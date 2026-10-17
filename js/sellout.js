@@ -84,7 +84,9 @@
     const tw = camp[0];
     const card = (tag, big, text) => {
       const f = el("figure", "note-card");
-      f.append(el("div", "tag", tag), el("div", "big", big), el("p", null, text));
+      const p = el("p");
+      p.append(el("b", null, tag + ". "), text);
+      f.append(el("div", "big", big), p);
       box.appendChild(f);
     };
     card("Twin date", fmt(tot[tw.day - 1] / avgNormal, 1) + "× an ordinary day",
@@ -100,7 +102,7 @@
       if (itemKind(code) !== "Single SKU") skuPack += k;
     }
     card("Bundles & multipacks", pct(skuPack / skuAll, 0) + " of SKU units",
-      "Physical units that leave the warehouse inside a pack. That is why stock is counted after bundles are split into SKUs, not from sellable items (see Forecast & stock).");
+      "Physical units that leave the warehouse inside a pack. That is why stock is counted after bundles are split into SKUs, not from sellable items (see the Forecast page).");
   }
 
   // ---------- charts ----------
@@ -127,7 +129,8 @@
     months.forEach((k, i) => {
       const cx = m.l + (i + 0.5) * band, x0 = cx - bw / 2, x1 = cx + bw / 2;
       const sel = k === U.state.month;
-      const g = svgEl("g", { opacity: sel ? 1 : 0.5 });
+      if (sel) svg.appendChild(svgEl("rect", { x: cx - band / 2 + 4, y: m.t - 18, width: band - 8, height: ih + 18 + 22, rx: 10, fill: "var(--soft)" }));
+      const g = svgEl("g");
       let acc = 0;
       const vals = D.platforms.map((p) => D.sell[k].plat[p][0]);
       vals.forEach((v, j) => {
@@ -152,13 +155,13 @@
     };
     hit.addEventListener("pointermove", (ev) => {
       const i = idxAt(ev), k = months[i];
-      groups.forEach((g, j) => g.g.setAttribute("opacity", j === i || g.sel ? 1 : 0.5));
+      groups.forEach((g, j) => g.g.setAttribute("opacity", j === i || g.sel ? 1 : 0.75));
       const s = svg.getBoundingClientRect().width / W;
       const rows = D.platforms.slice().reverse().map((p) => ({ label: p, value: rp(D.sell[k].plat[p][0]), color: PCOL[p] }));
       rows.push({ label: "Total", value: rp(totals[i]) });
       U.showTip(box, groups[i].cx * s, y(totals[i]) * s, U.monthName(k), rows, k === U.state.month ? null : "Click to select this month");
     });
-    hit.addEventListener("pointerleave", () => { groups.forEach((g) => g.g.setAttribute("opacity", g.sel ? 1 : 0.5)); U.hideTip(box); });
+    hit.addEventListener("pointerleave", () => { groups.forEach((g) => g.g.setAttribute("opacity", 1)); U.hideTip(box); });
     hit.addEventListener("click", (ev) => { const k = months[idxAt(ev)]; if (k !== U.state.month) { U.hideTip(box); U.setMonth(k); } });
   }
 

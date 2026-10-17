@@ -86,8 +86,9 @@
     }
     const gs = ms.map((x, i) => {
       const cx = m.l + (i + 0.5) * band, sel = x.k === U.state.month;
-      const g = svgEl("g", { opacity: sel ? 1 : 0.5 });
-      g.appendChild(svgEl("path", { d: U.barPath(cx - bw / 2, cx + bw / 2, y(x.A), y(0)), fill: "var(--one)" }));
+      if (sel) svg.appendChild(svgEl("rect", { x: cx - band / 2 + 4, y: m.t - 20, width: band - 8, height: ih + 20 + 22, rx: 10, fill: "var(--soft)" }));
+      const g = svgEl("g");
+      g.appendChild(svgEl("path", { d: U.barPath(cx - bw / 2, cx + bw / 2, y(x.A), y(0)), fill: sel ? "var(--one)" : "var(--one-soft)" }));
       g.appendChild(svgEl("rect", { x: cx - bw / 2 - 6, y: y(x.F) - 1.5, width: bw + 12, height: 3, rx: 1.5, fill: "var(--fg)" }));
       g.appendChild(svgEl("text", { x: cx, y: Math.min(y(x.A), y(x.F)) - 8, "text-anchor": "middle", class: sel ? "lbl-strong" : "" }, pct(x.acc, 0)));
       svg.appendChild(g);
@@ -100,7 +101,7 @@
     const at = (ev) => { const r = svg.getBoundingClientRect(); return Math.max(0, Math.min(ms.length - 1, Math.floor((((ev.clientX - r.left) / r.width) * W - m.l) / band))); };
     hit.addEventListener("pointermove", (ev) => {
       const i = at(ev), x = ms[i];
-      gs.forEach((g, j) => g.g.setAttribute("opacity", j === i || g.sel ? 1 : 0.5));
+      gs.forEach((g, j) => g.g.setAttribute("opacity", j === i || g.sel ? 1 : 0.8));
       const s = svg.getBoundingClientRect().width / W;
       U.showTip(box, gs[i].cx * s, y(Math.max(x.A, x.F)) * s, U.monthName(x.k), [
         { label: "Actual", value: num(x.A) + " units", color: "var(--one)" },
@@ -109,7 +110,7 @@
         { label: "Bias", value: U.signedPct(x.bias) },
       ], x.k === U.state.month ? null : "Click to select this month");
     });
-    hit.addEventListener("pointerleave", () => { gs.forEach((g) => g.g.setAttribute("opacity", g.sel ? 1 : 0.5)); U.hideTip(box); });
+    hit.addEventListener("pointerleave", () => { gs.forEach((g) => g.g.setAttribute("opacity", 1)); U.hideTip(box); });
     hit.addEventListener("click", (ev) => { const k = ms[at(ev)].k; if (k !== U.state.month) { U.hideTip(box); U.setMonth(k); } });
   }
 

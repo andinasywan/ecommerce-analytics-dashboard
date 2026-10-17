@@ -186,7 +186,8 @@
     }
     const groups = rows.map((r, i) => {
       const cx = m.l + (i + 0.5) * band, sel = r.k === U.state.month;
-      const g = svgEl("g", { opacity: sel ? 1 : 0.55 });
+      if (sel) svg.appendChild(svgEl("rect", { x: cx - band / 2 + 4, y: m.t - 18, width: band - 8, height: ih + 18 + 22, rx: 10, fill: "var(--soft)" }));
+      const g = svgEl("g");
       const tv = full(r.twin), pv = full(r.pay);
       g.appendChild(svgEl("path", { d: U.barPath(cx - bw - 1, cx - 1, y(tv), y(0)), fill: "var(--camp)" }));
       g.appendChild(svgEl("path", { d: U.barPath(cx + 1, cx + bw + 1, y(pv), y(0)), fill: "var(--one)" }));
@@ -205,14 +206,14 @@
     const at = (ev) => { const r = svg.getBoundingClientRect(); return Math.max(0, Math.min(ms.length - 1, Math.floor((((ev.clientX - r.left) / r.width) * W - m.l) / band))); };
     hit.addEventListener("pointermove", (ev) => {
       const i = at(ev), g = groups[i], s = svg.getBoundingClientRect().width / W;
-      groups.forEach((x, j) => x.g.setAttribute("opacity", j === i || x.sel ? 1 : 0.55));
+      groups.forEach((x, j) => x.g.setAttribute("opacity", j === i || x.sel ? 1 : 0.8));
       U.showTip(box, g.cx * s, y(Math.max(full(g.r.twin), full(g.r.pay))) * s, U.monthName(g.r.k), [
         { label: g.r.twin.label, value: rp(full(g.r.twin)), color: "var(--camp)" },
         { label: g.r.pay.label, value: rp(full(g.r.pay)), color: "var(--one)" },
         { label: "Ordinary day", value: rp(g.r.twin.avgDay), color: "var(--fg)" },
       ], D.months.includes(g.r.k) && g.r.k !== U.state.month ? "Click to select this month" : null);
     });
-    hit.addEventListener("pointerleave", () => { groups.forEach((x) => x.g.setAttribute("opacity", x.sel ? 1 : 0.55)); U.hideTip(box); });
+    hit.addEventListener("pointerleave", () => { groups.forEach((x) => x.g.setAttribute("opacity", 1)); U.hideTip(box); });
     hit.addEventListener("click", (ev) => { const k = ms[at(ev)]; if (D.months.includes(k) && k !== U.state.month) { U.hideTip(box); U.setMonth(k); } });
   }
 
