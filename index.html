@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Dasbor Sell-out & Forecast</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Dasbor portofolio: sell-out e-commerce produk kesehatan per platform, toko, brand, dan SKU, serta forecast kebutuhan stok per gudang. Semua data dummy.">
+<meta property="og:title" content="Dasbor Sell-out & Forecast E-commerce 2026">
+<meta property="og:description" content="Sell-out marketplace, forecast vs aktual per SKU × gudang, dan rencana kirim karton. Data dummy untuk portofolio.">
+<meta property="og:image" content="assets/preview-sellout.png">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="sellout">
+<header class="hero">
+  <div class="hero-art" id="hero-art" aria-hidden="true"></div>
+  <div class="inner gutter">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 48 48" width="40" height="40"><rect x="6" y="26" width="8" height="14" rx="2" fill="#0f7b6c"/><rect x="20" y="17" width="8" height="23" rx="2" fill="#0f7b6c"/><rect x="34" y="8" width="8" height="32" rx="2" fill="#0f7b6c"/><path d="M5 22 L18 13 L28 16 L43 5" fill="none" stroke="#eb6834" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <div class="eyebrow">Studi kasus portofolio · E-commerce produk kesehatan · 2026</div>
+        <h1 id="page-title">Sell-out E-commerce 2026</h1>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Halaman dasbor">
+      <a class="tab" role="tab" id="tab-sellout" href="#sellout" aria-controls="page-sellout" aria-selected="true"><span class="tab-no">01</span>Sell-out</a>
+      <a class="tab" role="tab" id="tab-forecast" href="#forecast" aria-controls="page-forecast" aria-selected="false"><span class="tab-no">02</span>Forecast & stok gudang</a>
+    </nav>
+    <p class="hero-sub" data-for="sellout">Penjualan bersih dari ekspor pesanan TikTok Shop, Shopee, Tokopedia, Lazada, dan Blibli: per platform, toko, brand, dan item.</p>
+    <p class="hero-sub" data-for="forecast">Bundle dan multipack dipecah ke SKU fisik, lalu forecast tiap SKU × gudang diuji terhadap penjualan aktual dan dijadikan rencana kirim karton.</p>
+    <div class="hero-bar">
+      <label class="month-pick" for="periode">Periode
+        <select id="periode" aria-label="Pilih bulan"></select>
+      </label>
+      <span class="chip"><span class="dot" aria-hidden="true"></span><span id="data-chip">Memuat data…</span></span>
+    </div>
+  </div>
+</header>
+
+<main id="page-sellout" class="page" role="tabpanel" aria-labelledby="tab-sellout">
+  <div class="inner gutter">
+    <p class="lede" id="so-lede"></p>
+
+    <section class="section" aria-label="Ringkasan sell-out">
+      <div class="kpis" id="so-kpis"></div>
+    </section>
+
+    <section class="section" aria-label="Temuan bulan ini">
+      <div class="notes" id="so-notes"></div>
+    </section>
+
+    <section class="section" id="tren">
+      <div class="section-head">
+        <h2>Tren penjualan</h2>
+        <p>GMV pesanan valid, tanpa pesanan batal dan retur</p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h3>GMV per platform, Mei–September</h3>
+          <div class="legend" id="leg-platform"></div>
+          <div class="chart" id="chart-bulanan"></div>
+        </div>
+        <div class="card">
+          <h3 id="harian-title">GMV harian</h3>
+          <div class="legend"><span><span class="key" style="background:var(--camp)"></span>Hari kampanye (tanggal kembar, payday)</span><span><span class="key" style="background:var(--one-soft)"></span>Hari biasa</span><span><span class="key line"></span>Rata-rata harian</span></div>
+          <div class="chart" id="chart-harian"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="platform">
+      <div class="section-head">
+        <h2>Platform & toko</h2>
+        <p id="platform-pos"></p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h3>Porsi GMV per platform</h3>
+          <div class="plat-list" id="plat-list"></div>
+        </div>
+        <div class="card">
+          <h3>Jam belanja</h3>
+          <p class="note">Porsi GMV per jam pesanan dibuat (WIB). Flash sale tengah malam di hari kampanye mendorong jam 00.</p>
+          <div class="chart" id="chart-jam"></div>
+        </div>
+      </div>
+      <div class="toolbar">
+        <label class="field" for="toko-platform">Platform
+          <select id="toko-platform"></select>
+        </label>
+        <label class="field" for="toko-urut">Urutkan
+          <select id="toko-urut">
+            <option value="gmv">GMV terbesar</option>
+            <option value="mom">Pertumbuhan tertinggi</option>
+            <option value="mom-low">Pertumbuhan terendah</option>
+            <option value="aov">Nilai pesanan rata-rata tertinggi</option>
+          </select>
+        </label>
+        <span class="count" id="toko-count"></span>
+      </div>
+      <div class="table-box">
+        <table id="tabel-toko">
+          <thead>
+            <tr>
+              <th>Toko</th>
+              <th class="opt">Gudang</th>
+              <th class="r">GMV</th>
+              <th class="r opt">Pesanan</th>
+              <th class="r opt">Rata-rata pesanan</th>
+              <th class="opt">Porsi GMV</th>
+              <th class="r">vs bulan lalu</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="brand">
+      <div class="section-head">
+        <h2>Brand</h2>
+        <p>Klik titik atau batang untuk melihat item brand itu</p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h3>Kontribusi dibanding pertumbuhan</h3>
+          <p class="note">Satu titik satu brand. Kanan berarti porsi GMV besar, atas berarti tumbuh dari bulan lalu.</p>
+          <div class="legend"><span><span class="key dot-fill"></span>Anak & Keluarga</span><span><span class="key dot-ring"></span>Dewasa & Spesialis</span></div>
+          <div class="chart" id="chart-brand-sebar"></div>
+        </div>
+        <div class="card">
+          <h3>GMV per brand</h3>
+          <div class="legend"><span><span class="key" style="background:var(--one)"></span>Anak & Keluarga</span><span><span class="key dot-ring" style="border-radius:3px"></span>Dewasa & Spesialis</span></div>
+          <div class="brand-bars" id="brand-bars"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="rincian-item">
+      <div class="section-head">
+        <h2>Rincian item</h2>
+        <p>Item jual apa adanya di marketplace, termasuk multipack dan bundle</p>
+      </div>
+      <div class="toolbar">
+        <label class="field" for="item-cari">Cari
+          <input id="item-cari" type="search" placeholder="Kode atau nama item" autocomplete="off">
+        </label>
+        <label class="field" for="item-brand">Brand
+          <select id="item-brand"></select>
+        </label>
+        <label class="field" for="item-urut">Urutkan
+          <select id="item-urut">
+            <option value="gmv">GMV terbesar</option>
+            <option value="units">Unit terbanyak</option>
+            <option value="mom">Pertumbuhan tertinggi</option>
+            <option value="mom-low">Pertumbuhan terendah</option>
+            <option value="price">Harga per unit tertinggi</option>
+          </select>
+        </label>
+        <span class="count" id="item-count"></span>
+      </div>
+      <div class="table-box">
+        <table id="tabel-item">
+          <thead>
+            <tr>
+              <th class="opt">Kode</th>
+              <th>Item</th>
+              <th class="opt">Jenis</th>
+              <th class="r opt">Unit</th>
+              <th class="r">GMV</th>
+              <th class="r opt">Harga rata-rata</th>
+              <th class="r">vs bulan lalu</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</main>
+
+<main id="page-forecast" class="page" role="tabpanel" aria-labelledby="tab-forecast" hidden>
+  <div class="inner gutter">
+    <p class="lede" id="fc-lede"></p>
+
+    <section class="section" aria-label="Ringkasan forecast">
+      <div class="kpis" id="fc-kpis"></div>
+    </section>
+
+    <section class="section" id="akurasi">
+      <div class="section-head">
+        <h2>Akurasi forecast</h2>
+        <p id="fc-metode"></p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h3>Forecast dibanding aktual, unit SKU per bulan</h3>
+          <div class="legend"><span><span class="key" style="background:var(--one)"></span>Aktual</span><span><span class="key tick"></span>Forecast</span></div>
+          <div class="chart" id="chart-fc-bulan"></div>
+        </div>
+        <div class="card">
+          <h3>Akurasi per gudang</h3>
+          <p class="note">Akurasi = 1 − WAPE. Makin pekat warnanya, makin rendah akurasinya. Klik baris untuk menyaring tabel SKU.</p>
+          <div class="table-box flat">
+            <table class="heat-table" id="tabel-gudang"></table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="sku-gudang">
+      <div class="section-head">
+        <h2>SKU × gudang</h2>
+        <p>Selisih forecast terhadap aktual. Biru: forecast kurang. Merah: forecast lebih.</p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h3>Forecast dibanding aktual per SKU × gudang</h3>
+          <p class="note">Skala logaritmik. Titik di garis berarti tepat, pita abu-abu = toleransi ±25%. Titik bercincin = SKU yang sedang dibuka; klik titik lain untuk berganti.</p>
+          <div class="legend"><span><span class="key" style="background:var(--under)"></span>Forecast kurang &gt;25%</span><span><span class="key" style="background:var(--over)"></span>Forecast lebih &gt;25%</span><span><span class="key" style="background:var(--axis)"></span>Dalam toleransi</span></div>
+          <div class="chart" id="chart-fc-sebar"></div>
+        </div>
+        <div class="card profile" id="sku-profile">
+          <label class="field select-unit" for="sku-pilih">SKU
+            <select id="sku-pilih"></select>
+          </label>
+          <div id="sku-profile-body"></div>
+        </div>
+      </div>
+      <div class="toolbar">
+        <label class="field" for="heat-gudang">Gudang
+          <select id="heat-gudang"></select>
+        </label>
+        <label class="field" for="heat-urut">Urutkan
+          <select id="heat-urut">
+            <option value="err">Selisih terbesar</option>
+            <option value="vol">Volume aktual terbesar</option>
+            <option value="code">Kode SKU</option>
+          </select>
+        </label>
+        <span class="count" id="heat-count"></span>
+      </div>
+      <div class="table-box">
+        <table class="sku-heat" id="tabel-heat">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="rencana">
+      <div class="section-head">
+        <h2 id="rencana-title">Rencana kirim</h2>
+        <p id="rencana-sub"></p>
+      </div>
+      <div class="wh-strip" id="wh-strip" role="tablist" aria-label="Pilih gudang"></div>
+      <div class="table-box">
+        <table id="tabel-rencana">
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th class="r opt">Rata-rata 3 bln</th>
+              <th class="r">Forecast</th>
+              <th class="r opt">+ Stok pengaman</th>
+              <th class="r opt">Isi per karton</th>
+              <th class="r">Karton dikirim</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="alur">
+      <div class="section-head">
+        <h2>Alur pengolahan data</h2>
+        <p id="alur-sub"></p>
+      </div>
+      <ol class="flow" id="flow"></ol>
+      <div class="grid2">
+        <div class="card">
+          <h3>Contoh pemecahan item ke SKU fisik</h3>
+          <p class="note">Satu item jual bisa berisi beberapa SKU. Stok gudang dihitung dari SKU fisiknya, bukan dari item jual.</p>
+          <div class="table-box flat">
+            <table class="conv-table" id="tabel-convert"></table>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Cara forecast dihitung</h3>
+          <div class="method" id="method"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="inner gutter">
+    <p><b>Data dummy.</b> Semua nama brand, SKU, toko, nomor pesanan, dan angka di dasbor ini fiktif, dibuat dengan generator acak. Struktur dan alur kerjanya meniru dasbor yang saya kerjakan saat magang sebagai Data Analyst di perusahaan consumer health.</p>
+    <p id="stamp"></p>
+    <p>Dibuat dengan HTML, CSS, dan JavaScript tanpa library grafik · pipeline data dengan Python (pandas) · <a href="https://github.com/andinasywan/ecommerce-analytics-dashboard">kode di GitHub</a></p>
+  </div>
+</footer>
+
+<script src="data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/sellout.js"></script>
+<script src="js/forecast.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
