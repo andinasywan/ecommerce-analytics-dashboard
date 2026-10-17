@@ -57,11 +57,14 @@
 
     <section class="section" id="warehouses">
       <div class="section-head">
-        <h2>Where orders ship from</h2>
+        <h2>Where buyers are, and where orders ship from</h2>
         <p id="so-map-sub"></p>
       </div>
       <div class="card map-card">
-        <div class="legend"><span><span class="key dot-fill"></span>Bubble size = GMV shipped from the warehouse</span><span>Click a warehouse to filter the store table</span></div>
+        <div class="map-top">
+          <div class="seg small" id="map-mode" role="tablist" aria-label="Map view"></div>
+          <div class="legend" id="map-legend"></div>
+        </div>
         <div class="chart" id="map-sellout"></div>
         <div class="wh-list" id="wl-sellout"></div>
       </div>

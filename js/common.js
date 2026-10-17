@@ -272,6 +272,65 @@
       }
     }
   }
+
+  // province map: fill by bin index, warehouse dots, optional detour arcs
+  // opts: {aria, bin(name) -> 0..4, tip(name) -> rows, arcs: [{from, to, w}], selected}
+  function drawChoropleth(box, opts) {
+    const G = window.GEO;
+    const W = box.clientWidth;
+    if (!G || !W || !G.provinces) return;
+    const s = W / G.w, H = Math.round(G.h * s);
+    const narrow = W < 560;
+    const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": opts.aria, style: "overflow:hidden" });
+    svg.appendChild(svgEl("rect", { x: 0, y: 0, width: W, height: H, rx: 10, fill: "var(--sea)" }));
+    const g = svgEl("g", { transform: `scale(${s})` });
+    g.appendChild(svgEl("path", { d: G.neighbours, fill: "var(--land-2)", stroke: "var(--sea)", "stroke-width": 1 / s }));
+    const shapes = [];
+    for (const p of G.provinces) {
+      const b = opts.bin(p.n);
+      const path = svgEl("path", { d: p.d, fill: RAMP[b], stroke: "var(--sea)", "stroke-width": 0.9 / s, "stroke-linejoin": "round", style: "cursor:pointer" });
+      g.appendChild(path);
+      shapes.push({ p, path });
+    }
+    svg.appendChild(g);
+    const P = (lon, lat) => { const [x, y] = geoXY(lon, lat); return [x * s, y * s]; };
+    const cen = {};
+    G.provinces.forEach((p) => (cen[p.n] = [p.c[0] * s, p.c[1] * s]));
+    // detour arcs: curved so they read as journeys, thicker for more orders
+    const arcs = opts.arcs || [];
+    const wmax = Math.max(1, ...arcs.map((a) => a.w));
+    for (const a of arcs) {
+      const [x0, y0] = P(...WH_LL[a.from]), [x1, y1] = cen[a.to];
+      const mx = (x0 + x1) / 2, my = (y0 + y1) / 2, len = Math.hypot(x1 - x0, y1 - y0);
+      const cx = mx + (-(y1 - y0) / len) * len * 0.22, cy = my + ((x1 - x0) / len) * len * 0.22;
+      svg.appendChild(svgEl("path", { d: `M${x0},${y0}Q${cx},${cy} ${x1},${y1}`, fill: "none", stroke: "var(--camp)", "stroke-width": 1.5 + 3 * (a.w / wmax), "stroke-linecap": "round", opacity: 0.9 }));
+      svg.appendChild(svgEl("circle", { cx: x1, cy: y1, r: 3.5, fill: "var(--camp)", stroke: "var(--panel)", "stroke-width": 1.5 }));
+    }
+    for (const w of Object.keys(WH_LL)) {
+      const [x, y] = P(...WH_LL[w]);
+      svg.appendChild(svgEl("rect", { x: x - 5, y: y - 5, width: 10, height: 10, rx: 2, fill: "var(--fg)", stroke: "var(--panel)", "stroke-width": 1.5 }));
+      if (!narrow) {
+        const [dx, dy] = LABEL_DIR[w];
+        const lx = dy < 0 ? x - 4 : x + dx * 9, ly = dy < 0 ? y - 10 : dy > 0 ? y + 18 : y + 4;
+        svg.appendChild(svgEl("text", { x: lx, y: ly, "text-anchor": dy < 0 ? "start" : dx < 0 ? "end" : "start", class: "map-name" }, w));
+      }
+    }
+    box.replaceChildren(svg);
+    for (const { p, path } of shapes) {
+      const show = () => {
+        path.setAttribute("stroke", "var(--fg)");
+        path.setAttribute("stroke-width", 1.8 / s);
+        g.appendChild(path);
+        const k = svg.getBoundingClientRect().width / W;
+        showTip(box, cen[p.n][0] * k, cen[p.n][1] * k, p.n, opts.tip(p.n));
+      };
+      const hide = () => { path.setAttribute("stroke", "var(--sea)"); path.setAttribute("stroke-width", 0.9 / s); hideTip(box); };
+      path.addEventListener("pointerenter", show);
+      path.addEventListener("pointerleave", hide);
+    }
+  }
+  const RAMP = [0, 25, 50, 75, 100].map((p) => `color-mix(in oklab, var(--ramp-hi) ${p}%, var(--ramp-lo))`);
+
   // ranked list next to a map; rows: [{name, value, label, sub, bar, delta}]
   function whList(box, rows, selected, onPick) {
     box.replaceChildren();
@@ -300,7 +359,7 @@
   function onMonth(f) { state.listeners.push(f); }
 
   window.U = { NS, MONTHS, MON3, isNum, fmt, rp, rpFull, num, pct, signedPct, axisRp, axisNum, monthName, monthOnly, monthShort, monthNo, prevKey,
-    growth, el, svgEl, delta, bar, barPath, rectPath, showTip, hideTip, niceTicks, labelWidth, kpi, sub, spark, emptyRow, campaignDays, seg, drawMap, whList,
+    growth, el, svgEl, delta, bar, barPath, rectPath, showTip, hideTip, niceTicks, labelWidth, kpi, sub, spark, emptyRow, campaignDays, seg, drawMap, drawChoropleth, RAMP, whList,
     state, setMonth, onMonth,
     reduceMotion: window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches };
 })();

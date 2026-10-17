@@ -26,7 +26,8 @@ warehouses, vouchers that sell out), never the real names or numbers.
 
 **01 · Sell-out**
 - Monthly KPIs: GMV, orders, units, average order value, GMV share of campaign days
-- Map of Indonesia with the five warehouses sized by GMV shipped (click one to filter the store table)
+- Map of Indonesia with two views: buyers by province (with the share of orders shipped from the nearest warehouse
+  and the biggest detours), and the five warehouses sized by GMV shipped (click one to filter the store table)
 - GMV by platform per month and daily GMV with campaign days marked
 - Platform share, shopping hours, and a table of 19 stores with their warehouse
 - Brands: contribution vs growth (click to filter items), then a searchable item table
@@ -97,7 +98,7 @@ index.html, style.css, js/        the dashboard (plain HTML/CSS/JS, hand-drawn S
 data.js                           aggregated data for the dashboard (pipeline output)
 tools/generate_dummy_data.py      dummy data generator
 tools/build_dashboard_data.py     pipeline: raw exports -> data.js + processed CSVs
-tools/build_map.py                map outlines -> js/geo.js (Natural Earth 1:50m, public domain)
+tools/build_map.py                map outlines and province centroids -> js/geo.js, data/master/provinces.csv (Natural Earth, public domain)
 data/raw/orders_2026-MM.csv.gz    monthly order exports (Feb–Sep 2026)
 data/raw/traffic_daily.csv.gz     daily traffic report per store
 data/raw/platform_rebates.csv     platform rebates on campaign days
@@ -118,6 +119,7 @@ data/processed/                   SKU × warehouse units, forecast vs actual, sh
 | `status` | Completed, In transit, Cancelled, Returned |
 | `tiktok_channel` | TikTok Shop content source: LIVE, Video, Product card |
 | `voucher_code`, `voucher_discount` | store voucher redeemed on the order and its cost to the seller |
+| `buyer_province` | province of the buyer (dummy); `data/master/provinces.csv` holds each province's nearest warehouse and distances |
 
 ### Traffic report columns (`data/raw/traffic_daily.csv.gz`)
 

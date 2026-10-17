@@ -9,6 +9,7 @@ The same monthly steps that were done in Excel during the internship, rewritten 
   5. Campaign days (twin dates and payday): hour-by-hour GMV per channel, store voucher
      redemption, and platform rebates.
   6. Traffic: visitors, product clicks, ad impressions and conversion by store and day.
+     Buyer geography: orders by buyer province, and how many shipped from the nearest warehouse.
   7. Explode multipacks & bundles into physical SKUs (item_convert.csv), pivot units SKU x warehouse.
   8. Forecast month M = weighted average of the 3 previous months (0.5 / 0.3 / 0.2),
      compared with actuals -> accuracy (1 - WAPE) and bias.
@@ -148,6 +149,22 @@ def main():
                 index=range(1, days_n + 1), columns=PLATFORMS).fillna(0).astype(int).values.tolist()
         tr[m] = dict(store=by_store.values.tolist(), daily=daily)
 
+    # ------------------------------------------------------------ buyer geography
+    prov = pd.read_csv(MASTER / "provinces.csv")
+    km_cols = ["km_" + w.lower() for w in WAREHOUSES]
+    km = {(r.province, w): getattr(r, "km_" + w.lower()) for r in prov.itertuples() for w in WAREHOUSES}
+    orders_geo = valid.drop_duplicates("order_id")[["order_id", "month", "warehouse", "buyer_province", "gmv"]].copy()
+    orders_geo["gmv"] = valid.groupby("order_id").gmv.sum().reindex(orders_geo.order_id).values
+    geo = dict(warehouses=WAREHOUSES, prov=[[r.province, r.nearest_warehouse, [int(getattr(r, c)) for c in km_cols]] for r in prov.itertuples()], m={})
+    for m in months_all:
+        o = orders_geo[orders_geo.month == m]
+        byp = o.groupby("buyer_province").agg(orders=("order_id", "size"), gmv=("gmv", "sum")).reindex(prov.province).fillna(0).astype(int)
+        flows = o.groupby(["warehouse", "buyer_province"]).size()
+        geo["m"][m] = dict(p=[[p, int(r.orders), int(r.gmv)] for p, r in byp.iterrows()],
+                           f=[[w, p, int(n)] for (w, p), n in flows.items()])
+    near = orders_geo.merge(prov[["province", "nearest_warehouse"]], left_on="buyer_province", right_on="province")
+    print("orders from nearest warehouse:", f"{(near.warehouse == near.nearest_warehouse).mean():.1%}")
+
     # ------------------------------------------------------------ explode bundles -> SKU x warehouse
     parts = []
     for i in (1, 2, 3):
@@ -204,7 +221,7 @@ def main():
         brands=skus.groupby("brand").category.first().reset_index().values.tolist(),
         skus=skus[["sku", "sku_name", "brand", "category", "units_per_carton"]].values.tolist(),
         items=items, stores=stores.values.tolist(),
-        sell=sell, campaigns=campaigns, traffic=tr,
+        sell=sell, campaigns=campaigns, traffic=tr, geo=geo,
         fc=dict(weights=WMA, buffer=BUFFER, tolerance=TOLERANCE, rows=fc_rows, plan=plan, hist=hist, pipe=pipe),
     )
     js = "/* Dummy data - built by tools/build_dashboard_data.py. Every name and number is fictional. */\n"

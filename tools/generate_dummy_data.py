@@ -16,6 +16,8 @@ Outputs
   data/master/store_map.csv          store -> platform, channel, warehouse
   data/master/vouchers.csv           store vouchers set up for each campaign day
 
+Needs data/master/provinces.csv (built by tools/build_map.py) for the buyer's province on each order.
+
 Run:  python tools/generate_dummy_data.py
 """
 from __future__ import annotations
@@ -30,6 +32,7 @@ import numpy as np
 
 SEED = 20260917
 rng = np.random.default_rng(SEED)
+rng_geo = np.random.default_rng(SEED + 7)   # separate stream: adding buyer provinces leaves every other number unchanged
 ROOT = Path(__file__).resolve().parents[1]
 RAW, MASTER = ROOT / "data" / "raw", ROOT / "data" / "master"
 RAW.mkdir(parents=True, exist_ok=True)
@@ -159,6 +162,43 @@ VOUCHERS = {
 }
 REBATE_RATE = {"Shopee": (0.28, 0.48), "TikTok Shop": (0.18, 0.34)}
 
+# buyer location: rough population (millions, 2020 census; North Kalimantan sits inside East Kalimantan in the
+# map source) x an online-shopping factor by region. Approximate public figures, used only to shape dummy demand.
+POP = {"Jakarta": 10.6, "West Java": 48.3, "Banten": 11.9, "Central Java": 36.5, "East Java": 41.0, "Yogyakarta": 3.7,
+       "Bali": 4.3, "North Sumatra": 14.8, "Aceh": 5.3, "West Sumatra": 5.5, "Riau": 6.4, "Riau Islands": 2.1, "Jambi": 3.5,
+       "South Sumatra": 8.5, "Bengkulu": 2.0, "Lampung": 9.0, "Bangka Belitung": 1.5, "West Kalimantan": 5.4,
+       "Central Kalimantan": 2.7, "South Kalimantan": 4.1, "East Kalimantan": 4.5, "South Sulawesi": 9.1,
+       "Southeast Sulawesi": 2.6, "Central Sulawesi": 3.0, "North Sulawesi": 2.6, "Gorontalo": 1.2, "West Sulawesi": 1.4,
+       "West Nusa Tenggara": 5.3, "East Nusa Tenggara": 5.3, "Maluku": 1.8, "North Maluku": 1.3, "Papua": 4.3, "West Papua": 1.1}
+ONLINE = {"Jakarta": 2.2, "West Java": 1.3, "Banten": 1.3, "Yogyakarta": 1.3, "Bali": 1.2, "Central Java": 1.0, "East Java": 1.0}
+REGION_ONLINE = {"Sumatra": 0.8, "Kalimantan": 0.8, "Sulawesi": 0.7, "Nusa Tenggara": 0.5, "Maluku": 0.4, "Papua": 0.4}
+# share of a warehouse's orders that come from its own nearest-warehouse zone; the rest come from anywhere
+LOCAL_SHARE = {"Jakarta": 0.48, "Surabaya": 0.62, "Medan": 0.72, "Makassar": 0.70, "Semarang": 0.55}
+
+
+def province_sampler():
+    rows = list(csv.DictReader(open(MASTER / "provinces.csv", encoding="utf-8")))
+    names = [r["province"] for r in rows]
+
+    def region(n):
+        for k in REGION_ONLINE:
+            if k in n or (k == "Sumatra" and n in ("Aceh", "Riau", "Riau Islands", "Jambi", "Bengkulu", "Lampung", "Bangka Belitung"))\
+                    or (k == "Sulawesi" and n == "Gorontalo") or (k == "Papua" and n == "West Papua"):
+                return REGION_ONLINE[k]
+        return 1.0
+    w = np.array([POP[n] * ONLINE.get(n, region(n)) for n in names])
+    nearest = {r["province"]: r["nearest_warehouse"] for r in rows}
+    national = w / w.sum()
+    zone = {}
+    for wh in WAREHOUSES:
+        z = np.array([w[i] if nearest[n] == wh else 0 for i, n in enumerate(names)])
+        zone[wh] = z / z.sum()
+
+    def draw(wh):
+        p = zone[wh] if rng_geo.random() < LOCAL_SHARE[wh] else national
+        return names[int(rng_geo.choice(len(names), p=p))]
+    return draw
+
 
 def item_catalog():
     items = []
@@ -262,7 +302,8 @@ def main():
     store_noise = {(s[0], m): float(rng.lognormal(0, 0.05)) for s in STORES for _, m in MONTHS}
 
     fields = ["order_id", "order_datetime", "order_date", "store", "item_code", "item_name", "brand", "category",
-              "qty", "gmv", "status", "tiktok_channel", "voucher_code", "voucher_discount"]
+              "qty", "gmv", "status", "tiktok_channel", "voucher_code", "voucher_discount", "buyer_province"]
+    buyer_province = province_sampler()
     traffic, rebates, voucher_rows = [], [], []
     for mi, (y, mo) in enumerate(MONTHS):
         rows = []
@@ -365,10 +406,11 @@ def main():
 
             for o in orders:
                 v = o.get("voucher")
+                prov = buyer_province(o["store"][3])
                 for k, (it, q, gmv) in enumerate(o["lines"]):
                     rows.append([o["id"], o["ts"], d.isoformat(), o["store"][0], it["code"], it["name"], it["brand"],
                                  BRANDS[it["brand"]][0], q, gmv, o["status"], o["src"],
-                                 v[0] if v and k == 0 else "", v[1] if v and k == 0 else ""])
+                                 v[0] if v and k == 0 else "", v[1] if v and k == 0 else "", prov])
             for s in STORES:
                 traffic.append(traffic_row(d, s, placed[s[0]], tag, mi))
 

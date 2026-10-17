@@ -1,8 +1,12 @@
 """
 Build js/geo.js: simplified SVG outlines of Indonesia and its neighbours for the warehouse maps.
 
-Source: Natural Earth 1:50m admin-0 countries (public domain), taken from the world-atlas npm package
-(countries-50m.json) and saved as data/geo/natural_earth_50m_sea.geojson.
+Sources (public domain):
+  - Natural Earth 1:50m admin-0 countries, from the world-atlas npm package (countries-50m.json),
+    saved as data/geo/natural_earth_50m_sea.geojson
+  - Natural Earth 1:10m admin-1 provinces of Indonesia (33 provinces in this release), from
+    github.com/nvkelso/natural-earth-vector, saved as data/geo/natural_earth_10m_indonesia_provinces.geojson
+Also writes data/master/provinces.csv: province centroids and their distance to each warehouse.
 Projection: Mercator, cropped to lon 94.5..141.5, lat -11.2..6.4, 1000 units wide.
 
 Run:  python tools/build_map.py
@@ -15,6 +19,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "data" / "geo" / "natural_earth_50m_sea.geojson"
+PROV = ROOT / "data" / "geo" / "natural_earth_10m_indonesia_provinces.geojson"
+PROV_CSV = ROOT / "data" / "master" / "provinces.csv"
+WAREHOUSES = {"Jakarta": (106.8456, -6.2088), "Surabaya": (112.7521, -7.2575), "Medan": (98.6722, 3.5952),
+              "Makassar": (119.4327, -5.1477), "Semarang": (110.4167, -6.9667)}
 OUT = ROOT / "js" / "geo.js"
 
 LON0, LON1, LAT_TOP, LAT_BOT = 94.5, 141.5, 6.4, -11.2
@@ -88,10 +96,10 @@ def area(ring):
     return abs(sum(ring[i - 1][0] * ring[i][1] - ring[i][0] * ring[i - 1][1] for i in range(len(ring)))) / 2
 
 
-def ring_path(ring):
+def ring_path(ring, min_area=2.5):
     pts = [project(lon, lat) for lon, lat in ring]
     pts = clip(pts)
-    if len(pts) < 3 or area(pts) < 2.5:
+    if len(pts) < 3 or area(pts) < min_area:
         return ""
     pts = dp(pts + [pts[0]], 0.55)[:-1]
     if len(pts) < 3:
@@ -99,18 +107,52 @@ def ring_path(ring):
     return "M" + "L".join(f"{x:.1f},{y:.1f}" for x, y in pts) + "Z"
 
 
-def feature_path(f):
+def feature_path(f, min_area=2.5):
     g = f["geometry"]
     polys = g["coordinates"] if g["type"] == "MultiPolygon" else [g["coordinates"]]
-    return "".join(ring_path(poly[0]) for poly in polys)
+    return "".join(ring_path(poly[0], min_area) for poly in polys)
+
+
+def centroid(f):
+    """Area-weighted centroid of the outer rings, in lon/lat."""
+    g = f["geometry"]
+    polys = g["coordinates"] if g["type"] == "MultiPolygon" else [g["coordinates"]]
+    A = cx = cy = 0.0
+    for poly in polys:
+        r = poly[0]
+        for i in range(len(r) - 1):
+            (x0, y0), (x1, y1) = r[i], r[i + 1]
+            c = x0 * y1 - x1 * y0
+            A += c; cx += (x0 + x1) * c; cy += (y0 + y1) * c
+    A /= 2
+    return cx / (6 * A), cy / (6 * A)
+
+
+def km(a, b):
+    (lon1, lat1), (lon2, lat2) = a, b
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    h = math.sin((p2 - p1) / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(math.radians(lon2 - lon1) / 2) ** 2
+    return 2 * 6371 * math.asin(math.sqrt(h))
 
 
 def main():
     fc = json.loads(SRC.read_text())
     indo = "".join(feature_path(f) for f in fc["features"] if str(f["id"]) == "360")
     other = "".join(feature_path(f) for f in fc["features"] if str(f["id"]) != "360")
-    geo = dict(w=W, h=H, lon0=LON0, latTop=LAT_TOP, k=round(K, 6), indonesia=indo, neighbours=other,
-               source="Natural Earth 1:50m (public domain)")
+    provinces, rows = [], []
+    for f in sorted(json.loads(PROV.read_text())["features"], key=lambda f: f["properties"]["name_en"]):
+        name = f["properties"]["name_en"].replace(" Islands", "") if f["properties"]["name_en"].startswith("Bangka") else f["properties"]["name_en"]
+        lon, lat = centroid(f)
+        x, y = project(lon, lat)
+        provinces.append(dict(n=name, d=feature_path(f, 1.2), c=[round(x, 1), round(y, 1)]))
+        dist = {w: round(km((lon, lat), ll)) for w, ll in WAREHOUSES.items()}
+        rows.append([name, f["properties"]["iso"], round(lon, 3), round(lat, 3), min(dist, key=dist.get)] + [dist[w] for w in WAREHOUSES])
+    with open(PROV_CSV, "w", encoding="utf-8") as fh:
+        fh.write(",".join(["province", "iso", "lon", "lat", "nearest_warehouse"] + ["km_" + w.lower() for w in WAREHOUSES]) + "\n")
+        for r in rows:
+            fh.write(",".join(str(v) for v in r) + "\n")
+    geo = dict(w=W, h=H, lon0=LON0, latTop=LAT_TOP, k=round(K, 6), indonesia=indo, neighbours=other, provinces=provinces,
+               source="Natural Earth (public domain)")
     OUT.write_text("/* Map outlines built by tools/build_map.py from Natural Earth (public domain). */\n"
                    "window.GEO = " + json.dumps(geo, separators=(",", ":")) + ";\n", encoding="utf-8")
     print("geo.js", round(OUT.stat().st_size / 1024), "KB", "| viewBox", W, "x", H)

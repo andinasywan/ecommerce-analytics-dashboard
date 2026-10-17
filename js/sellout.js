@@ -15,7 +15,7 @@
   const ITEM = {}; D.items.forEach((it) => (ITEM[it.code] = it));
   const CAT = {}; D.brands.forEach(([b, c]) => (CAT[b] = c));
   const KIDS = "Kids & Family";
-  const st = { platform: "", wh: "", storeSort: "gmv", brand: "", itemSort: "gmv", q: "" };
+  const st = { platform: "", wh: "", mapMode: "buyers", storeSort: "gmv", brand: "", itemSort: "gmv", q: "" };
 
   const S = (m) => D.sell[m];
   const prev = (m) => D.sell[U.prevKey(m)];
@@ -290,15 +290,117 @@
     st.wh = w;
     $("#store-wh").value = w;
     renderStores();
-    renderWhList();
-    drawWhMap();
+    renderMapSide();
+    drawSellMap();
     if (scroll && w) $("#store-wh").scrollIntoView({ behavior: U.reduceMotion ? "auto" : "smooth", block: "center" });
   }
-  function renderWhList() {
-    const m = U.state.month, rows = whRows(m), tot = S(m).tot.gmv;
-    $("#so-map-sub").textContent = D.stores.length + " stores ship from " + D.warehouses.length + " warehouses · " + U.monthName(m);
-    U.whList($("#wl-sellout"), rows.map((r) => ({ name: r.name, label: rp(r.gmv), bar: r.gmv / rows[0].gmv,
-      sub: pct(r.gmv / tot, 0) + " of GMV · " + r.stores + (r.stores === 1 ? " store" : " stores"), delta: delta(growth(r.gmv, r.before)) })), st.wh, (w) => pickWh(w, true));
+
+  // buyer geography for a month: provinces, flows warehouse -> province, nearest-warehouse share
+  const GEO_META = {};
+  if (D.geo) D.geo.prov.forEach(([name, nearest, kms]) => {
+    const km = {};
+    D.geo.warehouses.forEach((w, i) => (km[w] = kms[i]));
+    GEO_META[name] = { nearest, km };
+  });
+  function geoMonth(m) {
+    const g = D.geo.m[m];
+    const prov = {};
+    let total = 0;
+    g.p.forEach(([name, orders, gmv]) => { prov[name] = { name, orders, gmv, near: 0, main: null }; total += orders; });
+    let near = 0, kmAct = 0, kmNear = 0;
+    const detours = [];
+    for (const [w, name, n] of g.f) {
+      const meta = GEO_META[name], P = prov[name];
+      kmAct += n * meta.km[w];
+      kmNear += n * meta.km[meta.nearest];
+      if (w === meta.nearest) { near += n; P.near += n; }
+      else detours.push({ from: w, to: name, n, extra: meta.km[w] - meta.km[meta.nearest] });
+      if (!P.main || n > P.main[1]) P.main = [w, n];
+    }
+    detours.sort((a, b) => b.n * b.extra - a.n * a.extra);
+    return { prov, total, nearShare: near / total, kmAct: kmAct / total, kmNear: kmNear / total, detours };
+  }
+  const BINS = [0.005, 0.01, 0.02, 0.05];
+  const binOf = (share) => BINS.filter((t) => share >= t).length;
+  const BIN_LABELS = ["under 0.5%", "0.5–1%", "1–2%", "2–5%", "5% or more"];
+
+  function renderMapMode() {
+    U.seg($("#map-mode"), [["buyers", "Buyers by province"], ["warehouses", "Warehouses"]], st.mapMode, (k) => { st.mapMode = k; renderMapMode(); renderMapSide(); drawSellMap(); });
+    const leg = $("#map-legend");
+    leg.replaceChildren();
+    if (st.mapMode === "buyers") {
+      leg.className = "ramp-legend";
+      leg.appendChild(document.createTextNode("Share of orders"));
+      BIN_LABELS.forEach((l, i) => { const sw = el("span", "sw"); const c = el("i"); c.style.background = U.RAMP[i]; sw.append(c, l); leg.appendChild(sw); });
+      const wk = el("span", "sw"); const sq = el("i"); Object.assign(sq.style, { width: "10px", background: "var(--fg)" }); wk.append(sq, "warehouse"); leg.appendChild(wk);
+      const ar = el("span", "sw"); const ln = el("i"); Object.assign(ln.style, { height: "3px", background: "var(--camp)" }); ar.append(ln, "biggest detours"); leg.appendChild(ar);
+    } else {
+      leg.className = "legend";
+      const a = el("span"); const k = el("span", "key dot-fill"); a.append(k, "Bubble size = GMV shipped from the warehouse");
+      leg.append(a, el("span", null, "Click a warehouse to filter the store table"));
+    }
+  }
+
+  function renderMapSide() {
+    const m = U.state.month;
+    const box = $("#wl-sellout");
+    if (st.mapMode === "warehouses") {
+      const rows = whRows(m), tot = S(m).tot.gmv;
+      $("#so-map-sub").textContent = D.stores.length + " stores ship from " + D.warehouses.length + " warehouses, " + U.monthName(m);
+      box.className = "wh-list";
+      U.whList(box, rows.map((r) => ({ name: r.name, label: rp(r.gmv), bar: r.gmv / rows[0].gmv,
+        sub: pct(r.gmv / tot, 0) + " of GMV · " + r.stores + (r.stores === 1 ? " store" : " stores"), delta: delta(growth(r.gmv, r.before)) })), st.wh, (w) => pickWh(w, true));
+      return;
+    }
+    const g = geoMonth(m), pk = U.prevKey(m), gp = D.geo.m[pk] ? geoMonth(pk) : null;
+    $("#so-map-sub").textContent = "Orders by buyer province, " + U.monthName(m) + ". Buyer locations are dummy data, like everything else here.";
+    box.className = "geo-side";
+    box.replaceChildren();
+    const stat = el("div", "geo-stat");
+    const big = el("div", "big", pct(g.nearShare, 0));
+    const p = el("p");
+    p.append("of orders shipped from the warehouse nearest the buyer");
+    if (gp) { p.append(" ("); p.appendChild(delta((g.nearShare - gp.nearShare) * 100, { points: true })); p.append(" vs " + prevName(m) + ")"); }
+    p.append(". Average trip ", el("b", null, fmt(g.kmAct, 0) + " km"), ", or ", el("b", null, fmt(g.kmNear, 0) + " km"), " if every order left from the nearest warehouse.");
+    stat.append(big, p);
+    box.appendChild(stat);
+    const top = Object.values(g.prov).sort((a, b) => b.orders - a.orders).slice(0, 5);
+    const sec1 = el("div");
+    sec1.appendChild(el("h4", null, "Top buyer provinces"));
+    for (const r of top) {
+      const row = el("div", "geo-row");
+      const bar = el("span", "geo-bar"); const f = el("span"); f.style.width = (r.orders / top[0].orders) * 100 + "%"; bar.appendChild(f);
+      row.append(el("span", null, r.name), el("b", null, pct(r.orders / g.total, 1)), bar);
+      sec1.appendChild(row);
+    }
+    box.appendChild(sec1);
+    const sec2 = el("div");
+    sec2.appendChild(el("h4", null, "Biggest detours"));
+    for (const d of g.detours.slice(0, 3)) {
+      const row = el("div", "geo-row");
+      row.append(el("span", null, d.from + " → " + d.to), el("b", null, num(d.n) + " orders"),
+        el("small", null, "+" + fmt(d.extra, 0) + " km each vs " + GEO_META[d.to].nearest));
+      sec2.appendChild(row);
+    }
+    box.appendChild(sec2);
+  }
+
+  function drawSellMap() {
+    const m = U.state.month;
+    if (st.mapMode === "warehouses") return drawWhMap();
+    const g = geoMonth(m);
+    U.drawChoropleth($("#map-sellout"), {
+      aria: "Map of Indonesian provinces shaded by share of orders, with warehouses and the biggest detours",
+      bin: (n) => binOf((g.prov[n] ? g.prov[n].orders : 0) / g.total),
+      arcs: g.detours.slice(0, 5).map((d) => ({ from: d.from, to: d.to, w: d.n * d.extra })),
+      tip: (n) => {
+        const r = g.prov[n], meta = GEO_META[n];
+        if (!r || !r.orders) return [{ label: "Orders", value: "0" }];
+        return [{ label: "Orders", value: num(r.orders) + " (" + pct(r.orders / g.total, 1) + ")" }, { label: "GMV", value: rp(r.gmv) },
+          { label: "Nearest warehouse", value: meta.nearest + ", " + fmt(meta.km[meta.nearest], 0) + " km" },
+          { label: "Shipped from nearest", value: pct(r.near / r.orders, 0) }, { label: "Ships most from", value: r.main[0] }];
+      },
+    });
   }
   function drawWhMap() {
     const m = U.state.month, rows = whRows(m), tot = S(m).tot.gmv;
@@ -512,9 +614,9 @@
     if (scroll && b) $("#items").scrollIntoView({ behavior: U.reduceMotion ? "auto" : "smooth", block: "start" });
   }
 
-  function redraw() { drawWhMap(); drawMonthly(); drawDaily(); drawHours(); drawBrandScatter(); }
+  function redraw() { drawSellMap(); drawMonthly(); drawDaily(); drawHours(); drawBrandScatter(); }
   function renderAll() {
-    renderLede(); renderKpis(); renderNotes(); renderWhList(); renderPlatforms(); renderStores();
+    renderLede(); renderKpis(); renderNotes(); renderMapMode(); renderMapSide(); renderPlatforms(); renderStores();
     renderBrandBars(); renderItemBrandSelect(); renderItems();
     redraw();
   }
