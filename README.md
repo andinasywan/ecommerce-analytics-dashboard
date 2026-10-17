@@ -142,4 +142,4 @@ Settings → Pages → *Deploy from a branch* → `main` / `(root)`. There is no
 ## Built with
 
 Python (pandas, numpy) for the data · plain HTML, CSS and JavaScript for the dashboard · SVG charts drawn by hand,
-no chart library · map outlines from Natural Earth · Archivo and Plus Jakarta Sans fonts.
+no chart library · map outlines from Natural Earth · flat illustrations drawn for this project (assets/illustrations) · Archivo and Plus Jakarta Sans fonts.

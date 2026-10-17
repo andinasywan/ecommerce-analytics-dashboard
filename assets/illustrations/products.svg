@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" role="img" aria-label="Illustration of the fictional product range on a shelf">
+  <rect width="480" height="300" fill="#e2f2ed"/>
+  <circle cx="240" cy="168" r="122" fill="#cde9e1"/>
+  <circle cx="400" cy="62" r="34" fill="#ffd9c2"/>
+  <path d="M64 70l6 0M67 67l0 6M420 210l7 0M423.5 206.5l0 7M110 52l5 0M112.5 49.5l0 5" stroke="#14a08c" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M372 112l6 0M375 109l0 6M52 160l6 0M55 157l0 6" stroke="#ff8a4c" stroke-width="2.4" stroke-linecap="round"/>
+  <!-- shelf -->
+  <rect x="34" y="232" width="412" height="12" rx="6" fill="#9fd1c5"/>
+  <rect x="60" y="244" width="10" height="26" rx="3" fill="#9fd1c5"/><rect x="410" y="244" width="10" height="26" rx="3" fill="#9fd1c5"/>
+  <!-- syrup bottle -->
+  <rect x="84" y="86" width="36" height="18" rx="5" fill="#0b2624"/>
+  <rect x="90" y="102" width="24" height="22" fill="#e2552e"/>
+  <rect x="68" y="120" width="68" height="112" rx="16" fill="#ff8a4c"/>
+  <rect x="76" y="148" width="52" height="58" rx="7" fill="#fff"/>
+  <circle cx="102" cy="167" r="9" fill="#ffd9c2"/><path d="M97 167h10M102 162v10" stroke="#e2552e" stroke-width="2.6" stroke-linecap="round"/>
+  <rect x="84" y="183" width="36" height="5" rx="2.5" fill="#0b2624"/><rect x="88" y="193" width="28" height="4" rx="2" fill="#9fd1c5"/>
+  <rect x="76" y="126" width="8" height="90" rx="4" fill="#fff" opacity=".25"/>
+  <!-- gummy jar -->
+  <rect x="148" y="132" width="84" height="22" rx="7" fill="#14a08c"/>
+  <rect x="152" y="152" width="76" height="80" rx="16" fill="#f4fbf9"/>
+  <circle cx="172" cy="200" r="8" fill="#ff8a4c"/><circle cx="191" cy="212" r="8" fill="#14a08c"/><circle cx="209" cy="198" r="8" fill="#ffb27a"/>
+  <circle cx="178" cy="218" r="7" fill="#9fd1c5"/><circle cx="208" cy="218" r="7" fill="#e2552e"/><circle cx="192" cy="192" r="7" fill="#0f7b6c"/>
+  <rect x="160" y="160" width="60" height="22" rx="6" fill="#0f7b6c"/><rect x="168" y="168" width="44" height="5" rx="2.5" fill="#fff"/>
+  <rect x="156" y="160" width="6" height="64" rx="3" fill="#fff" opacity=".7"/>
+  <!-- lotion pump -->
+  <path d="M262 82h26v8h-10v14h-16z" fill="#0b2624"/>
+  <rect x="262" y="100" width="20" height="14" fill="#0b2624"/>
+  <rect x="244" y="112" width="56" height="120" rx="22" fill="#9fd1c5"/>
+  <rect x="252" y="150" width="40" height="52" rx="8" fill="#fff"/>
+  <path d="M262 170c6-10 14-10 20 0-6 10-14 10-20 0z" fill="#14a08c"/>
+  <rect x="260" y="186" width="24" height="4" rx="2" fill="#0b2624"/>
+  <rect x="250" y="122" width="7" height="96" rx="3.5" fill="#fff" opacity=".35"/>
+  <!-- carton box -->
+  <path d="M318 150l40-14 40 14-40 14z" fill="#16413c"/>
+  <path d="M318 150l40 14v68l-40-14z" fill="#0b2624"/>
+  <path d="M398 150l-40 14v68l40-14z" fill="#123733"/>
+  <path d="M330 176l18 6v24l-18-6z" fill="#ff8a4c"/>
+  <path d="M339 183v14M333 190l12 4" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M366 172l24-8M366 182l24-8" stroke="#9fd1c5" stroke-width="3" stroke-linecap="round"/>
+  <!-- capsules -->
+  <g transform="rotate(-28 380 224)"><rect x="356" y="216" width="40" height="17" rx="8.5" fill="#fff"/><path d="M376 216h11.5a8.5 8.5 0 0 1 0 17H376z" fill="#ff8a4c"/></g>
+  <g transform="rotate(18 150 236)"><rect x="128" y="227" width="36" height="15" rx="7.5" fill="#fff"/><path d="M146 227h10.5a7.5 7.5 0 0 1 0 15H146z" fill="#14a08c"/></g>
+</svg>

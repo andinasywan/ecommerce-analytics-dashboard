@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" role="img" aria-label="Illustration of a 9.9 sale on a phone with a shopping bag and voucher">
+  <rect width="480" height="300" fill="#fff0e6"/>
+  <circle cx="230" cy="160" r="118" fill="#ffdcc6"/>
+  <path d="M70 60l8 0M74 56l0 8M410 236l8 0M414 232l0 8M400 70l8 0M404 66l0 8" stroke="#e2552e" stroke-width="2.6" stroke-linecap="round"/>
+  <rect x="96" y="96" width="9" height="9" rx="2" fill="#14a08c" transform="rotate(20 100 100)"/><rect x="372" y="150" width="9" height="9" rx="2" fill="#14a08c" transform="rotate(-15 376 154)"/>
+  <circle cx="352" cy="44" r="5" fill="#ff8a4c"/><circle cx="128" cy="230" r="5" fill="#ff8a4c"/>
+  <!-- phone -->
+  <rect x="168" y="34" width="132" height="244" rx="22" fill="#0b2624"/>
+  <rect x="178" y="48" width="112" height="216" rx="14" fill="#fff"/>
+  <rect x="216" y="40" width="36" height="5" rx="2.5" fill="#16413c"/>
+  <rect x="186" y="58" width="96" height="74" rx="10" fill="#ff8a4c"/>
+  <text x="234" y="104" text-anchor="middle" font-family="Arial Narrow, Arial, sans-serif" font-weight="800" font-size="40" fill="#fff">9.9</text>
+  <rect x="210" y="112" width="48" height="12" rx="6" fill="#fff"/>
+  <text x="234" y="121.5" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="9" fill="#e2552e">SALE</text>
+  <g fill="#e2f2ed"><rect x="186" y="142" width="45" height="52" rx="8"/><rect x="237" y="142" width="45" height="52" rx="8"/><rect x="186" y="200" width="45" height="52" rx="8"/><rect x="237" y="200" width="45" height="52" rx="8"/></g>
+  <rect x="197" y="150" width="22" height="30" rx="7" fill="#ff8a4c"/><rect x="247" y="156" width="26" height="24" rx="7" fill="#14a08c"/>
+  <rect x="198" y="208" width="22" height="30" rx="9" fill="#9fd1c5"/><rect x="248" y="210" width="24" height="26" rx="3" fill="#0b2624"/>
+  <rect x="190" y="184" width="22" height="5" rx="2.5" fill="#0b2624" opacity=".5"/><rect x="241" y="184" width="22" height="5" rx="2.5" fill="#0b2624" opacity=".5"/>
+  <!-- bag -->
+  <g transform="translate(318 148)">
+    <path d="M22 24v-8a16 16 0 0 1 32 0v8" fill="none" stroke="#0b2624" stroke-width="6" stroke-linecap="round"/>
+    <path d="M4 24h68l-5 66a9 9 0 0 1-9 8H18a9 9 0 0 1-9-8z" fill="#14a08c"/>
+    <path d="M16 62h11l6-12 9 22 7-15h11" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <!-- voucher -->
+  <g transform="rotate(-12 96 170)">
+    <path d="M44 144h104v18a10 10 0 0 0 0 20v18H44v-18a10 10 0 0 0 0-20z" fill="#0b2624"/>
+    <path d="M78 148v48" stroke="#16413c" stroke-width="2" stroke-dasharray="4 4"/>
+    <text x="63" y="178" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="16" fill="#ff8a4c">%</text>
+    <text x="112" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="13" fill="#fff">15K</text>
+    <text x="112" y="186" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="9" fill="#9fd1c5">OFF</text>
+  </g>
+  <!-- clock -->
+  <g transform="translate(330 68)"><circle r="26" fill="#fff"/><circle r="26" fill="none" stroke="#0b2624" stroke-width="5"/><path d="M0-13V0l9 6" fill="none" stroke="#e2552e" stroke-width="4" stroke-linecap="round"/></g>
+</svg>

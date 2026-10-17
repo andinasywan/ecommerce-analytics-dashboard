@@ -14,15 +14,26 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="style.css?v=20261017-1340">
+<link rel="stylesheet" href="style.css?v=20261017-1400">
 </head>
 <body data-page="sellout">
 <header class="hero">
+  <div class="hero-bg" id="hero-bg" aria-hidden="true"></div>
+  <div class="topbar gutter">
+    <div class="topbar-in">
+      <a class="wordmark" href="#sellout">
+        <span class="logo" aria-hidden="true">
+        <svg viewBox="0 0 48 48" width="34" height="34"><defs><linearGradient id="logo-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1cb39c"/><stop offset="1" stop-color="#0a5148"/></linearGradient></defs><rect width="48" height="48" rx="13" fill="url(#logo-g)"/><rect x="1" y="1" width="46" height="46" rx="12" fill="none" stroke="#fff" stroke-opacity=".18"/><path d="M18 17v-2a6 6 0 0 1 12 0v2" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M11.5 17.5h25l-1.6 17.8a3.5 3.5 0 0 1-3.5 3.2H16.6a3.5 3.5 0 0 1-3.5-3.2z" fill="#fff"/><path d="M15.5 29.5h4.4l2.5-5 3.6 8.5 3-6.5h4.5" fill="none" stroke="#ff8a4c" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="wm-text">E-commerce Analytics<small>Portfolio project, dummy data</small></span>
+      </a>
+      <nav class="toplinks" aria-label="Project links">
+        <a href="#about">About the data</a>
+        <a class="btn-line" href="https://github.com/andinasywan/ecommerce-analytics-dashboard"><span class="long">View code on </span>GitHub</a>
+      </nav>
+    </div>
+  </div>
   <div class="inner gutter">
     <div class="brand">
-      <div class="logo" aria-hidden="true">
-        <svg viewBox="0 0 48 48" width="52" height="52"><defs><linearGradient id="logo-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1cb39c"/><stop offset="1" stop-color="#0a5148"/></linearGradient></defs><rect width="48" height="48" rx="13" fill="url(#logo-g)"/><rect x="1" y="1" width="46" height="46" rx="12" fill="none" stroke="#fff" stroke-opacity=".18"/><path d="M18 17v-2a6 6 0 0 1 12 0v2" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M11.5 17.5h25l-1.6 17.8a3.5 3.5 0 0 1-3.5 3.2H16.6a3.5 3.5 0 0 1-3.5-3.2z" fill="#fff"/><path d="M15.5 29.5h4.4l2.5-5 3.6 8.5 3-6.5h4.5" fill="none" stroke="#ff8a4c" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
       <div>
         <h1 id="page-title">E-commerce Sell-out 2026</h1>
         <div class="eyebrow">A portfolio project on a consumer-health brand selling on Indonesian marketplaces</div>
@@ -51,7 +62,10 @@
 <!-- ============================================================ 01 SELL-OUT -->
 <main id="page-sellout" class="page" role="tabpanel" aria-labelledby="tab-sellout">
   <div class="inner gutter">
-    <p class="lede" id="so-lede"></p>
+    <div class="intro">
+      <div class="intro-text"><p class="lede" id="so-lede"></p></div>
+      <figure class="ill"><img src="assets/illustrations/products.svg" alt="Illustration of the fictional product range: syrup, gummies, lotion, boxed caplets and capsules" width="480" height="300"></figure>
+    </div>
     <section class="section" aria-label="Sell-out summary"><div class="kpis" id="so-kpis"></div></section>
     <section class="section" aria-label="Notes for this month"><div class="notes" id="so-notes"></div></section>
 
@@ -206,7 +220,10 @@
 <!-- ============================================================ 02 TRAFFIC -->
 <main id="page-traffic" class="page" role="tabpanel" aria-labelledby="tab-traffic" hidden>
   <div class="inner gutter">
-    <p class="lede" id="tr-lede"></p>
+    <div class="intro">
+      <div class="intro-text"><p class="lede" id="tr-lede"></p></div>
+      <figure class="ill"><img src="assets/illustrations/live.svg" alt="Illustration of a live shopping stream on a phone" width="480" height="300"></figure>
+    </div>
     <section class="section" aria-label="Traffic summary"><div class="kpis" id="tr-kpis"></div></section>
 
     <section class="section" id="funnel">
@@ -293,8 +310,11 @@
 <!-- ============================================================ 03 CAMPAIGNS -->
 <main id="page-campaigns" class="page" role="tabpanel" aria-labelledby="tab-campaigns" hidden>
   <div class="inner gutter">
-    <div class="seg" id="camp-kind" role="tablist" aria-label="Campaign type"></div>
-    <p class="lede" id="cp-lede"></p>
+    <div class="intro">
+      <div class="intro-text"><div class="seg" id="camp-kind" role="tablist" aria-label="Campaign type"></div>
+        <p class="lede" id="cp-lede"></p></div>
+      <figure class="ill"><img src="assets/illustrations/campaign.svg" alt="Illustration of a 9.9 sale on a phone with a voucher and a shopping bag" width="480" height="300"></figure>
+    </div>
     <section class="section" aria-label="Campaign summary"><div class="kpis" id="cp-kpis"></div></section>
 
     <section class="section" id="pacing">
@@ -371,7 +391,10 @@
 <!-- ============================================================ 04 FORECAST -->
 <main id="page-forecast" class="page" role="tabpanel" aria-labelledby="tab-forecast" hidden>
   <div class="inner gutter">
-    <p class="lede" id="fc-lede"></p>
+    <div class="intro">
+      <div class="intro-text"><p class="lede" id="fc-lede"></p></div>
+      <figure class="ill"><img src="assets/illustrations/warehouse.svg" alt="Illustration of a warehouse with cartons and a delivery van" width="480" height="300"></figure>
+    </div>
     <section class="section" aria-label="Forecast summary"><div class="kpis" id="fc-kpis"></div></section>
 
     <section class="section" id="network">
@@ -493,21 +516,38 @@
   </div>
 </main>
 
-<footer>
+<footer id="about">
   <div class="inner gutter">
-    <p><b>Dummy data.</b> Every brand, SKU, store, order number, voucher code and figure on this dashboard is fictional and comes from a random generator. The structure and workflow mirror the reporting I did as a Data Analyst intern at a consumer-health company.</p>
-    <p id="stamp"></p>
-    <p>Built with plain HTML, CSS and JavaScript, no chart library · data pipeline in Python (pandas) · map outlines from Natural Earth · <a href="https://github.com/andinasywan/ecommerce-analytics-dashboard">source on GitHub</a></p>
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <span class="wordmark static"><span class="logo" aria-hidden="true"><svg viewBox="0 0 48 48" width="34" height="34"><defs><linearGradient id="logo-g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1cb39c"/><stop offset="1" stop-color="#0a5148"/></linearGradient></defs><rect width="48" height="48" rx="13" fill="url(#logo-g2)"/><rect x="1" y="1" width="46" height="46" rx="12" fill="none" stroke="#fff" stroke-opacity=".18"/><path d="M18 17v-2a6 6 0 0 1 12 0v2" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M11.5 17.5h25l-1.6 17.8a3.5 3.5 0 0 1-3.5 3.2H16.6a3.5 3.5 0 0 1-3.5-3.2z" fill="#fff"/><path d="M15.5 29.5h4.4l2.5-5 3.6 8.5 3-6.5h4.5" fill="none" stroke="#ff8a4c" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="wm-text">E-commerce Analytics<small>Portfolio project, dummy data</small></span></span>
+        <p><b>Dummy data.</b> Every brand, SKU, store, order number, voucher code, buyer location and figure on this dashboard is fictional and comes from a random generator. The structure and workflow mirror the reporting I did as a Data Analyst intern at a consumer-health company.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Dashboard</h4>
+        <a href="#sellout">Sell-out</a><a href="#traffic">Traffic</a><a href="#campaigns">Campaign days</a><a href="#forecast">Forecast &amp; stock</a>
+      </div>
+      <div class="foot-col">
+        <h4>Project</h4>
+        <a href="https://github.com/andinasywan/ecommerce-analytics-dashboard">Source code</a>
+        <a href="https://github.com/andinasywan/ecommerce-analytics-dashboard#readme">Data and method</a>
+        <a href="https://github.com/andinasywan">@andinasywan on GitHub</a>
+      </div>
+    </div>
+    <div class="foot-meta">
+      <p id="stamp"></p>
+      <p>Built with plain HTML, CSS and JavaScript, no chart library. Data pipeline in Python (pandas). Map outlines from Natural Earth. Illustrations drawn for this project.</p>
+    </div>
   </div>
 </footer>
 
-<script src="data.js?v=20261017-1340"></script>
-<script src="js/geo.js?v=20261017-1340"></script>
-<script src="js/common.js?v=20261017-1340"></script>
-<script src="js/sellout.js?v=20261017-1340"></script>
-<script src="js/traffic.js?v=20261017-1340"></script>
-<script src="js/campaigns.js?v=20261017-1340"></script>
-<script src="js/forecast.js?v=20261017-1340"></script>
-<script src="js/app.js?v=20261017-1340"></script>
+<script src="data.js?v=20261017-1400"></script>
+<script src="js/geo.js?v=20261017-1400"></script>
+<script src="js/common.js?v=20261017-1400"></script>
+<script src="js/sellout.js?v=20261017-1400"></script>
+<script src="js/traffic.js?v=20261017-1400"></script>
+<script src="js/campaigns.js?v=20261017-1400"></script>
+<script src="js/forecast.js?v=20261017-1400"></script>
+<script src="js/app.js?v=20261017-1400"></script>
 </body>
 </html>

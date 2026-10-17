@@ -59,6 +59,15 @@
     box.appendChild(U.el("span", "art-cap", "Daily GMV, " + U.monthName(m)));
   }
 
+  // faint archipelago behind the hero title
+  function drawHeroBg() {
+    const G = window.GEO, box = $("#hero-bg");
+    if (!G || !box) return;
+    const svg = U.svgEl("svg", { viewBox: `0 0 ${G.w} ${G.h}` });
+    svg.appendChild(U.svgEl("path", { d: G.indonesia, fill: "var(--hero-fg)" }));
+    box.replaceChildren(svg);
+  }
+
   function show(name) {
     if (!PAGES[name]) name = "sellout";
     document.body.dataset.page = name;
@@ -82,6 +91,7 @@
 
   for (const k of Object.keys(PAGES)) { const o = PAGES[k].obj(); if (o) o.render(); }
   drawHero();
+  drawHeroBg();
   window.addEventListener("hashchange", fromHash);
   fromHash();
 

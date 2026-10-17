@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" role="img" aria-label="Illustration of a live shopping stream on a phone">
+  <rect width="480" height="300" fill="#e2f2ed"/>
+  <circle cx="240" cy="158" r="120" fill="#cde9e1"/>
+  <path d="M84 84l8 0M88 80l0 8M398 228l8 0M402 224l0 8" stroke="#14a08c" stroke-width="2.6" stroke-linecap="round"/>
+  <!-- phone -->
+  <rect x="172" y="30" width="136" height="250" rx="22" fill="#0b2624"/>
+  <rect x="182" y="44" width="116" height="222" rx="14" fill="#16413c"/>
+  <rect x="222" y="36" width="36" height="5" rx="2.5" fill="#1e5650"/>
+  <!-- host -->
+  <circle cx="240" cy="128" r="30" fill="#ffd9c2"/>
+  <path d="M210 120c0-22 14-34 30-34s30 12 30 34c-8-10-18-14-30-14s-22 4-30 14z" fill="#0b2624"/>
+  <path d="M188 266c4-50 24-78 52-78s48 28 52 78z" fill="#14a08c"/>
+  <rect x="226" y="196" width="28" height="36" rx="9" fill="#ff8a4c"/><rect x="232" y="206" width="16" height="12" rx="3" fill="#fff"/>
+  <!-- live badge + viewers -->
+  <rect x="190" y="54" width="42" height="18" rx="5" fill="#e2552e"/>
+  <text x="211" y="67" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="10" fill="#fff">LIVE</text>
+  <rect x="238" y="54" width="50" height="18" rx="5" fill="#0b2624" opacity=".6"/>
+  <circle cx="249" cy="63" r="4" fill="none" stroke="#fff" stroke-width="2"/>
+  <text x="270" y="67" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="10" fill="#fff">2.4K</text>
+  <!-- comments -->
+  <rect x="190" y="160" width="62" height="14" rx="7" fill="#fff" opacity=".85"/><rect x="190" y="178" width="44" height="14" rx="7" fill="#fff" opacity=".85"/>
+  <!-- product card -->
+  <rect x="190" y="236" width="100" height="24" rx="8" fill="#fff"/>
+  <rect x="195" y="240" width="16" height="16" rx="4" fill="#ff8a4c"/>
+  <rect x="216" y="243" width="38" height="4" rx="2" fill="#0b2624"/><rect x="216" y="250" width="24" height="4" rx="2" fill="#9fd1c5"/>
+  <rect x="260" y="241" width="24" height="14" rx="7" fill="#14a08c"/>
+  <!-- hearts -->
+  <g fill="#ff8a4c"><path d="M328 168c-8-6-14-10-14-17a7 7 0 0 1 14-2 7 7 0 0 1 14 2c0 7-6 11-14 17z"/></g>
+  <g fill="#e2552e" opacity=".8"><path d="M350 128c-6-4.5-10-7.5-10-12.5a5 5 0 0 1 10-1.5 5 5 0 0 1 10 1.5c0 5-4 8-10 12.5z"/></g>
+  <g fill="#ffb27a"><path d="M334 96c-5-3.5-8-6-8-10a4 4 0 0 1 8-1 4 4 0 0 1 8 1c0 4-3 6.5-8 10z"/></g>
+  <!-- funnel chips -->
+  <g transform="translate(70 120)">
+    <rect width="78" height="26" rx="8" fill="#fff"/><rect x="8" y="9" width="44" height="8" rx="4" fill="#9fd1c5"/>
+    <rect x="10" y="34" width="58" height="26" rx="8" fill="#fff"/><rect x="18" y="43" width="30" height="8" rx="4" fill="#14a08c"/>
+    <rect x="20" y="68" width="38" height="26" rx="8" fill="#fff"/><rect x="28" y="77" width="16" height="8" rx="4" fill="#ff8a4c"/>
+  </g>
+</svg>
