@@ -15,7 +15,7 @@
   const ITEM = {}; D.items.forEach((it) => (ITEM[it.code] = it));
   const CAT = {}; D.brands.forEach(([b, c]) => (CAT[b] = c));
   const KIDS = "Kids & Family";
-  const st = { platform: "", storeSort: "gmv", brand: "", itemSort: "gmv", q: "" };
+  const st = { platform: "", wh: "", storeSort: "gmv", brand: "", itemSort: "gmv", q: "" };
 
   const S = (m) => D.sell[m];
   const prev = (m) => D.sell[U.prevKey(m)];
@@ -274,6 +274,46 @@
     hit.addEventListener("pointerleave", () => { bars.forEach((b, j) => b.setAttribute("fill-opacity", strong(j) ? 1 : 0.6)); U.hideTip(box); });
   }
 
+  // ---------- warehouse map ----------
+  function whRows(m) {
+    const s = S(m), p = prev(m), out = {};
+    for (const w of D.warehouses) out[w] = { name: w, gmv: 0, orders: 0, stores: 0, before: 0, plat: {} };
+    s.store.forEach(([name, gmv, orders]) => {
+      const r = out[STORE[name].wh];
+      r.gmv += gmv; r.orders += orders; r.stores += 1;
+      r.plat[STORE[name].platform] = (r.plat[STORE[name].platform] || 0) + gmv;
+    });
+    if (p) p.store.forEach(([name, gmv]) => (out[STORE[name].wh].before += gmv));
+    return D.warehouses.map((w) => out[w]).sort((a, b) => b.gmv - a.gmv);
+  }
+  function pickWh(w, scroll) {
+    st.wh = w;
+    $("#store-wh").value = w;
+    renderStores();
+    renderWhList();
+    drawWhMap();
+    if (scroll && w) $("#store-wh").scrollIntoView({ behavior: U.reduceMotion ? "auto" : "smooth", block: "center" });
+  }
+  function renderWhList() {
+    const m = U.state.month, rows = whRows(m), tot = S(m).tot.gmv;
+    $("#so-map-sub").textContent = D.stores.length + " stores ship from " + D.warehouses.length + " warehouses · " + U.monthName(m);
+    U.whList($("#wl-sellout"), rows.map((r) => ({ name: r.name, label: rp(r.gmv), bar: r.gmv / rows[0].gmv,
+      sub: pct(r.gmv / tot, 0) + " of GMV · " + r.stores + (r.stores === 1 ? " store" : " stores"), delta: delta(growth(r.gmv, r.before)) })), st.wh, (w) => pickWh(w, true));
+  }
+  function drawWhMap() {
+    const m = U.state.month, rows = whRows(m), tot = S(m).tot.gmv;
+    U.drawMap($("#map-sellout"), rows.map((r) => ({ name: r.name, value: r.gmv, label2: rp(r.gmv), r })), {
+      aria: "Map of Indonesia with the five warehouses sized by GMV shipped",
+      selected: st.wh,
+      onPick: (w) => pickWh(st.wh === w ? "" : w, true),
+      tip: (p) => {
+        const top = Object.entries(p.r.plat).sort((a, b) => b[1] - a[1])[0];
+        return [{ label: "GMV", value: rp(p.r.gmv) }, { label: "Share of GMV", value: pct(p.r.gmv / tot) }, { label: "Orders", value: num(p.r.orders) },
+          { label: "Stores", value: String(p.r.stores) }, { label: "Top platform", value: top[0], color: PCOL[top[0]] }, { label: "vs last month", value: U.signedPct(growth(p.r.gmv, p.r.before)) }];
+      },
+    });
+  }
+
   // ---------- platform list & store table ----------
   function renderPlatforms() {
     const m = U.state.month, s = S(m), p = prev(m);
@@ -303,16 +343,19 @@
     const sel = $("#store-platform");
     if (!sel.options.length) sel.append(new Option("All platforms", ""), ...D.platforms.map((x) => new Option(x, x)));
     sel.value = st.platform;
+    const whSel = $("#store-wh");
+    if (!whSel.options.length) whSel.append(new Option("All warehouses", ""), ...D.warehouses.map((x) => new Option(x, x)));
+    whSel.value = st.wh;
     const before = {};
     if (p) p.store.forEach(([n, g]) => (before[n] = g));
     let rows = s.store.map(([name, gmv, orders]) => ({ name, gmv, orders, aov: orders ? gmv / orders : null, mom: growth(gmv, before[name]), ...STORE[name] }))
-      .filter((r) => !st.platform || r.platform === st.platform);
+      .filter((r) => (!st.platform || r.platform === st.platform) && (!st.wh || r.wh === st.wh));
     const key = { gmv: ["gmv", -1], mom: ["mom", -1], "mom-low": ["mom", 1], aov: ["aov", -1] }[st.storeSort];
     rows.sort((a, b) => key[1] * ((a[key[0]] ?? -1e9) - (b[key[0]] ?? -1e9)));
     $("#store-count").textContent = rows.length + " stores · " + D.warehouses.length + " warehouses";
     const tb = $("#table-store tbody");
     tb.replaceChildren();
-    if (!rows.length) return U.emptyRow(tb, 7, "No stores on this platform.");
+    if (!rows.length) return U.emptyRow(tb, 7, "No stores match this platform and warehouse.");
     const max = Math.max(...rows.map((r) => r.gmv / s.tot.gmv));
     for (const r of rows) {
       const tr = el("tr");
@@ -469,15 +512,16 @@
     if (scroll && b) $("#items").scrollIntoView({ behavior: U.reduceMotion ? "auto" : "smooth", block: "start" });
   }
 
-  function redraw() { drawMonthly(); drawDaily(); drawHours(); drawBrandScatter(); }
+  function redraw() { drawWhMap(); drawMonthly(); drawDaily(); drawHours(); drawBrandScatter(); }
   function renderAll() {
-    renderLede(); renderKpis(); renderNotes(); renderPlatforms(); renderStores();
+    renderLede(); renderKpis(); renderNotes(); renderWhList(); renderPlatforms(); renderStores();
     renderBrandBars(); renderItemBrandSelect(); renderItems();
     redraw();
   }
 
   $("#store-platform").addEventListener("change", (e) => { st.platform = e.target.value; renderStores(); });
   $("#store-sort").addEventListener("change", (e) => { st.storeSort = e.target.value; renderStores(); });
+  $("#store-wh").addEventListener("change", (e) => pickWh(e.target.value, false));
   $("#item-brand").addEventListener("change", (e) => pickBrand(e.target.value, false));
   $("#item-sort").addEventListener("change", (e) => { st.itemSort = e.target.value; renderItems(); });
   $("#item-search").addEventListener("input", (e) => { st.q = e.target.value; renderItems(); });

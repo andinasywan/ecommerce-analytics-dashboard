@@ -55,6 +55,18 @@
     <section class="section" aria-label="Sell-out summary"><div class="kpis" id="so-kpis"></div></section>
     <section class="section" aria-label="Notes for this month"><div class="notes" id="so-notes"></div></section>
 
+    <section class="section" id="warehouses">
+      <div class="section-head">
+        <h2>Where orders ship from</h2>
+        <p id="so-map-sub"></p>
+      </div>
+      <div class="card map-card">
+        <div class="legend"><span><span class="key dot-fill"></span>Bubble size = GMV shipped from the warehouse</span><span>Click a warehouse to filter the store table</span></div>
+        <div class="chart" id="map-sellout"></div>
+        <div class="wh-list" id="wl-sellout"></div>
+      </div>
+    </section>
+
     <section class="section" id="trend">
       <div class="section-head">
         <h2>Sales trend</h2>
@@ -93,6 +105,9 @@
       <div class="toolbar">
         <label class="field" for="store-platform">Platform
           <select id="store-platform"></select>
+        </label>
+        <label class="field" for="store-wh">Warehouse
+          <select id="store-wh"></select>
         </label>
         <label class="field" for="store-sort">Sort
           <select id="store-sort">
@@ -356,6 +371,18 @@
     <p class="lede" id="fc-lede"></p>
     <section class="section" aria-label="Forecast summary"><div class="kpis" id="fc-kpis"></div></section>
 
+    <section class="section" id="network">
+      <div class="section-head">
+        <h2>Warehouse network</h2>
+        <p id="fc-map-sub"></p>
+      </div>
+      <div class="card map-card">
+        <div class="legend"><span><span class="key dot-fill"></span>Bubble size = cartons to ship next month</span><span><span class="key ring-key"></span>Ring = forecast accuracy this month</span></div>
+        <div class="chart" id="map-forecast"></div>
+        <div class="wh-list" id="wl-forecast"></div>
+      </div>
+    </section>
+
     <section class="section" id="accuracy">
       <div class="section-head">
         <h2>Forecast accuracy</h2>
@@ -467,11 +494,12 @@
   <div class="inner gutter">
     <p><b>Dummy data.</b> Every brand, SKU, store, order number, voucher code and figure on this dashboard is fictional and comes from a random generator. The structure and workflow mirror the reporting I did as a Data Analyst intern at a consumer-health company.</p>
     <p id="stamp"></p>
-    <p>Built with plain HTML, CSS and JavaScript, no chart library · data pipeline in Python (pandas) · <a href="https://github.com/andinasywan/ecommerce-analytics-dashboard">source on GitHub</a></p>
+    <p>Built with plain HTML, CSS and JavaScript, no chart library · data pipeline in Python (pandas) · map outlines from Natural Earth · <a href="https://github.com/andinasywan/ecommerce-analytics-dashboard">source on GitHub</a></p>
   </div>
 </footer>
 
 <script src="data.js"></script>
+<script src="js/geo.js"></script>
 <script src="js/common.js"></script>
 <script src="js/sellout.js"></script>
 <script src="js/traffic.js"></script>

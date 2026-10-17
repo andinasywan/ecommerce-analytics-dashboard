@@ -65,6 +65,38 @@
     box.appendChild(U.kpi(month(D.next) + " shipment plan", num(cartons), U.sub(["to " + WH.length + " warehouses, " + fmt(FC.buffer * 100, 0) + "% safety stock"]), { unit: "cartons" }));
   }
 
+  // ---------- warehouse network map ----------
+  function netRows() {
+    const m = U.state.month, list = rows(m);
+    return WH.map((w) => {
+      const plan = FC.plan.filter((r) => r[1] === w);
+      return { name: w, cartons: plan.reduce((a, r) => a + r[3], 0), units: plan.reduce((a, r) => a + r[2], 0), ...metrics(list.filter((r) => r.wh === w)) };
+    }).sort((a, b) => b.cartons - a.cartons);
+  }
+  function pickNet(w) {
+    st.planWh = w || WH[0];
+    st.wh = w;
+    $("#heat-wh").value = w;
+    renderNetList(); drawNetMap(); renderPlan(); renderWhTable(); renderHeat(); drawScatter();
+  }
+  function renderNetList() {
+    const rs = netRows();
+    $("#fc-map-sub").textContent = num(FC.plan.reduce((a, r) => a + r[3], 0)) + " cartons planned for " + nextName + " · accuracy for " + U.monthName(U.state.month);
+    U.whList($("#wl-forecast"), rs.map((r) => ({ name: r.name, label: num(r.cartons) + " cartons", bar: r.cartons / rs[0].cartons,
+      sub: pct(r.acc, 0) + " accurate · bias " + U.signedPct(r.bias, 0) })), st.wh, (w) => pickNet(w));
+  }
+  function drawNetMap() {
+    const rs = netRows();
+    U.drawMap($("#map-forecast"), rs.map((r) => ({ name: r.name, value: r.cartons, label2: num(r.cartons) + " cartons · " + pct(r.acc, 0), r })), {
+      aria: "Map of Indonesia with the five warehouses sized by cartons to ship, ringed by forecast accuracy",
+      selected: st.wh,
+      ring: (p) => p.r.acc,
+      onPick: (w) => pickNet(st.wh === w ? "" : w),
+      tip: (p) => [{ label: month(D.next) + " cartons", value: num(p.r.cartons) }, { label: month(D.next) + " units", value: num(p.r.units) },
+        { label: month(U.state.month) + " accuracy", value: pct(p.r.acc) }, { label: "Bias", value: U.signedPct(p.r.bias) }],
+    });
+  }
+
   // ---------- monthly forecast vs actual ----------
   function drawMonthly() {
     const box = $("#chart-fc-month");
@@ -134,7 +166,7 @@
         td.title = L.label + ", " + U.monthName(k) + ": accuracy " + pct(mt.acc) + ", bias " + U.signedPct(mt.bias);
         tr.appendChild(td);
       }
-      const go = () => { st.wh = L.w; $("#heat-wh").value = L.w; renderWhTable(); renderHeat(); drawScatter(); };
+      const go = () => { st.wh = L.w; $("#heat-wh").value = L.w; renderWhTable(); renderHeat(); drawScatter(); renderNetList(); drawNetMap(); };
       tr.addEventListener("click", go);
       tr.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
       tb.appendChild(tr);
@@ -472,14 +504,14 @@
     box.appendChild(el("p", null, "A weighted moving average is easy to explain to the warehouse team and works well for steady SKUs. Its weak spots show in months with a rising trend, viral content and stock-outs. Next steps: add a trend factor and the campaign calendar, and correct stock-out months before they enter the average."));
   }
 
-  function redraw() { drawMonthly(); drawScatter(); renderProfile(); }
+  function redraw() { drawNetMap(); drawMonthly(); drawScatter(); renderProfile(); }
   function renderAll() {
-    renderLede(); renderKpis(); renderWhTable(); renderSkuSelect(); renderProfile(); renderHeat(); renderPlan(); renderFlow(); renderConvert(); renderMethod();
+    renderLede(); renderKpis(); renderNetList(); renderWhTable(); renderSkuSelect(); renderProfile(); renderHeat(); renderPlan(); renderFlow(); renderConvert(); renderMethod();
     redraw();
   }
 
   $("#sku-pick").addEventListener("change", (e) => pickSku(e.target.value));
-  $("#heat-wh").addEventListener("change", (e) => { st.wh = e.target.value; renderWhTable(); renderHeat(); drawScatter(); });
+  $("#heat-wh").addEventListener("change", (e) => { st.wh = e.target.value; renderWhTable(); renderHeat(); drawScatter(); renderNetList(); drawNetMap(); });
   $("#heat-sort").addEventListener("change", (e) => { st.sort = e.target.value; renderHeat(); });
 
   U.onMonth(() => renderAll());

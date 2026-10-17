@@ -200,13 +200,107 @@
     }
   }
 
+
+  // ---------- warehouse map ----------
+  const WH_LL = { Jakarta: [106.8456, -6.2088], Surabaya: [112.7521, -7.2575], Medan: [98.6722, 3.5952], Makassar: [119.4327, -5.1477], Semarang: [110.4167, -6.9667] };
+  // where each label sits relative to its bubble, so the three Java cities do not collide
+  const LABEL_DIR = { Jakarta: [-1, 1], Semarang: [0, -1], Surabaya: [1, 1], Medan: [1, 0], Makassar: [1, 0] };
+  function geoXY(lon, lat) {
+    const G = window.GEO;
+    const merc = (l) => (180 / Math.PI) * Math.log(Math.tan(Math.PI / 4 + (l * Math.PI) / 360));
+    return [(lon - G.lon0) * G.k, (merc(G.latTop) - merc(lat)) * G.k];
+  }
+  // pts: [{name, value, label2}], opts: {aria, selected, onPick, tip(p) -> rows, ring(p) -> 0..1 or null}
+  function drawMap(box, pts, opts) {
+    const G = window.GEO;
+    const W = box.clientWidth;
+    if (!G || !W) return;
+    const s = W / G.w, H = Math.round(G.h * s);
+    const narrow = W < 560;
+    const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": opts.aria, style: "overflow:hidden" });
+    svg.appendChild(svgEl("rect", { x: 0, y: 0, width: W, height: H, rx: 10, fill: "var(--sea)" }));
+    const g = svgEl("g", { transform: `scale(${s})` });
+    g.appendChild(svgEl("path", { d: G.neighbours, fill: "var(--land-2)", stroke: "var(--sea)", "stroke-width": 1 / s, "stroke-linejoin": "round" }));
+    g.appendChild(svgEl("path", { d: G.indonesia, fill: "var(--land)", stroke: "var(--sea)", "stroke-width": 1 / s, "stroke-linejoin": "round" }));
+    svg.appendChild(g);
+    const vmax = Math.max(...pts.map((p) => p.value), 1);
+    const rMax = Math.max(12, Math.min(30, W * 0.034));
+    const placed = pts.map((p) => {
+      const [x, y] = geoXY(...WH_LL[p.name]);
+      return { p, x: x * s, y: y * s, r: Math.max(5, rMax * Math.sqrt(p.value / vmax)) };
+    }).sort((a, b) => b.r - a.r);
+    const marks = [];
+    for (const m of placed) {
+      const on = opts.selected === m.p.name;
+      const grp = svgEl("g", { style: "cursor:pointer", tabindex: "0", role: "button", "aria-label": m.p.name + ", " + m.p.label2 });
+      grp.appendChild(svgEl("circle", { cx: m.x, cy: m.y, r: Math.max(m.r, 12), fill: "transparent" }));
+      grp.appendChild(svgEl("circle", { cx: m.x, cy: m.y, r: m.r, fill: "var(--one)", "fill-opacity": opts.selected && !on ? 0.45 : 0.88, stroke: on ? "var(--fg)" : "var(--panel)", "stroke-width": on ? 2.5 : 1.5 }));
+      const ring = opts.ring ? opts.ring(m.p) : null;
+      if (isNum(ring)) {
+        const rr = m.r + 5, c = 2 * Math.PI * rr;
+        grp.appendChild(svgEl("circle", { cx: m.x, cy: m.y, r: rr, fill: "none", stroke: "var(--line)", "stroke-width": 3 }));
+        grp.appendChild(svgEl("circle", { cx: m.x, cy: m.y, r: rr, fill: "none", stroke: "var(--fg)", "stroke-width": 3, "stroke-linecap": "round",
+          "stroke-dasharray": `${(c * Math.max(0, Math.min(1, ring))).toFixed(1)} ${c.toFixed(1)}`, transform: `rotate(-90 ${m.x} ${m.y})` }));
+      }
+      if (!narrow) {
+        const [dx, dy] = LABEL_DIR[m.p.name] || [1, 0];
+        const off = m.r + (isNum(ring) ? 11 : 6);
+        let lx, ly, anchor;
+        if (dy < 0) { lx = m.x - 6; ly = m.y - off - 18; anchor = "start"; }          // above, running right
+        else if (dy > 0) { lx = m.x + dx * off * 0.7; ly = m.y + off + 10; anchor = dx < 0 ? "end" : "start"; }  // below, to one side
+        else { lx = m.x + dx * off; ly = m.y - 3; anchor = dx < 0 ? "end" : "start"; }
+        grp.appendChild(svgEl("text", { x: lx, y: ly, "text-anchor": anchor, class: "map-name" }, m.p.name));
+        grp.appendChild(svgEl("text", { x: lx, y: ly + 15, "text-anchor": anchor, class: "map-val" }, m.p.label2));
+      }
+      svg.appendChild(grp);
+      marks.push({ m, grp });
+    }
+    box.replaceChildren(svg);
+    for (const { m, grp } of marks) {
+      const show = () => {
+        const k = svg.getBoundingClientRect().width / W;
+        showTip(box, m.x * k, (m.y - m.r) * k, m.p.name + " warehouse", opts.tip(m.p), opts.onPick ? "Click to filter by this warehouse" : null);
+      };
+      grp.addEventListener("pointerenter", show);
+      grp.addEventListener("focus", show);
+      grp.addEventListener("pointerleave", () => hideTip(box));
+      grp.addEventListener("blur", () => hideTip(box));
+      if (opts.onPick) {
+        const pick = () => { hideTip(box); opts.onPick(m.p.name); };
+        grp.addEventListener("click", pick);
+        grp.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
+      }
+    }
+  }
+  // ranked list next to a map; rows: [{name, value, label, sub, bar, delta}]
+  function whList(box, rows, selected, onPick) {
+    box.replaceChildren();
+    for (const r of rows) {
+      const b = el("button", "wl-row" + (selected === r.name ? " sel" : ""));
+      b.type = "button";
+      const head = el("span", "wl-head");
+      head.append(el("span", "wl-name", r.name), el("span", "wl-val", r.label));
+      b.appendChild(head);
+      const track = el("span", "wl-track"); const fill = el("span", "wl-fill");
+      fill.style.width = Math.max(0, Math.min(1, r.bar)) * 100 + "%";
+      track.appendChild(fill);
+      b.appendChild(track);
+      const sb = el("span", "wl-sub");
+      sb.append(r.sub);
+      if (r.delta) { sb.append(" "); sb.appendChild(r.delta); }
+      b.appendChild(sb);
+      if (onPick) b.addEventListener("click", () => onPick(selected === r.name ? "" : r.name));
+      box.appendChild(b);
+    }
+  }
+
   const D = window.DASH;
   const state = { month: D ? D.months[D.months.length - 1] : null, listeners: [] };
   function setMonth(m) { state.month = m; state.listeners.forEach((f) => f(m)); }
   function onMonth(f) { state.listeners.push(f); }
 
   window.U = { NS, MONTHS, MON3, isNum, fmt, rp, rpFull, num, pct, signedPct, axisRp, axisNum, monthName, monthOnly, monthShort, monthNo, prevKey,
-    growth, el, svgEl, delta, bar, barPath, rectPath, showTip, hideTip, niceTicks, labelWidth, kpi, sub, spark, emptyRow, campaignDays, seg,
+    growth, el, svgEl, delta, bar, barPath, rectPath, showTip, hideTip, niceTicks, labelWidth, kpi, sub, spark, emptyRow, campaignDays, seg, drawMap, whList,
     state, setMonth, onMonth,
     reduceMotion: window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches };
 })();

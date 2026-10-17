@@ -26,6 +26,7 @@ warehouses, vouchers that sell out), never the real names or numbers.
 
 **01 · Sell-out**
 - Monthly KPIs: GMV, orders, units, average order value, GMV share of campaign days
+- Map of Indonesia with the five warehouses sized by GMV shipped (click one to filter the store table)
 - GMV by platform per month and daily GMV with campaign days marked
 - Platform share, shopping hours, and a table of 19 stores with their warehouse
 - Brands: contribution vs growth (click to filter items), then a searchable item table
@@ -46,6 +47,7 @@ warehouses, vouchers that sell out), never the real names or numbers.
 - Voucher cost after platform rebates
 
 **04 · Forecast & stock**
+- Warehouse network map: next month's cartons per warehouse, ringed by forecast accuracy
 - Forecast accuracy (1 − WAPE) and bias by month and warehouse
 - Forecast vs actual per SKU × warehouse, SKU profile with automatic notes (spikes, stock-outs, trend)
 - Heat map of forecast error for 25 SKUs × 5 warehouses
@@ -95,6 +97,7 @@ index.html, style.css, js/        the dashboard (plain HTML/CSS/JS, hand-drawn S
 data.js                           aggregated data for the dashboard (pipeline output)
 tools/generate_dummy_data.py      dummy data generator
 tools/build_dashboard_data.py     pipeline: raw exports -> data.js + processed CSVs
+tools/build_map.py                map outlines -> js/geo.js (Natural Earth 1:50m, public domain)
 data/raw/orders_2026-MM.csv.gz    monthly order exports (Feb–Sep 2026)
 data/raw/traffic_daily.csv.gz     daily traffic report per store
 data/raw/platform_rebates.csv     platform rebates on campaign days
@@ -126,6 +129,7 @@ data/processed/                   SKU × warehouse units, forecast vs actual, sh
 pip install -r requirements.txt
 python tools/generate_dummy_data.py     # optional: regenerate the dummy data (fixed seed)
 python tools/build_dashboard_data.py    # build data.js and data/processed/
+python tools/build_map.py               # optional: rebuild the map outlines in js/geo.js
 python -m http.server 8000              # open http://localhost:8000
 ```
 
@@ -136,4 +140,4 @@ Settings → Pages → *Deploy from a branch* → `main` / `(root)`. There is no
 ## Built with
 
 Python (pandas, numpy) for the data · plain HTML, CSS and JavaScript for the dashboard · SVG charts drawn by hand,
-no chart library · Archivo and Plus Jakarta Sans fonts.
+no chart library · map outlines from Natural Earth · Archivo and Plus Jakarta Sans fonts.
