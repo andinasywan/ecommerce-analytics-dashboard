@@ -1,114 +1,139 @@
 # E-commerce Analytics Dashboard 2026
 
-**Demo:** https://andinasywan.github.io/ecommerce-analytics-dashboard/
+**Live demo:** https://andinasywan.github.io/ecommerce-analytics-dashboard/
 
-![Halaman Sell-out](assets/preview-sellout.png)
+![Sell-out page](assets/preview-sellout.png)
 
-> **Semua data di repo ini dummy.** Nama brand, SKU, toko, nomor pesanan, dan angka dibuat oleh generator acak
-> (`tools/generate_dummy_data.py`). Tidak ada data internal perusahaan yang dipakai.
+> **All data in this repository is dummy data.** Brand names, SKUs, stores, order numbers, voucher codes and
+> every figure are produced by a random generator (`tools/generate_dummy_data.py`). No company data is included.
 
-*English summary: a two-page dashboard for a (fictional) consumer-health brand selling on Indonesian marketplaces.
-Page 1 tracks sell-out by platform, store, brand and item. Page 2 explodes bundles into physical SKUs, tests a
-3-month weighted moving-average forecast per SKU × warehouse against actual sales, and turns next month's forecast
-into a carton shipment plan. Built with plain HTML/CSS/JS (no chart library) and a Python/pandas pipeline. All data is synthetic.*
+A four-page dashboard for a fictional consumer-health brand that sells on Indonesian marketplaces
+(TikTok Shop, Shopee, Tokopedia, Lazada, Blibli) and ships from five warehouses.
 
-## Latar belakang
+## Background
 
-Selama magang sebagai Data Analyst Intern di Soho Global Health, saya mengolah ekspor pesanan marketplace menjadi
-laporan sell-out bulanan dan file kebutuhan stok per gudang. Prosesnya di Excel: menggabungkan ratusan ribu baris
-pesanan, memetakan setiap toko ke gudang pengirimnya, memecah produk bundle ke SKU komponen lewat tabel *master convert*,
-lalu membuat pivot per SKU dan gudang.
+During my Data Analyst internship at Soho Global Health I turned raw marketplace exports into recurring reports:
+monthly sell-out, warehouse stock needs, hour-by-hour updates on twin-date and payday campaigns, voucher usage,
+platform rebates and store traffic. The work ran in Excel: combining hundreds of thousands of order lines, mapping
+each store to its shipping warehouse, splitting bundles into component SKUs with a *master convert* table, and
+building pivots.
 
-Repo ini menulis ulang alur itu di Python dan menampilkannya sebagai dasbor, dengan data dummy yang meniru bentuk
-dan pola data aslinya (lonjakan tanggal kembar, payday, flash sale tengah malam, bundle, multi-gudang).
+This repository rebuilds that workflow in Python and presents it as a dashboard. The dummy data copies the shape
+and the seasonality of the real exports (twin-date spikes, payday, midnight flash sales, bundles, multiple
+warehouses, vouchers that sell out), never the real names or numbers.
 
-## Isi dasbor
+## Pages
 
 **01 · Sell-out**
-- KPI bulanan: GMV, pesanan, unit, nilai rata-rata pesanan, porsi GMV hari kampanye
-- GMV per platform per bulan dan GMV harian dengan hari kampanye (9.9, payday)
-- Porsi platform, jam belanja, tabel 19 toko dengan gudangnya
-- Brand: kontribusi dibanding pertumbuhan (klik untuk menyaring item), lalu rincian item yang bisa dicari
+- Monthly KPIs: GMV, orders, units, average order value, GMV share of campaign days
+- GMV by platform per month and daily GMV with campaign days marked
+- Platform share, shopping hours, and a table of 19 stores with their warehouse
+- Brands: contribution vs growth (click to filter items), then a searchable item table
 
-**02 · Forecast & stok gudang**
-- Akurasi forecast (1 − WAPE) dan bias per bulan dan per gudang
-- Sebaran forecast vs aktual per SKU × gudang, profil SKU dengan catatan otomatis (lonjakan, stok kosong, tren)
-- Peta panas selisih forecast untuk 25 SKU × 5 gudang
-- Rencana kirim bulan depan dalam karton per gudang
-- Alur pengolahan data dengan angka tiap langkah
+**02 · Traffic**
+- Visitors, platform-reported orders, conversion rate, ad click-through rate, visits from ads
+- Store funnel (visitors → product clicks → orders) and the ads funnel
+- Conversion by platform per month, daily visitors and conversion
+- TikTok Shop GMV by content source (LIVE, video, product card)
+- Store table with conversion, ad CTR and visitor growth
 
-![Halaman Forecast](assets/preview-forecast.png)
+**03 · Campaign days**
+- Twin date (e.g. 9.9) or payday (25th) of the chosen month
+- Hour-by-hour cumulative GMV against the previous campaign of the same type
+- Checkpoint report at 02:00, 10:00, 14:00, 18:00 and full day, per channel
+- Campaign history since February against the ordinary-day average
+- Store vouchers: quota, usage, sell-out time, cost and GMV per Rp1 of voucher cost
+- Voucher cost after platform rebates
 
-## Alur data
+**04 · Forecast & stock**
+- Forecast accuracy (1 − WAPE) and bias by month and warehouse
+- Forecast vs actual per SKU × warehouse, SKU profile with automatic notes (spikes, stock-outs, trend)
+- Heat map of forecast error for 25 SKUs × 5 warehouses
+- Next month's shipment plan in cartons per warehouse
+- The processing pipeline with the numbers at each step
+
+![Campaign days page](assets/preview-campaigns.png)
+
+## Data flow
 
 ```mermaid
 flowchart LR
-  A[Ekspor pesanan<br/>8 file .csv.gz] --> B[Buang Batal & Retur]
-  B --> C[Petakan toko ke<br/>platform & gudang]
-  C --> D[Rekap sell-out<br/>platform · toko · brand · item · hari · jam]
-  C --> E[Pecah bundle & multipack<br/>item_convert.csv]
-  E --> F[Pivot unit SKU × gudang<br/>per bulan]
-  F --> G[Forecast WMA 3 bulan<br/>vs aktual]
-  G --> H[Rencana kirim<br/>karton per gudang]
+  A[Order exports<br/>8 monthly .csv.gz] --> B[Drop cancelled & returned]
+  B --> C[Map store to<br/>platform, channel, warehouse]
+  C --> D[Sell-out recap<br/>platform · store · brand · item · day · hour]
+  C --> K[Campaign days<br/>hourly GMV · vouchers · rebates]
+  T[Daily traffic report] --> L[Traffic recap<br/>funnel · conversion · ads]
+  C --> E[Explode bundles & multipacks<br/>item_convert.csv]
+  E --> F[Pivot SKU units × warehouse<br/>per month]
+  F --> G[3-month WMA forecast<br/>vs actual]
+  G --> H[Shipment plan<br/>cartons per warehouse]
   D --> I[data.js]
+  K --> I
+  L --> I
   G --> I
   H --> I
 ```
 
-## Metode forecast
+## Forecast method
 
 ```
-Forecast(M) = 0,5 × Aktual(M−1) + 0,3 × Aktual(M−2) + 0,2 × Aktual(M−3)
-Akurasi     = 1 − Σ|forecast − aktual| ÷ Σ aktual        (WAPE)
-Bias        = (Σ forecast − Σ aktual) ÷ Σ aktual
-Karton      = ⌈forecast × 1,15 ÷ isi per karton⌉          (stok pengaman 15%)
+Forecast(M) = 0.5 × Actual(M−1) + 0.3 × Actual(M−2) + 0.2 × Actual(M−3)
+Accuracy    = 1 − Σ|forecast − actual| ÷ Σ actual        (WAPE)
+Bias        = (Σ forecast − Σ actual) ÷ Σ actual
+Cartons     = ⌈forecast × 1.15 ÷ units per carton⌉       (15% safety stock)
 ```
 
-Februari–April hanya dipakai sebagai riwayat awal. Forecast diuji untuk Mei–September, lalu forecast Oktober
-dijadikan rencana kirim.
+February–April only seed the history. Forecasts are tested for May–September, and the October forecast becomes
+the shipment plan. The dummy data includes a few events that expose the weak spots of a moving average:
+a product that goes viral on TikTok in August, a stock-out in one warehouse in July, an affiliate push in
+September, and a seasonal cough syrup that picks up when the rainy season starts.
 
-Data dummy sengaja diberi beberapa kejadian supaya kelemahan rata-rata bergerak terlihat:
-produk yang viral di TikTok pada Agustus, stok kosong di satu gudang pada Juli, program affiliate pada September,
-dan produk musiman (sirup batuk) yang naik saat musim hujan.
-
-## Struktur repo
+## Repository layout
 
 ```
-index.html, style.css, js/        dasbor (HTML/CSS/JS murni, grafik SVG buatan sendiri)
-data.js                           data agregat untuk dasbor (hasil pipeline)
-tools/generate_dummy_data.py      generator data dummy
-tools/build_dashboard_data.py     pipeline: raw -> data.js + CSV olahan
-data/raw/orders_2026-MM.csv.gz    ekspor pesanan dummy per bulan (Feb–Sep 2026)
-data/master/                      sku_master, item_convert (bundle -> SKU), store_map (toko -> gudang)
-data/processed/                   unit SKU × gudang per bulan, forecast vs aktual, rencana kirim
+index.html, style.css, js/        the dashboard (plain HTML/CSS/JS, hand-drawn SVG charts)
+data.js                           aggregated data for the dashboard (pipeline output)
+tools/generate_dummy_data.py      dummy data generator
+tools/build_dashboard_data.py     pipeline: raw exports -> data.js + processed CSVs
+data/raw/orders_2026-MM.csv.gz    monthly order exports (Feb–Sep 2026)
+data/raw/traffic_daily.csv.gz     daily traffic report per store
+data/raw/platform_rebates.csv     platform rebates on campaign days
+data/master/                      sku_master, item_convert (bundle -> SKU), store_map, vouchers
+data/processed/                   SKU × warehouse units, forecast vs actual, shipment plan
 ```
 
-### Kolom ekspor pesanan (`data/raw`)
+### Order export columns (`data/raw/orders_*.csv.gz`)
 
-| Kolom | Isi |
+| Column | Meaning |
 |---|---|
-| `order_id` | nomor pesanan, formatnya beda per platform |
-| `order_datetime`, `order_date` | waktu pesanan (WIB) |
-| `store` | nama toko, dipetakan ke platform & gudang lewat `store_map.csv` |
-| `item_code`, `item_name` | item jual: SKU tunggal, multipack, atau bundle |
-| `brand`, `category` | brand dan kategori (Anak & Keluarga / Dewasa & Spesialis) |
-| `qty`, `gmv` | jumlah item dan nilai transaksi (Rp) |
-| `status` | Selesai, Dalam pengiriman, Batal, Retur |
+| `order_id` | order number, format differs per platform |
+| `order_datetime`, `order_date` | time of order (WIB) |
+| `store` | store name, mapped to platform, channel and warehouse in `store_map.csv` |
+| `item_code`, `item_name` | sellable item: single SKU, multipack or bundle |
+| `brand`, `category` | brand and category (Kids & Family / Adult & Specialty) |
+| `qty`, `gmv` | quantity and merchandise value (Rp) |
+| `status` | Completed, In transit, Cancelled, Returned |
+| `tiktok_channel` | TikTok Shop content source: LIVE, Video, Product card |
+| `voucher_code`, `voucher_discount` | store voucher redeemed on the order and its cost to the seller |
 
-## Menjalankan ulang
+### Traffic report columns (`data/raw/traffic_daily.csv.gz`)
+
+`date`, `store`, `organic_views`, `product_clicks`, `visitors`, `orders`, `ad_impressions`, `ad_clicks`
+
+## Run it yourself
 
 ```bash
 pip install -r requirements.txt
-python tools/generate_dummy_data.py     # opsional: buat ulang data dummy (seed tetap)
-python tools/build_dashboard_data.py    # bangun data.js dan data/processed/
-python -m http.server 8000              # buka http://localhost:8000
+python tools/generate_dummy_data.py     # optional: regenerate the dummy data (fixed seed)
+python tools/build_dashboard_data.py    # build data.js and data/processed/
+python -m http.server 8000              # open http://localhost:8000
 ```
 
-## Publikasi ke GitHub Pages
+## Publishing on GitHub Pages
 
-Settings → Pages → *Deploy from a branch* → `main` / `(root)`. Tidak ada build step; file `.nojekyll` sudah disertakan.
+Settings → Pages → *Deploy from a branch* → `main` / `(root)`. There is no build step; `.nojekyll` is included.
 
-## Teknologi
+## Built with
 
-Python (pandas, numpy) untuk data · HTML, CSS, JavaScript murni untuk dasbor · grafik SVG digambar sendiri, tanpa library grafik ·
-font Archivo dan Plus Jakarta Sans.
+Python (pandas, numpy) for the data · plain HTML, CSS and JavaScript for the dashboard · SVG charts drawn by hand,
+no chart library · Archivo and Plus Jakarta Sans fonts.

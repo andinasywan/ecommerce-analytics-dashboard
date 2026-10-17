@@ -1,20 +1,20 @@
-store,platform,warehouse
-TikTok Shop Jakarta,TikTok Shop,Jakarta
-TikTok Shop Surabaya,TikTok Shop,Surabaya
-TikTok Shop Medan,TikTok Shop,Medan
-TikTok Shop Makassar,TikTok Shop,Makassar
-TikTok Shop Semarang,TikTok Shop,Semarang
-Shopee Tumbuhku Official Jakarta,Shopee,Jakarta
-Shopee Tumbuhku Official Surabaya,Shopee,Surabaya
-Shopee Tumbuhku Official Medan,Shopee,Medan
-Shopee Tumbuhku Official Makassar,Shopee,Makassar
-Shopee Dermaya Official Jakarta,Shopee,Jakarta
-Shopee Dermaya Official Surabaya,Shopee,Surabaya
-Shopee Dermaya Official Medan,Shopee,Medan
-Shopee Fortivit Official Jakarta,Shopee,Jakarta
-Shopee Fortivit Official Surabaya,Shopee,Surabaya
-Shopee Fortivit Official Makassar,Shopee,Makassar
-Tokopedia Jakarta,Tokopedia,Jakarta
-Tokopedia Surabaya,Tokopedia,Surabaya
-Lazada Jakarta,Lazada,Jakarta
-Blibli Jakarta,Blibli,Jakarta
+store,platform,channel,warehouse
+TikTok Shop Jakarta,TikTok Shop,TikTok Shop,Jakarta
+TikTok Shop Surabaya,TikTok Shop,TikTok Shop,Surabaya
+TikTok Shop Medan,TikTok Shop,TikTok Shop,Medan
+TikTok Shop Makassar,TikTok Shop,TikTok Shop,Makassar
+TikTok Shop Semarang,TikTok Shop,TikTok Shop,Semarang
+Shopee Growlie Official Jakarta,Shopee,Shopee Growlie Official,Jakarta
+Shopee Growlie Official Surabaya,Shopee,Shopee Growlie Official,Surabaya
+Shopee Growlie Official Medan,Shopee,Shopee Growlie Official,Medan
+Shopee Growlie Official Makassar,Shopee,Shopee Growlie Official,Makassar
+Shopee Dermaya Official Jakarta,Shopee,Shopee Dermaya Official,Jakarta
+Shopee Dermaya Official Surabaya,Shopee,Shopee Dermaya Official,Surabaya
+Shopee Dermaya Official Medan,Shopee,Shopee Dermaya Official,Medan
+Shopee Fortivit Official Jakarta,Shopee,Shopee Fortivit Official,Jakarta
+Shopee Fortivit Official Surabaya,Shopee,Shopee Fortivit Official,Surabaya
+Shopee Fortivit Official Makassar,Shopee,Shopee Fortivit Official,Makassar
+Tokopedia Jakarta,Tokopedia,Tokopedia,Jakarta
+Tokopedia Surabaya,Tokopedia,Tokopedia,Surabaya
+Lazada Jakarta,Lazada,Lazada,Jakarta
+Blibli Jakarta,Blibli,Blibli,Jakarta

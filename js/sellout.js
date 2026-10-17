@@ -2,38 +2,34 @@
 (function () {
   "use strict";
   const U = window.U, D = window.DASH;
-  const { el, svgEl, rp, rpFull, num, pct, idn, delta, growth, isNum } = U;
+  const { el, svgEl, rp, rpFull, num, pct, fmt, delta, growth, isNum } = U;
   const $ = (s) => document.querySelector(s);
   if (!D || !D.sell) {
-    $("#so-lede").replaceWith(Object.assign(document.createElement("div"), { className: "error", textContent: "Data dasbor belum termuat. Coba muat ulang halaman ini." }));
+    $("#so-lede").replaceWith(Object.assign(document.createElement("div"), { className: "error", textContent: "The dashboard data did not load. Try reloading the page." }));
     return;
   }
 
   const PCOL = {};
   D.platforms.forEach((p, i) => (PCOL[p] = "var(--p" + (i + 1) + ")"));
-  const STORE = {}; D.stores.forEach(([name, platform, wh]) => (STORE[name] = { platform, wh }));
+  const STORE = {}; D.stores.forEach(([name, platform, channel, wh]) => (STORE[name] = { platform, channel, wh }));
   const ITEM = {}; D.items.forEach((it) => (ITEM[it.code] = it));
   const CAT = {}; D.brands.forEach(([b, c]) => (CAT[b] = c));
-  const KIDS = "Anak & Keluarga";
-  const st = { platform: "", tokoSort: "gmv", brand: "", itemSort: "gmv", q: "" };
+  const KIDS = "Kids & Family";
+  const st = { platform: "", storeSort: "gmv", brand: "", itemSort: "gmv", q: "" };
 
   const S = (m) => D.sell[m];
   const prev = (m) => D.sell[U.prevKey(m)];
   const days = (m) => S(m).daily.length;
   const dayTotal = (m) => S(m).daily.map((r) => r.reduce((a, b) => a + b, 0));
+  const campaignDays = (m) => U.campaignDays(m, days(m));
+  const prevName = (m) => U.monthOnly(U.prevKey(m));
 
-  function campaignDays(m) {
-    const mo = U.monthNo(m);
-    const out = [{ day: mo, label: mo + "." + mo, kind: "twin" }, { day: 25, label: "Payday", kind: "payday" }];
-    if (mo === 8) out.push({ day: 17, label: "17-an", kind: "hut" });
-    return out.filter((c) => c.day <= days(m));
-  }
   function itemKind(code) {
     const it = ITEM[code];
-    if (!it) return "SKU tunggal";
+    if (!it) return "Single SKU";
     if (it.comp.length > 1) return "Bundle";
     if (it.comp[0][1] > 1) return "Multipack";
-    return "SKU tunggal";
+    return "Single SKU";
   }
   const skuUnitsPerItem = (code) => (ITEM[code] ? ITEM[code].comp.reduce((a, c) => a + c[1], 0) : 1);
 
@@ -43,20 +39,20 @@
     const lede = $("#so-lede");
     lede.replaceChildren();
     const add = (txt, bold) => lede.appendChild(bold ? el("b", null, txt) : document.createTextNode(txt));
-    add("Sepanjang " + U.monthName(m) + ", GMV pesanan valid mencapai ");
+    add("In " + U.monthName(m) + ", valid orders brought in ");
     add(rp(t.gmv), true);
-    add(" dari " + num(t.orders) + " pesanan");
+    add(" of GMV from " + num(t.orders) + " orders");
     const g = p && growth(t.gmv, p.tot.gmv);
-    if (isNum(g)) add(", " + (g >= 0 ? "naik " : "turun ") + idn(Math.abs(g) * 100, 1) + "% dari " + U.BULAN[U.monthNo(U.prevKey(m)) - 1]);
+    if (isNum(g)) add(", " + (g >= 0 ? "up " : "down ") + fmt(Math.abs(g) * 100, 1) + "% on " + prevName(m));
     add(". ");
     const plats = D.platforms.map((n) => ({ n, gmv: S(m).plat[n][0] })).sort((a, b) => b.gmv - a.gmv);
-    add(plats[0].n + " menyumbang ");
+    add(plats[0].n + " accounted for ");
     add(pct(plats[0].gmv / t.gmv, 0), true);
-    add(" GMV. ");
+    add(" of it. ");
     const tw = campaignDays(m)[0], tot = dayTotal(m);
-    add("Hari kampanye " + tw.label + " sendiri menghasilkan ");
+    add("The " + tw.label + " campaign alone made ");
     add(rp(tot[tw.day - 1]), true);
-    add(", atau " + pct(tot[tw.day - 1] / t.gmv) + " GMV sebulan.");
+    add(", or " + pct(tot[tw.day - 1] / t.gmv) + " of the month.");
   }
 
   function renderKpis() {
@@ -66,17 +62,15 @@
     const idx = D.months.indexOf(m);
     const series = (f) => D.months.map((k) => f(D.sell[k]));
     const lbl = D.months.map(U.monthShort);
-    const pn = U.BULAN[U.monthNo(U.prevKey(m)) - 1];
-    const vs = (now, before) => U.sub([delta(growth(now, before)), " dari " + pn]);
-    const gm = (v) => idn(v / 1e9, 2);
-    box.appendChild(U.kpi("GMV", gm(t.gmv), vs(t.gmv, p && p.tot.gmv), { cur: "Rp", unit: "M", title: rpFull(t.gmv), spark: U.spark(series((s) => s.tot.gmv), idx, lbl) }));
-    box.appendChild(U.kpi("Pesanan", num(t.orders), vs(t.orders, p && p.tot.orders), { spark: U.spark(series((s) => s.tot.orders), idx, lbl) }));
-    box.appendChild(U.kpi("Unit terjual", num(t.units), vs(t.units, p && p.tot.units), { spark: U.spark(series((s) => s.tot.units), idx, lbl) }));
+    const vs = (now, before) => U.sub([delta(growth(now, before)), " vs " + prevName(m)]);
+    box.appendChild(U.kpi("GMV", fmt(t.gmv / 1e9, 2), vs(t.gmv, p && p.tot.gmv), { cur: "Rp", unit: "B", title: rpFull(t.gmv), spark: U.spark(series((s) => s.tot.gmv), idx, lbl) }));
+    box.appendChild(U.kpi("Orders", num(t.orders), vs(t.orders, p && p.tot.orders), { spark: U.spark(series((s) => s.tot.orders), idx, lbl) }));
+    box.appendChild(U.kpi("Units sold", num(t.units), vs(t.units, p && p.tot.units), { spark: U.spark(series((s) => s.tot.units), idx, lbl) }));
     const aov = (s) => s.tot.gmv / s.tot.orders;
-    box.appendChild(U.kpi("Nilai rata-rata pesanan", num(Math.round(aov(S(m)))), vs(aov(S(m)), p && aov(p)), { cur: "Rp", spark: U.spark(series(aov), idx, lbl) }));
-    const tot = dayTotal(m), camp = campaignDays(m);
+    box.appendChild(U.kpi("Average order value", num(Math.round(aov(S(m)))), vs(aov(S(m)), p && aov(p)), { cur: "Rp", spark: U.spark(series(aov), idx, lbl) }));
+    const tot = dayTotal(m), camp = campaignDays(m).filter((c) => c.kind !== "holiday");
     const cg = camp.reduce((a, c) => a + tot[c.day - 1], 0);
-    box.appendChild(U.kpi("Porsi GMV hari kampanye", pct(cg / t.gmv), U.sub([el("b", null, camp.length + " hari"), " (" + camp.map((c) => c.label).join(", ") + ") dari " + days(m)]),
+    box.appendChild(U.kpi("GMV share of campaign days", pct(cg / t.gmv), U.sub([el("b", null, camp.length + " days"), " (" + camp.map((c) => c.label).join(", ") + ") out of " + days(m)]),
       { meter: cg / t.gmv, meterColor: "var(--camp)" }));
   }
 
@@ -93,29 +87,28 @@
       f.append(el("div", "tag", tag), el("div", "big", big), el("p", null, text));
       box.appendChild(f);
     };
-    card("Tanggal kembar", idn(tot[tw.day - 1] / avgNormal, 1) + "× hari biasa",
-      "GMV tanggal " + tw.label + " dibanding rata-rata hari tanpa kampanye. Payday tanggal 25 ada di " + idn(tot[24] / avgNormal, 1) + "×. Stok gudang perlu disiapkan sebelum tanggal ini, bukan sesudahnya.");
+    card("Twin date", fmt(tot[tw.day - 1] / avgNormal, 1) + "× an ordinary day",
+      "GMV on " + tw.label + " against the average day without a campaign. Payday on the 25th ran at " + fmt(tot[24] / avgNormal, 1) + "×. Stock has to be in place before these dates, not after.");
     const h = s.hour, hs = h.reduce((a, b) => a + b, 0);
     const others = (hs - h[0]) / 23;
-    card("Flash sale jam 00", pct(h[0] / hs) + " GMV",
-      "Jam 00.00–00.59 menyumbang " + idn(h[0] / others, 1) + "× rata-rata jam lain, hampir semuanya dari pembukaan promo tengah malam di hari kampanye.");
+    card("Midnight flash sale", pct(h[0] / hs) + " of GMV",
+      "Hour 00:00–00:59 brings " + fmt(h[0] / others, 1) + "× the average of the other hours, almost all of it from promotions that open at midnight on campaign days.");
     let skuAll = 0, skuPack = 0;
     for (const [code, , units] of s.item) {
       const k = skuUnitsPerItem(code) * units;
       skuAll += k;
-      if (itemKind(code) !== "SKU tunggal") skuPack += k;
+      if (itemKind(code) !== "Single SKU") skuPack += k;
     }
-    card("Bundle & multipack", pct(skuPack / skuAll, 0) + " unit SKU",
-      "Unit fisik yang keluar gudang lewat paket. Karena itu stok dihitung setelah bundle dipecah ke SKU, bukan dari item jual (lihat halaman Forecast & stok gudang).");
+    card("Bundles & multipacks", pct(skuPack / skuAll, 0) + " of SKU units",
+      "Physical units that leave the warehouse inside a pack. That is why stock is counted after bundles are split into SKUs, not from sellable items (see Forecast & stock).");
   }
 
   // ---------- charts ----------
   function drawMonthly() {
-    const box = $("#chart-bulanan");
+    const box = $("#chart-monthly");
     const W = box.clientWidth;
     if (!W) return;
-    const narrow = W < 520;
-    const H = narrow ? 250 : 280;
+    const H = W < 520 ? 250 : 280;
     const months = D.months;
     const totals = months.map((k) => D.sell[k].tot.gmv);
     const ticks = U.niceTicks(Math.max(...totals) * 1.08, 4);
@@ -125,7 +118,7 @@
     const band = iw / months.length;
     const bw = Math.min(56, band * 0.56);
     const y = (v) => m.t + ih - (v / yMax) * ih;
-    const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": "Grafik batang bertumpuk GMV per platform per bulan" });
+    const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": "Stacked bar chart of GMV by platform per month" });
     for (const t of ticks) {
       svg.appendChild(svgEl("line", { x1: m.l, x2: m.l + iw, y1: y(t), y2: y(t), stroke: t === 0 ? "var(--axis)" : "var(--grid)" }));
       svg.appendChild(svgEl("text", { x: m.l - 8, y: y(t) + 4, "text-anchor": "end" }, U.axisRp(t)));
@@ -140,10 +133,9 @@
       vals.forEach((v, j) => {
         if (v <= 0) return;
         const yb = y(acc), yt = y(acc + v);
-        const last = j === vals.length - 1 || vals.slice(j + 1).every((x) => x <= 0);
-        const gap = j > 0 ? 2 : 0; // 2px surface gap between stacked segments
-        const d = last ? U.barPath(x0, x1, yt, yb - gap) : U.rectPath(x0, x1, yt, yb - gap);
-        g.appendChild(svgEl("path", { d, fill: PCOL[D.platforms[j]] }));
+        const last = vals.slice(j + 1).every((x) => x <= 0);
+        const gap = j > 0 ? 2 : 0;
+        g.appendChild(svgEl("path", { d: last ? U.barPath(x0, x1, yt, yb - gap) : U.rectPath(x0, x1, yt, yb - gap), fill: PCOL[D.platforms[j]] }));
         acc += v;
       });
       svg.appendChild(g);
@@ -156,83 +148,77 @@
     box.replaceChildren(svg);
     const idxAt = (ev) => {
       const r = svg.getBoundingClientRect();
-      const sx = ((ev.clientX - r.left) / r.width) * W;
-      return Math.max(0, Math.min(months.length - 1, Math.floor((sx - m.l) / band)));
+      return Math.max(0, Math.min(months.length - 1, Math.floor((((ev.clientX - r.left) / r.width) * W - m.l) / band)));
     };
-    const move = (ev) => {
+    hit.addEventListener("pointermove", (ev) => {
       const i = idxAt(ev), k = months[i];
       groups.forEach((g, j) => g.g.setAttribute("opacity", j === i || g.sel ? 1 : 0.5));
-      const r = svg.getBoundingClientRect(), s = r.width / W;
+      const s = svg.getBoundingClientRect().width / W;
       const rows = D.platforms.slice().reverse().map((p) => ({ label: p, value: rp(D.sell[k].plat[p][0]), color: PCOL[p] }));
       rows.push({ label: "Total", value: rp(totals[i]) });
-      U.showTip(box, groups[i].cx * s, y(totals[i]) * s, U.monthName(k), rows, k === U.state.month ? null : "Klik untuk memilih bulan ini");
-    };
-    hit.addEventListener("pointermove", move);
+      U.showTip(box, groups[i].cx * s, y(totals[i]) * s, U.monthName(k), rows, k === U.state.month ? null : "Click to select this month");
+    });
     hit.addEventListener("pointerleave", () => { groups.forEach((g) => g.g.setAttribute("opacity", g.sel ? 1 : 0.5)); U.hideTip(box); });
     hit.addEventListener("click", (ev) => { const k = months[idxAt(ev)]; if (k !== U.state.month) { U.hideTip(box); U.setMonth(k); } });
   }
 
   function drawDaily() {
-    const box = $("#chart-harian");
+    const box = $("#chart-daily");
     const W = box.clientWidth;
     if (!W) return;
     const mo = U.state.month;
-    $("#harian-title").textContent = "GMV harian, " + U.monthName(mo);
+    $("#daily-title").textContent = "Daily GMV, " + U.monthName(mo);
     const narrow = W < 520;
     const H = narrow ? 250 : 280;
     const vals = dayTotal(mo), n = vals.length;
-    const camp = campaignDays(mo), cmap = {};
-    camp.forEach((c) => (cmap[c.day] = c));
+    const cmap = {};
+    campaignDays(mo).forEach((c) => (cmap[c.day] = c));
     const ticks = U.niceTicks(Math.max(...vals) * 1.1, 4);
     const yMax = ticks[ticks.length - 1];
     const m = { t: 18, r: 6, b: 28, l: U.labelWidth(box, ticks.map(U.axisRp)) + 12 };
     const iw = W - m.l - m.r, ih = H - m.t - m.b;
-    const band = iw / n;
-    const bw = Math.max(2, band - 2);
+    const band = iw / n, bw = Math.max(2, band - 2);
     const y = (v) => m.t + ih - (v / yMax) * ih;
-    const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": "Grafik batang GMV per hari, " + U.monthName(mo) });
+    const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": "Bar chart of GMV per day, " + U.monthName(mo) });
     for (const t of ticks) {
       svg.appendChild(svgEl("line", { x1: m.l, x2: m.l + iw, y1: y(t), y2: y(t), stroke: t === 0 ? "var(--axis)" : "var(--grid)" }));
       svg.appendChild(svgEl("text", { x: m.l - 8, y: y(t) + 4, "text-anchor": "end" }, U.axisRp(t)));
     }
     const bars = [];
     vals.forEach((v, i) => {
-      const x0 = m.l + i * band + 1, d = i + 1;
-      const c = cmap[d];
-      const p = svgEl("path", { d: U.barPath(x0, x0 + bw, y(v), y(0), Math.min(3, bw / 2)), fill: c ? "var(--camp)" : "var(--one-soft)" });
+      const x0 = m.l + i * band + 1, c = cmap[i + 1];
+      const camp = c && c.kind !== "holiday";
+      const p = svgEl("path", { d: U.barPath(x0, x0 + bw, y(v), y(0), Math.min(3, bw / 2)), fill: camp ? "var(--camp)" : "var(--one-soft)" });
       svg.appendChild(p);
       bars.push(p);
-      if (c && c.kind !== "hut") svg.appendChild(svgEl("text", { x: x0 + bw / 2, y: y(v) - 6, "text-anchor": c.kind === "payday" && narrow ? "end" : "middle", class: "lbl-camp" }, c.label));
+      if (camp) svg.appendChild(svgEl("text", { x: x0 + bw / 2, y: y(v) - 6, "text-anchor": c.kind === "payday" && narrow ? "end" : "middle", class: "lbl-camp" }, c.label));
     });
     const avg = vals.reduce((a, b) => a + b, 0) / n;
     svg.appendChild(svgEl("line", { x1: m.l, x2: m.l + iw, y1: y(avg), y2: y(avg), stroke: "var(--fg)", "stroke-width": 1.2, "stroke-opacity": 0.7 }));
-    // average label sits mid-month (days 11-22 carry no labelled campaign), clear of the 9.9 and payday labels
-    const avgLbl = "rata-rata " + U.rp(avg);
+    const avgLbl = "average " + rp(avg);
     const lw = U.labelWidth(box, [avgLbl]);
     const lx = Math.min(m.l + iw - lw - 4, Math.max(m.l + 4, m.l + 16.5 * band - lw / 2));
     svg.appendChild(svgEl("rect", { x: lx - 3, y: y(avg) - 17, width: lw + 6, height: 14, fill: "var(--panel)", "fill-opacity": 0.88, rx: 3 }));
     svg.appendChild(svgEl("text", { x: lx, y: y(avg) - 6, "text-anchor": "start", class: "lbl-strong" }, avgLbl));
-    [1, 5, 10, 15, 20, 25, 30].filter((d) => d <= n).forEach((d) => {
-      svg.appendChild(svgEl("text", { x: m.l + (d - 0.5) * band, y: H - 8, "text-anchor": "middle" }, String(d)));
-    });
+    [1, 5, 10, 15, 20, 25, 30].filter((d) => d <= n).forEach((d) => svg.appendChild(svgEl("text", { x: m.l + (d - 0.5) * band, y: H - 8, "text-anchor": "middle" }, String(d))));
     const hit = svgEl("rect", { x: m.l, y: m.t, width: iw, height: ih, fill: "transparent" });
     svg.appendChild(hit);
     box.replaceChildren(svg);
     const move = (ev) => {
       const r = svg.getBoundingClientRect();
-      const sx = ((ev.clientX - r.left) / r.width) * W;
-      const i = Math.max(0, Math.min(n - 1, Math.floor((sx - m.l) / band)));
+      const i = Math.max(0, Math.min(n - 1, Math.floor((((ev.clientX - r.left) / r.width) * W - m.l) / band)));
       bars.forEach((b, j) => b.setAttribute("fill-opacity", j === i ? 1 : 0.55));
       const s = r.width / W, d = i + 1;
       const row = S(mo).daily[i];
       const top = D.platforms.map((p, j) => [p, row[j]]).sort((a, b) => b[1] - a[1])[0];
       const date = new Date(+mo.slice(0, 4), U.monthNo(mo) - 1, d);
-      const title = date.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long" }) + (cmap[d] ? " · " + (cmap[d].kind === "twin" ? "kampanye " + cmap[d].label : cmap[d].kind === "payday" ? "payday" : "HUT RI") : "");
+      const c = cmap[d];
+      const title = date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }) + (c ? " · " + (c.kind === "twin" ? c.label + " campaign" : c.kind === "payday" ? "payday" : "Independence Day") : "");
       U.showTip(box, (m.l + (i + 0.5) * band) * s, y(vals[i]) * s, title, [
         { label: "GMV", value: rp(vals[i]) },
-        { label: "Pesanan", value: num(S(mo).dailyOrders[i]) },
-        { label: "vs rata-rata", value: idn(vals[i] / avg, 1) + "×" },
-        { label: "Platform teratas", value: top[0], color: PCOL[top[0]] },
+        { label: "Orders", value: num(S(mo).dailyOrders[i]) },
+        { label: "vs average", value: fmt(vals[i] / avg, 1) + "×" },
+        { label: "Top platform", value: top[0], color: PCOL[top[0]] },
       ]);
     };
     hit.addEventListener("pointermove", move);
@@ -241,29 +227,29 @@
   }
 
   function drawHours() {
-    const box = $("#chart-jam");
+    const box = $("#chart-hours");
     const W = box.clientWidth;
     if (!W) return;
     const h = S(U.state.month).hour, hs = h.reduce((a, b) => a + b, 0);
     const vals = h.map((v) => v / hs);
-    const narrow = W < 520;
-    const H = narrow ? 210 : 230;
+    const H = W < 520 ? 210 : 230;
     const ticks = U.niceTicks(Math.max(...vals) * 1.12, 4);
     const yMax = ticks[ticks.length - 1];
-    const tl = ticks.map((t) => idn(t * 100, 0) + "%");
+    const tl = ticks.map((t) => fmt(t * 100, 0) + "%");
     const m = { t: 18, r: 6, b: 28, l: U.labelWidth(box, tl) + 12 };
     const iw = W - m.l - m.r, ih = H - m.t - m.b;
     const band = iw / 24, bw = Math.max(3, band - 3);
     const y = (v) => m.t + ih - (v / yMax) * ih;
-    const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": "Grafik batang porsi GMV per jam" });
+    const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": "Bar chart of GMV share by hour" });
     ticks.forEach((t, i) => {
       svg.appendChild(svgEl("line", { x1: m.l, x2: m.l + iw, y1: y(t), y2: y(t), stroke: t === 0 ? "var(--axis)" : "var(--grid)" }));
       svg.appendChild(svgEl("text", { x: m.l - 8, y: y(t) + 4, "text-anchor": "end" }, tl[i]));
     });
     const peak = vals.indexOf(Math.max(...vals));
+    const strong = (i) => i === peak || i === 0;
     const bars = vals.map((v, i) => {
       const x0 = m.l + i * band + 1.5;
-      const p = svgEl("path", { d: U.barPath(x0, x0 + bw, y(v), y(0), 3), fill: "var(--one)", "fill-opacity": i === peak || i === 0 ? 1 : 0.6 });
+      const p = svgEl("path", { d: U.barPath(x0, x0 + bw, y(v), y(0), 3), fill: "var(--one)", "fill-opacity": strong(i) ? 1 : 0.6 });
       svg.appendChild(p);
       return p;
     });
@@ -275,22 +261,20 @@
     box.replaceChildren(svg);
     const move = (ev) => {
       const r = svg.getBoundingClientRect();
-      const sx = ((ev.clientX - r.left) / r.width) * W;
-      const i = Math.max(0, Math.min(23, Math.floor((sx - m.l) / band)));
-      bars.forEach((b, j) => b.setAttribute("fill-opacity", j === i || j === peak || j === 0 ? 1 : 0.6));
-      const s = r.width / W;
-      U.showTip(box, (m.l + (i + 0.5) * band) * s, y(vals[i]) * s, "Jam " + String(i).padStart(2, "0") + ".00–" + String(i).padStart(2, "0") + ".59",
-        [{ label: "Porsi GMV", value: pct(vals[i]) }, { label: "GMV", value: rp(h[i]) }]);
+      const i = Math.max(0, Math.min(23, Math.floor((((ev.clientX - r.left) / r.width) * W - m.l) / band)));
+      bars.forEach((b, j) => b.setAttribute("fill-opacity", j === i || strong(j) ? 1 : 0.6));
+      const s = r.width / W, hh = String(i).padStart(2, "0");
+      U.showTip(box, (m.l + (i + 0.5) * band) * s, y(vals[i]) * s, hh + ":00–" + hh + ":59", [{ label: "GMV share", value: pct(vals[i]) }, { label: "GMV", value: rp(h[i]) }]);
     };
     hit.addEventListener("pointermove", move);
     hit.addEventListener("pointerdown", move);
-    hit.addEventListener("pointerleave", () => { bars.forEach((b, j) => b.setAttribute("fill-opacity", j === peak || j === 0 ? 1 : 0.6)); U.hideTip(box); });
+    hit.addEventListener("pointerleave", () => { bars.forEach((b, j) => b.setAttribute("fill-opacity", strong(j) ? 1 : 0.6)); U.hideTip(box); });
   }
 
   // ---------- platform list & store table ----------
   function renderPlatforms() {
     const m = U.state.month, s = S(m), p = prev(m);
-    $("#platform-pos").textContent = U.monthName(m) + " · dibanding " + U.BULAN[U.monthNo(U.prevKey(m)) - 1];
+    $("#platform-pos").textContent = U.monthName(m) + " · compared with " + prevName(m);
     const box = $("#plat-list");
     box.replaceChildren();
     const leg = $("#leg-platform");
@@ -299,13 +283,12 @@
       const span = el("span"); const k = el("span", "key"); k.style.background = PCOL[name];
       span.append(k, name); leg.appendChild(span);
     }
-    const rows = D.platforms.map((n) => ({ n, gmv: s.plat[n][0], orders: s.plat[n][1], before: p ? p.plat[n][0] : null }))
-      .sort((a, b) => b.gmv - a.gmv);
+    const rows = D.platforms.map((n) => ({ n, gmv: s.plat[n][0], orders: s.plat[n][1], before: p ? p.plat[n][0] : null })).sort((a, b) => b.gmv - a.gmv);
     for (const r of rows) {
       const row = el("div", "plat-row");
       const name = el("div", "plat-name");
       const k = el("span", "pkey"); k.style.background = PCOL[r.n];
-      name.append(k, r.n, el("small", null, num(r.orders) + " pesanan"));
+      name.append(k, r.n, el("small", null, num(r.orders) + " orders"));
       const g = el("div", "plat-gmv", rp(r.gmv)); g.title = rpFull(r.gmv);
       row.append(name, g, delta(growth(r.gmv, r.before)), U.bar(r.gmv / s.tot.gmv, PCOL[r.n]));
       box.appendChild(row);
@@ -314,21 +297,19 @@
 
   function renderStores() {
     const m = U.state.month, s = S(m), p = prev(m);
-    const sel = $("#toko-platform");
-    if (!sel.options.length) {
-      sel.append(new Option("Semua platform", ""), ...D.platforms.map((x) => new Option(x, x)));
-    }
+    const sel = $("#store-platform");
+    if (!sel.options.length) sel.append(new Option("All platforms", ""), ...D.platforms.map((x) => new Option(x, x)));
     sel.value = st.platform;
     const before = {};
     if (p) p.store.forEach(([n, g]) => (before[n] = g));
     let rows = s.store.map(([name, gmv, orders]) => ({ name, gmv, orders, aov: orders ? gmv / orders : null, mom: growth(gmv, before[name]), ...STORE[name] }))
       .filter((r) => !st.platform || r.platform === st.platform);
-    const key = { gmv: ["gmv", -1], mom: ["mom", -1], "mom-low": ["mom", 1], aov: ["aov", -1] }[st.tokoSort];
+    const key = { gmv: ["gmv", -1], mom: ["mom", -1], "mom-low": ["mom", 1], aov: ["aov", -1] }[st.storeSort];
     rows.sort((a, b) => key[1] * ((a[key[0]] ?? -1e9) - (b[key[0]] ?? -1e9)));
-    $("#toko-count").textContent = rows.length + " toko · " + D.warehouses.length + " gudang";
-    const tb = $("#tabel-toko tbody");
+    $("#store-count").textContent = rows.length + " stores · " + D.warehouses.length + " warehouses";
+    const tb = $("#table-store tbody");
     tb.replaceChildren();
-    if (!rows.length) return U.emptyRow(tb, 7, "Tidak ada toko untuk platform ini.");
+    if (!rows.length) return U.emptyRow(tb, 7, "No stores on this platform.");
     const max = Math.max(...rows.map((r) => r.gmv / s.tot.gmv));
     for (const r of rows) {
       const tr = el("tr");
@@ -338,8 +319,7 @@
       n.append(nm, el("span", "t-sub", r.platform));
       const g = el("td", "r", rp(r.gmv)); g.title = rpFull(r.gmv);
       const share = el("td", "barcell opt");
-      const b = U.bar(r.gmv / s.tot.gmv / max, PCOL[r.platform], pct(r.gmv / s.tot.gmv));
-      share.appendChild(b);
+      share.appendChild(U.bar(r.gmv / s.tot.gmv / max, PCOL[r.platform], pct(r.gmv / s.tot.gmv)));
       const dm = el("td", "r"); dm.appendChild(delta(r.mom));
       tr.append(n, el("td", "opt", r.wh), g, el("td", "r opt", num(r.orders)), el("td", "r opt", rp(r.aov, 1)), share, dm);
       tb.appendChild(tr);
@@ -355,14 +335,13 @@
   }
 
   function drawBrandScatter() {
-    const box = $("#chart-brand-sebar");
+    const box = $("#chart-brand-scatter");
     const W = box.clientWidth;
     if (!W) return;
     const rows = brandRows(U.state.month);
     const H = Math.min(330, Math.max(250, W * 0.62));
     const maxX = Math.ceil(Math.max(...rows.map((r) => r.share)) * 20) / 20 + 0.0001;
-    const ext = Math.max(0.1, ...rows.map((r) => Math.abs(r.mom || 0)));
-    const yExt = Math.ceil(ext * 20) / 20;
+    const yExt = Math.ceil(Math.max(0.1, ...rows.map((r) => Math.abs(r.mom || 0))) * 20) / 20;
     const yt = [];
     for (let v = -yExt; v <= yExt + 1e-9; v += yExt / 2) yt.push(+v.toFixed(4));
     const ylab = yt.map((v) => U.signedPct(v, 0).replace("±", ""));
@@ -370,17 +349,18 @@
     const iw = W - m.l - m.r, ih = H - m.t - m.b;
     const x = (v) => m.l + (v / maxX) * iw;
     const y = (v) => m.t + ih / 2 - (v / yExt) * (ih / 2);
-    const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": "Sebaran brand menurut porsi GMV dan pertumbuhan" });
+    const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": "Brands by GMV share and growth" });
     yt.forEach((v, i) => {
-      svg.appendChild(svgEl("line", { x1: m.l, x2: m.l + iw, y1: y(v), y2: y(v), stroke: Math.abs(v) < 1e-9 ? "var(--axis)" : "var(--grid)", "stroke-width": Math.abs(v) < 1e-9 ? 1.5 : 1 }));
+      const zero = Math.abs(v) < 1e-9;
+      svg.appendChild(svgEl("line", { x1: m.l, x2: m.l + iw, y1: y(v), y2: y(v), stroke: zero ? "var(--axis)" : "var(--grid)", "stroke-width": zero ? 1.5 : 1 }));
       svg.appendChild(svgEl("text", { x: m.l - 8, y: y(v) + 4, "text-anchor": "end" }, ylab[i]));
     });
     for (let v = 0; v <= maxX + 1e-9; v += 0.05) {
       svg.appendChild(svgEl("line", { x1: x(v), x2: x(v), y1: m.t, y2: m.t + ih, stroke: "var(--grid)" }));
-      svg.appendChild(svgEl("text", { x: x(v), y: m.t + ih + 16, "text-anchor": v === 0 ? "start" : "middle" }, idn(v * 100, 0) + "%"));
+      svg.appendChild(svgEl("text", { x: x(v), y: m.t + ih + 16, "text-anchor": v === 0 ? "start" : "middle" }, fmt(v * 100, 0) + "%"));
     }
-    svg.appendChild(svgEl("text", { x: m.l + iw / 2, y: H - 4, "text-anchor": "middle" }, "Porsi GMV bulan ini →"));
-    svg.appendChild(svgEl("text", { x: 0, y: 0, "text-anchor": "middle", transform: `translate(11 ${m.t + ih / 2}) rotate(-90)` }, "Pertumbuhan vs bulan lalu →"));
+    svg.appendChild(svgEl("text", { x: m.l + iw / 2, y: H - 4, "text-anchor": "middle" }, "Share of GMV this month →"));
+    svg.appendChild(svgEl("text", { x: 0, y: 0, "text-anchor": "middle", transform: `translate(11 ${m.t + ih / 2}) rotate(-90)` }, "Growth vs last month →"));
     const labelled = new Set(rows.slice(0, 3).map((r) => r.b));
     const byMom = rows.filter((r) => isNum(r.mom)).sort((a, b) => b.mom - a.mom);
     if (byMom.length) { labelled.add(byMom[0].b); labelled.add(byMom[byMom.length - 1].b); }
@@ -390,10 +370,9 @@
       if (!isNum(r.mom)) continue;
       const active = !st.brand || st.brand === r.b;
       const cx = x(r.share), cy = y(Math.max(-yExt, Math.min(yExt, r.mom)));
-      const g = svgEl("g", { style: "cursor:pointer", tabindex: "0", role: "button", "aria-label": r.b + ", porsi " + pct(r.share) + ", pertumbuhan " + U.signedPct(r.mom) });
+      const g = svgEl("g", { style: "cursor:pointer", tabindex: "0", role: "button", "aria-label": r.b + ", share " + pct(r.share) + ", growth " + U.signedPct(r.mom) });
       g.appendChild(svgEl("circle", { cx, cy, r: 13, fill: "transparent" }));
-      const big = st.brand === r.b;
-      g.appendChild(svgEl("circle", { cx, cy, r: big ? 7.5 : 6, fill: r.kids ? "var(--one)" : "var(--panel)", stroke: r.kids ? "var(--panel)" : "var(--one)", "stroke-width": r.kids ? 2 : 2.2, opacity: active ? 1 : 0.3 }));
+      g.appendChild(svgEl("circle", { cx, cy, r: st.brand === r.b ? 7.5 : 6, fill: r.kids ? "var(--one)" : "var(--panel)", stroke: r.kids ? "var(--panel)" : "var(--one)", "stroke-width": r.kids ? 2 : 2.2, opacity: active ? 1 : 0.3 }));
       if (labelled.has(r.b)) {
         const right = cx < m.l + iw * 0.7;
         g.appendChild(svgEl("text", { x: cx + (right ? 10 : -10), y: cy + 4, "text-anchor": right ? "start" : "end", class: "lbl-strong", opacity: active ? 1 : 0.4 }, r.b));
@@ -404,13 +383,13 @@
     box.replaceChildren(svg);
     for (const { r, g, cx, cy } of dots) {
       const show = () => {
-        const rr = svg.getBoundingClientRect(), k = rr.width / W;
+        const k = svg.getBoundingClientRect().width / W;
         U.showTip(box, cx * k, cy * k, r.b, [
           { label: "GMV", value: rp(r.gmv) },
-          { label: "Porsi GMV", value: pct(r.share) },
-          { label: "vs bulan lalu", value: U.signedPct(r.mom) },
-          { label: "Kategori", value: r.kids ? "Anak & Keluarga" : "Dewasa & Spesialis" },
-        ], "Klik untuk melihat item brand ini");
+          { label: "GMV share", value: pct(r.share) },
+          { label: "vs last month", value: U.signedPct(r.mom) },
+          { label: "Category", value: r.kids ? "Kids & Family" : "Adult & Specialty" },
+        ], "Click to see this brand's items");
       };
       g.addEventListener("pointerenter", show);
       g.addEventListener("focus", show);
@@ -444,7 +423,7 @@
     const sel = $("#item-brand");
     if (!sel.options.length) {
       const brands = D.brands.map((b) => b[0]).sort((a, b) => a.localeCompare(b));
-      sel.append(new Option("Semua brand", ""), ...brands.map((b) => new Option(b, b)));
+      sel.append(new Option("All brands", ""), ...brands.map((b) => new Option(b, b)));
     }
     sel.value = st.brand;
   }
@@ -460,17 +439,17 @@
     let rows = all.filter((r) => (!st.brand || r.brand === st.brand) && (!q || (r.code + " " + r.name).toLowerCase().includes(q)));
     const key = { gmv: ["gmv", -1], units: ["units", -1], mom: ["mom", -1], "mom-low": ["mom", 1], price: ["price", -1] }[st.itemSort];
     rows.sort((a, b) => key[1] * ((a[key[0]] ?? -1e9) - (b[key[0]] ?? -1e9)));
-    $("#item-count").textContent = rows.length === all.length ? all.length + " item" : "Menampilkan " + rows.length + " dari " + all.length + " item";
-    const tb = $("#tabel-item tbody");
+    $("#item-count").textContent = rows.length === all.length ? all.length + " items" : "Showing " + rows.length + " of " + all.length + " items";
+    const tb = $("#table-item tbody");
     tb.replaceChildren();
-    if (!rows.length) return U.emptyRow(tb, 7, "Tidak ada item yang cocok. Ubah kata kunci atau pilih Semua brand.");
+    if (!rows.length) return U.emptyRow(tb, 7, "No matching items. Change the search or pick All brands.");
     for (const r of rows) {
       const tr = el("tr");
       const c = el("td", "opt"); c.appendChild(el("span", "code", r.code));
       const n = el("td"); n.append(el("span", "t-name", r.name));
       const sb = el("span", "t-sub"); sb.append(el("span", "only-narrow", r.code + " · " + r.kind + " · "), r.brand + " · " + (CAT[r.brand] || ""));
       n.appendChild(sb);
-      const k = el("td", "opt"); k.appendChild(el("span", "kind" + (r.kind === "SKU tunggal" ? "" : " bundle"), r.kind));
+      const k = el("td", "opt"); k.appendChild(el("span", "kind" + (r.kind === "Single SKU" ? "" : " bundle"), r.kind));
       const g = el("td", "r", rp(r.gmv)); g.title = rpFull(r.gmv);
       const dm = el("td", "r"); dm.appendChild(delta(r.mom));
       tr.append(c, n, k, el("td", "r opt", num(r.units)), g, el("td", "r opt", rp(r.price, 1)), dm);
@@ -484,7 +463,7 @@
     drawBrandScatter();
     renderBrandBars();
     renderItems();
-    if (scroll && b) $("#rincian-item").scrollIntoView({ behavior: U.reduceMotion ? "auto" : "smooth", block: "start" });
+    if (scroll && b) $("#items").scrollIntoView({ behavior: U.reduceMotion ? "auto" : "smooth", block: "start" });
   }
 
   function redraw() { drawMonthly(); drawDaily(); drawHours(); drawBrandScatter(); }
@@ -494,12 +473,12 @@
     redraw();
   }
 
-  $("#toko-platform").addEventListener("change", (e) => { st.platform = e.target.value; renderStores(); });
-  $("#toko-urut").addEventListener("change", (e) => { st.tokoSort = e.target.value; renderStores(); });
+  $("#store-platform").addEventListener("change", (e) => { st.platform = e.target.value; renderStores(); });
+  $("#store-sort").addEventListener("change", (e) => { st.storeSort = e.target.value; renderStores(); });
   $("#item-brand").addEventListener("change", (e) => pickBrand(e.target.value, false));
-  $("#item-urut").addEventListener("change", (e) => { st.itemSort = e.target.value; renderItems(); });
-  $("#item-cari").addEventListener("input", (e) => { st.q = e.target.value; renderItems(); });
+  $("#item-sort").addEventListener("change", (e) => { st.itemSort = e.target.value; renderItems(); });
+  $("#item-search").addEventListener("input", (e) => { st.q = e.target.value; renderItems(); });
 
   U.onMonth(() => renderAll());
-  window.SELLOUT_PAGE = { render: renderAll, redraw, campaignDays, dayTotal };
+  window.SELLOUT_PAGE = { render: renderAll, redraw, campaignDays, dayTotal, PCOL };
 })();

@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Dasbor Sell-out & Forecast</title>
+<title>E-commerce Analytics Dashboard</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Dasbor portofolio: sell-out e-commerce produk kesehatan per platform, toko, brand, dan SKU, serta forecast kebutuhan stok per gudang. Semua data dummy.">
-<meta property="og:title" content="Dasbor Sell-out & Forecast E-commerce 2026">
-<meta property="og:description" content="Sell-out marketplace, forecast vs aktual per SKU × gudang, dan rencana kirim karton. Data dummy untuk portofolio.">
+<meta name="description" content="Portfolio dashboard for a fictional consumer-health brand selling on Indonesian marketplaces: sell-out, store traffic, campaign days and warehouse stock forecast. All data is dummy.">
+<meta property="og:title" content="E-commerce Analytics Dashboard 2026">
+<meta property="og:description" content="Sell-out, store traffic, twin-date campaigns with voucher tracking, and SKU × warehouse forecasting. Built with dummy data for a portfolio.">
 <meta property="og:image" content="assets/preview-sellout.png">
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -25,97 +25,96 @@
         <svg viewBox="0 0 48 48" width="40" height="40"><rect x="6" y="26" width="8" height="14" rx="2" fill="#0f7b6c"/><rect x="20" y="17" width="8" height="23" rx="2" fill="#0f7b6c"/><rect x="34" y="8" width="8" height="32" rx="2" fill="#0f7b6c"/><path d="M5 22 L18 13 L28 16 L43 5" fill="none" stroke="#eb6834" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <div>
-        <div class="eyebrow">Studi kasus portofolio · E-commerce produk kesehatan · 2026</div>
-        <h1 id="page-title">Sell-out E-commerce 2026</h1>
+        <div class="eyebrow">Portfolio case study · Consumer-health e-commerce · 2026</div>
+        <h1 id="page-title">E-commerce Sell-out 2026</h1>
       </div>
     </div>
-    <nav class="tabs" role="tablist" aria-label="Halaman dasbor">
+    <nav class="tabs" role="tablist" aria-label="Dashboard pages">
       <a class="tab" role="tab" id="tab-sellout" href="#sellout" aria-controls="page-sellout" aria-selected="true"><span class="tab-no">01</span>Sell-out</a>
-      <a class="tab" role="tab" id="tab-forecast" href="#forecast" aria-controls="page-forecast" aria-selected="false"><span class="tab-no">02</span>Forecast & stok gudang</a>
+      <a class="tab" role="tab" id="tab-traffic" href="#traffic" aria-controls="page-traffic" aria-selected="false"><span class="tab-no">02</span>Traffic</a>
+      <a class="tab" role="tab" id="tab-campaigns" href="#campaigns" aria-controls="page-campaigns" aria-selected="false"><span class="tab-no">03</span>Campaign days</a>
+      <a class="tab" role="tab" id="tab-forecast" href="#forecast" aria-controls="page-forecast" aria-selected="false"><span class="tab-no">04</span>Forecast &amp; stock</a>
     </nav>
-    <p class="hero-sub" data-for="sellout">Penjualan bersih dari ekspor pesanan TikTok Shop, Shopee, Tokopedia, Lazada, dan Blibli: per platform, toko, brand, dan item.</p>
-    <p class="hero-sub" data-for="forecast">Bundle dan multipack dipecah ke SKU fisik, lalu forecast tiap SKU × gudang diuji terhadap penjualan aktual dan dijadikan rencana kirim karton.</p>
+    <p class="hero-sub" data-for="sellout">Net sales from TikTok Shop, Shopee, Tokopedia, Lazada and Blibli order exports, by platform, store, brand and item.</p>
+    <p class="hero-sub" data-for="traffic">Daily store traffic reports: visitors, product clicks, ads and conversion, read next to the orders they produced.</p>
+    <p class="hero-sub" data-for="campaigns">Twin-date and payday sales tracked hour by hour against the previous campaign, with store voucher usage and platform rebates.</p>
+    <p class="hero-sub" data-for="forecast">Bundles and multipacks are exploded into physical SKUs, each SKU × warehouse forecast is tested against actual sales, then turned into a carton shipment plan.</p>
     <div class="hero-bar">
-      <label class="month-pick" for="periode">Periode
-        <select id="periode" aria-label="Pilih bulan"></select>
+      <label class="month-pick" for="period">Period
+        <select id="period" aria-label="Choose month"></select>
       </label>
-      <span class="chip"><span class="dot" aria-hidden="true"></span><span id="data-chip">Memuat data…</span></span>
+      <span class="chip"><span class="dot" aria-hidden="true"></span><span id="data-chip">Loading data…</span></span>
     </div>
   </div>
 </header>
 
+<!-- ============================================================ 01 SELL-OUT -->
 <main id="page-sellout" class="page" role="tabpanel" aria-labelledby="tab-sellout">
   <div class="inner gutter">
     <p class="lede" id="so-lede"></p>
+    <section class="section" aria-label="Sell-out summary"><div class="kpis" id="so-kpis"></div></section>
+    <section class="section" aria-label="Notes for this month"><div class="notes" id="so-notes"></div></section>
 
-    <section class="section" aria-label="Ringkasan sell-out">
-      <div class="kpis" id="so-kpis"></div>
-    </section>
-
-    <section class="section" aria-label="Temuan bulan ini">
-      <div class="notes" id="so-notes"></div>
-    </section>
-
-    <section class="section" id="tren">
+    <section class="section" id="trend">
       <div class="section-head">
-        <h2>Tren penjualan</h2>
-        <p>GMV pesanan valid, tanpa pesanan batal dan retur</p>
+        <h2>Sales trend</h2>
+        <p>GMV of valid orders, excluding cancelled and returned orders</p>
       </div>
       <div class="grid2">
         <div class="card">
-          <h3>GMV per platform, Mei–September</h3>
+          <h3>GMV by platform, May–September</h3>
           <div class="legend" id="leg-platform"></div>
-          <div class="chart" id="chart-bulanan"></div>
+          <div class="chart" id="chart-monthly"></div>
         </div>
         <div class="card">
-          <h3 id="harian-title">GMV harian</h3>
-          <div class="legend"><span><span class="key" style="background:var(--camp)"></span>Hari kampanye (tanggal kembar, payday)</span><span><span class="key" style="background:var(--one-soft)"></span>Hari biasa</span><span><span class="key line"></span>Rata-rata harian</span></div>
-          <div class="chart" id="chart-harian"></div>
+          <h3 id="daily-title">Daily GMV</h3>
+          <div class="legend"><span><span class="key" style="background:var(--camp)"></span>Campaign day (twin date, payday)</span><span><span class="key" style="background:var(--one-soft)"></span>Ordinary day</span><span><span class="key line"></span>Daily average</span></div>
+          <div class="chart" id="chart-daily"></div>
         </div>
       </div>
     </section>
 
     <section class="section" id="platform">
       <div class="section-head">
-        <h2>Platform & toko</h2>
+        <h2>Platforms &amp; stores</h2>
         <p id="platform-pos"></p>
       </div>
       <div class="grid2">
         <div class="card">
-          <h3>Porsi GMV per platform</h3>
+          <h3>GMV share by platform</h3>
           <div class="plat-list" id="plat-list"></div>
         </div>
         <div class="card">
-          <h3>Jam belanja</h3>
-          <p class="note">Porsi GMV per jam pesanan dibuat (WIB). Flash sale tengah malam di hari kampanye mendorong jam 00.</p>
-          <div class="chart" id="chart-jam"></div>
+          <h3>Shopping hours</h3>
+          <p class="note">Share of GMV by the hour the order was placed (WIB). Midnight flash sales on campaign days lift hour 00.</p>
+          <div class="chart" id="chart-hours"></div>
         </div>
       </div>
       <div class="toolbar">
-        <label class="field" for="toko-platform">Platform
-          <select id="toko-platform"></select>
+        <label class="field" for="store-platform">Platform
+          <select id="store-platform"></select>
         </label>
-        <label class="field" for="toko-urut">Urutkan
-          <select id="toko-urut">
-            <option value="gmv">GMV terbesar</option>
-            <option value="mom">Pertumbuhan tertinggi</option>
-            <option value="mom-low">Pertumbuhan terendah</option>
-            <option value="aov">Nilai pesanan rata-rata tertinggi</option>
+        <label class="field" for="store-sort">Sort
+          <select id="store-sort">
+            <option value="gmv">Highest GMV</option>
+            <option value="mom">Fastest growth</option>
+            <option value="mom-low">Slowest growth</option>
+            <option value="aov">Highest order value</option>
           </select>
         </label>
-        <span class="count" id="toko-count"></span>
+        <span class="count" id="store-count"></span>
       </div>
       <div class="table-box">
-        <table id="tabel-toko">
+        <table id="table-store">
           <thead>
             <tr>
-              <th>Toko</th>
-              <th class="opt">Gudang</th>
+              <th>Store</th>
+              <th class="opt">Warehouse</th>
               <th class="r">GMV</th>
-              <th class="r opt">Pesanan</th>
-              <th class="r opt">Rata-rata pesanan</th>
-              <th class="opt">Porsi GMV</th>
-              <th class="r">vs bulan lalu</th>
+              <th class="r opt">Orders</th>
+              <th class="r opt">Avg. order value</th>
+              <th class="opt">GMV share</th>
+              <th class="r">vs last month</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -125,58 +124,58 @@
 
     <section class="section" id="brand">
       <div class="section-head">
-        <h2>Brand</h2>
-        <p>Klik titik atau batang untuk melihat item brand itu</p>
+        <h2>Brands</h2>
+        <p>Click a dot or a bar to see that brand's items</p>
       </div>
       <div class="grid2">
         <div class="card">
-          <h3>Kontribusi dibanding pertumbuhan</h3>
-          <p class="note">Satu titik satu brand. Kanan berarti porsi GMV besar, atas berarti tumbuh dari bulan lalu.</p>
-          <div class="legend"><span><span class="key dot-fill"></span>Anak & Keluarga</span><span><span class="key dot-ring"></span>Dewasa & Spesialis</span></div>
-          <div class="chart" id="chart-brand-sebar"></div>
+          <h3>Contribution vs growth</h3>
+          <p class="note">One dot per brand. Further right means a bigger share of GMV, higher up means it grew from last month.</p>
+          <div class="legend"><span><span class="key dot-fill"></span>Kids &amp; Family</span><span><span class="key dot-ring"></span>Adult &amp; Specialty</span></div>
+          <div class="chart" id="chart-brand-scatter"></div>
         </div>
         <div class="card">
-          <h3>GMV per brand</h3>
-          <div class="legend"><span><span class="key" style="background:var(--one)"></span>Anak & Keluarga</span><span><span class="key dot-ring" style="border-radius:3px"></span>Dewasa & Spesialis</span></div>
+          <h3>GMV by brand</h3>
+          <div class="legend"><span><span class="key" style="background:var(--one)"></span>Kids &amp; Family</span><span><span class="key dot-ring" style="border-radius:3px"></span>Adult &amp; Specialty</span></div>
           <div class="brand-bars" id="brand-bars"></div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="rincian-item">
+    <section class="section" id="items">
       <div class="section-head">
-        <h2>Rincian item</h2>
-        <p>Item jual apa adanya di marketplace, termasuk multipack dan bundle</p>
+        <h2>Items</h2>
+        <p>Sellable items as listed on the marketplaces, including multipacks and bundles</p>
       </div>
       <div class="toolbar">
-        <label class="field" for="item-cari">Cari
-          <input id="item-cari" type="search" placeholder="Kode atau nama item" autocomplete="off">
+        <label class="field" for="item-search">Search
+          <input id="item-search" type="search" placeholder="Item code or name" autocomplete="off">
         </label>
         <label class="field" for="item-brand">Brand
           <select id="item-brand"></select>
         </label>
-        <label class="field" for="item-urut">Urutkan
-          <select id="item-urut">
-            <option value="gmv">GMV terbesar</option>
-            <option value="units">Unit terbanyak</option>
-            <option value="mom">Pertumbuhan tertinggi</option>
-            <option value="mom-low">Pertumbuhan terendah</option>
-            <option value="price">Harga per unit tertinggi</option>
+        <label class="field" for="item-sort">Sort
+          <select id="item-sort">
+            <option value="gmv">Highest GMV</option>
+            <option value="units">Most units</option>
+            <option value="mom">Fastest growth</option>
+            <option value="mom-low">Slowest growth</option>
+            <option value="price">Highest price per unit</option>
           </select>
         </label>
         <span class="count" id="item-count"></span>
       </div>
       <div class="table-box">
-        <table id="tabel-item">
+        <table id="table-item">
           <thead>
             <tr>
-              <th class="opt">Kode</th>
+              <th class="opt">Code</th>
               <th>Item</th>
-              <th class="opt">Jenis</th>
-              <th class="r opt">Unit</th>
+              <th class="opt">Type</th>
+              <th class="r opt">Units</th>
               <th class="r">GMV</th>
-              <th class="r opt">Harga rata-rata</th>
-              <th class="r">vs bulan lalu</th>
+              <th class="r opt">Avg. price</th>
+              <th class="r">vs last month</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -186,91 +185,254 @@
   </div>
 </main>
 
-<main id="page-forecast" class="page" role="tabpanel" aria-labelledby="tab-forecast" hidden>
+<!-- ============================================================ 02 TRAFFIC -->
+<main id="page-traffic" class="page" role="tabpanel" aria-labelledby="tab-traffic" hidden>
   <div class="inner gutter">
-    <p class="lede" id="fc-lede"></p>
+    <p class="lede" id="tr-lede"></p>
+    <section class="section" aria-label="Traffic summary"><div class="kpis" id="tr-kpis"></div></section>
 
-    <section class="section" aria-label="Ringkasan forecast">
-      <div class="kpis" id="fc-kpis"></div>
-    </section>
-
-    <section class="section" id="akurasi">
+    <section class="section" id="funnel">
       <div class="section-head">
-        <h2>Akurasi forecast</h2>
-        <p id="fc-metode"></p>
+        <h2>From visit to order</h2>
+        <p id="tr-funnel-pos"></p>
       </div>
       <div class="grid2">
         <div class="card">
-          <h3>Forecast dibanding aktual, unit SKU per bulan</h3>
-          <div class="legend"><span><span class="key" style="background:var(--one)"></span>Aktual</span><span><span class="key tick"></span>Forecast</span></div>
-          <div class="chart" id="chart-fc-bulan"></div>
+          <h3>Store funnel</h3>
+          <p class="note">All stores combined. Each step shows how many of the previous step made it through.</p>
+          <div class="funnel" id="tr-funnel"></div>
         </div>
         <div class="card">
-          <h3>Akurasi per gudang</h3>
-          <p class="note">Akurasi = 1 − WAPE. Makin pekat warnanya, makin rendah akurasinya. Klik baris untuk menyaring tabel SKU.</p>
+          <h3>Conversion rate by platform, May–September</h3>
+          <p class="note">Orders ÷ visitors.</p>
+          <div class="legend" id="leg-platform-tr"></div>
+          <div class="chart" id="chart-cvr"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="daily-traffic">
+      <div class="section-head">
+        <h2>Day by day</h2>
+        <p>Campaign days bring more visitors and convert better</p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h3 id="tr-daily-title">Daily visitors and conversion</h3>
+          <div class="legend"><span><span class="key" style="background:var(--camp)"></span>Campaign day</span><span><span class="key" style="background:var(--one-soft)"></span>Ordinary day</span></div>
+          <div class="chart" id="chart-visitors"></div>
+          <div class="chart" id="chart-daily-cvr"></div>
+        </div>
+        <div class="card">
+          <h3>TikTok Shop GMV by content source</h3>
+          <p class="note">Where TikTok Shop buyers came from. LIVE sessions keep growing their share.</p>
+          <div class="plat-list" id="tt-source"></div>
+          <div class="chart" id="chart-live-share"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="store-traffic">
+      <div class="section-head">
+        <h2>Store traffic</h2>
+        <p>Conversion and ads by store · growth is in visitors</p>
+      </div>
+      <div class="toolbar">
+        <label class="field" for="trs-platform">Platform
+          <select id="trs-platform"></select>
+        </label>
+        <label class="field" for="trs-sort">Sort
+          <select id="trs-sort">
+            <option value="visitors">Most visitors</option>
+            <option value="cvr">Highest conversion</option>
+            <option value="cvr-low">Lowest conversion</option>
+            <option value="ads">Highest share from ads</option>
+          </select>
+        </label>
+        <span class="count" id="trs-count"></span>
+      </div>
+      <div class="table-box">
+        <table id="table-traffic">
+          <thead>
+            <tr>
+              <th>Store</th>
+              <th class="r">Visitors</th>
+              <th class="r opt">Product clicks</th>
+              <th class="r opt">Orders</th>
+              <th class="opt">Conversion</th>
+              <th class="r opt">Ad CTR</th>
+              <th class="r opt">Visits from ads</th>
+              <th class="r">vs last month</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- ============================================================ 03 CAMPAIGNS -->
+<main id="page-campaigns" class="page" role="tabpanel" aria-labelledby="tab-campaigns" hidden>
+  <div class="inner gutter">
+    <div class="seg" id="camp-kind" role="tablist" aria-label="Campaign type"></div>
+    <p class="lede" id="cp-lede"></p>
+    <section class="section" aria-label="Campaign summary"><div class="kpis" id="cp-kpis"></div></section>
+
+    <section class="section" id="pacing">
+      <div class="section-head">
+        <h2>Hour by hour</h2>
+        <p>Cumulative GMV of valid orders against the previous campaign of the same type</p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h3 id="pace-title">Pacing</h3>
+          <div class="toolbar tight">
+            <label class="field" for="pace-channel">Channel
+              <select id="pace-channel"></select>
+            </label>
+          </div>
+          <div class="legend" id="pace-legend"></div>
+          <div class="chart" id="chart-pacing"></div>
+        </div>
+        <div class="card">
+          <h3>Checkpoint report</h3>
+          <p class="note">The update the team posts during the day: GMV so far, against the same hour and the full day of the previous campaign.</p>
+          <div class="seg small" id="checkpoints" role="tablist" aria-label="Checkpoint"></div>
           <div class="table-box flat">
-            <table class="heat-table" id="tabel-gudang"></table>
+            <table class="mini-table" id="table-checkpoint"></table>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="sku-gudang">
+    <section class="section" id="history">
       <div class="section-head">
-        <h2>SKU × gudang</h2>
-        <p>Selisih forecast terhadap aktual. Biru: forecast kurang. Merah: forecast lebih.</p>
+        <h2>Campaign history</h2>
+        <p>Full-day GMV of every twin date and payday since February</p>
+      </div>
+      <div class="card">
+        <div class="legend"><span><span class="key" style="background:var(--camp)"></span>Twin date</span><span><span class="key" style="background:var(--one)"></span>Payday (25th)</span><span><span class="key tick"></span>Ordinary day average</span></div>
+        <div class="chart" id="chart-history"></div>
+      </div>
+    </section>
+
+    <section class="section" id="vouchers">
+      <div class="section-head">
+        <h2>Store vouchers</h2>
+        <p id="voucher-sub"></p>
+      </div>
+      <div class="table-box">
+        <table id="table-voucher">
+          <thead>
+            <tr>
+              <th>Voucher</th>
+              <th class="opt">Channel</th>
+              <th class="r opt">Min. spend</th>
+              <th class="r">Discount</th>
+              <th>Used / quota</th>
+              <th class="r opt">Sold out at</th>
+              <th class="r opt">Cost</th>
+              <th class="r">GMV per Rp1 of cost</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Voucher cost after platform rebates</h3>
+        <p class="note">Platforms co-fund part of the store vouchers on campaign days and pay it back as a rebate.</p>
+        <div class="table-box flat">
+          <table class="mini-table" id="table-rebate"></table>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- ============================================================ 04 FORECAST -->
+<main id="page-forecast" class="page" role="tabpanel" aria-labelledby="tab-forecast" hidden>
+  <div class="inner gutter">
+    <p class="lede" id="fc-lede"></p>
+    <section class="section" aria-label="Forecast summary"><div class="kpis" id="fc-kpis"></div></section>
+
+    <section class="section" id="accuracy">
+      <div class="section-head">
+        <h2>Forecast accuracy</h2>
+        <p id="fc-method"></p>
       </div>
       <div class="grid2">
         <div class="card">
-          <h3>Forecast dibanding aktual per SKU × gudang</h3>
-          <p class="note">Skala logaritmik. Titik di garis berarti tepat, pita abu-abu = toleransi ±25%. Titik bercincin = SKU yang sedang dibuka; klik titik lain untuk berganti.</p>
-          <div class="legend"><span><span class="key" style="background:var(--under)"></span>Forecast kurang &gt;25%</span><span><span class="key" style="background:var(--over)"></span>Forecast lebih &gt;25%</span><span><span class="key" style="background:var(--axis)"></span>Dalam toleransi</span></div>
-          <div class="chart" id="chart-fc-sebar"></div>
+          <h3>Forecast vs actual, SKU units per month</h3>
+          <div class="legend"><span><span class="key" style="background:var(--one)"></span>Actual</span><span><span class="key tick"></span>Forecast</span></div>
+          <div class="chart" id="chart-fc-month"></div>
+        </div>
+        <div class="card">
+          <h3>Accuracy by warehouse</h3>
+          <p class="note">Accuracy = 1 − WAPE. The darker the cell, the lower the accuracy. Click a row to filter the SKU table.</p>
+          <div class="table-box flat">
+            <table class="heat-table" id="table-wh"></table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="sku-warehouse">
+      <div class="section-head">
+        <h2>SKU × warehouse</h2>
+        <p>Forecast error against actual. Blue: forecast too low. Red: forecast too high.</p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h3>Forecast vs actual per SKU × warehouse</h3>
+          <p class="note">Log scale. Dots on the line are exact, the grey band is the ±25% tolerance. Ringed dots belong to the SKU on the right; click another dot to switch.</p>
+          <div class="legend"><span><span class="key" style="background:var(--under)"></span>Forecast &gt;25% too low</span><span><span class="key" style="background:var(--over)"></span>Forecast &gt;25% too high</span><span><span class="key" style="background:var(--axis)"></span>Within tolerance</span></div>
+          <div class="chart" id="chart-fc-scatter"></div>
         </div>
         <div class="card profile" id="sku-profile">
-          <label class="field select-unit" for="sku-pilih">SKU
-            <select id="sku-pilih"></select>
+          <label class="field select-unit" for="sku-pick">SKU
+            <select id="sku-pick"></select>
           </label>
           <div id="sku-profile-body"></div>
         </div>
       </div>
       <div class="toolbar">
-        <label class="field" for="heat-gudang">Gudang
-          <select id="heat-gudang"></select>
+        <label class="field" for="heat-wh">Warehouse
+          <select id="heat-wh"></select>
         </label>
-        <label class="field" for="heat-urut">Urutkan
-          <select id="heat-urut">
-            <option value="err">Selisih terbesar</option>
-            <option value="vol">Volume aktual terbesar</option>
-            <option value="code">Kode SKU</option>
+        <label class="field" for="heat-sort">Sort
+          <select id="heat-sort">
+            <option value="err">Largest error</option>
+            <option value="vol">Highest actual volume</option>
+            <option value="code">SKU code</option>
           </select>
         </label>
         <span class="count" id="heat-count"></span>
       </div>
       <div class="table-box">
-        <table class="sku-heat" id="tabel-heat">
+        <table class="sku-heat" id="table-heat">
           <thead></thead>
           <tbody></tbody>
         </table>
       </div>
     </section>
 
-    <section class="section" id="rencana">
+    <section class="section" id="plan">
       <div class="section-head">
-        <h2 id="rencana-title">Rencana kirim</h2>
-        <p id="rencana-sub"></p>
+        <h2 id="plan-title">Shipment plan</h2>
+        <p id="plan-sub"></p>
       </div>
-      <div class="wh-strip" id="wh-strip" role="tablist" aria-label="Pilih gudang"></div>
+      <div class="wh-strip" id="wh-strip" role="tablist" aria-label="Choose warehouse"></div>
       <div class="table-box">
-        <table id="tabel-rencana">
+        <table id="table-plan">
           <thead>
             <tr>
               <th>SKU</th>
-              <th class="r opt">Rata-rata 3 bln</th>
+              <th class="r opt">3-month avg.</th>
               <th class="r">Forecast</th>
-              <th class="r opt">+ Stok pengaman</th>
-              <th class="r opt">Isi per karton</th>
-              <th class="r">Karton dikirim</th>
+              <th class="r opt">+ Safety stock</th>
+              <th class="r opt">Units per carton</th>
+              <th class="r">Cartons to ship</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -278,22 +440,22 @@
       </div>
     </section>
 
-    <section class="section" id="alur">
+    <section class="section" id="pipeline">
       <div class="section-head">
-        <h2>Alur pengolahan data</h2>
-        <p id="alur-sub"></p>
+        <h2>How the data is processed</h2>
+        <p id="flow-sub"></p>
       </div>
       <ol class="flow" id="flow"></ol>
       <div class="grid2">
         <div class="card">
-          <h3>Contoh pemecahan item ke SKU fisik</h3>
-          <p class="note">Satu item jual bisa berisi beberapa SKU. Stok gudang dihitung dari SKU fisiknya, bukan dari item jual.</p>
+          <h3>Exploding items into physical SKUs</h3>
+          <p class="note">One sellable item can hold several SKUs. Warehouse stock is counted in physical SKUs, not in sellable items.</p>
           <div class="table-box flat">
-            <table class="conv-table" id="tabel-convert"></table>
+            <table class="conv-table" id="table-convert"></table>
           </div>
         </div>
         <div class="card">
-          <h3>Cara forecast dihitung</h3>
+          <h3>How the forecast works</h3>
           <div class="method" id="method"></div>
         </div>
       </div>
@@ -303,15 +465,17 @@
 
 <footer>
   <div class="inner gutter">
-    <p><b>Data dummy.</b> Semua nama brand, SKU, toko, nomor pesanan, dan angka di dasbor ini fiktif, dibuat dengan generator acak. Struktur dan alur kerjanya meniru dasbor yang saya kerjakan saat magang sebagai Data Analyst di perusahaan consumer health.</p>
+    <p><b>Dummy data.</b> Every brand, SKU, store, order number, voucher code and figure on this dashboard is fictional and comes from a random generator. The structure and workflow mirror the reporting I did as a Data Analyst intern at a consumer-health company.</p>
     <p id="stamp"></p>
-    <p>Dibuat dengan HTML, CSS, dan JavaScript tanpa library grafik · pipeline data dengan Python (pandas) · <a href="https://github.com/andinasywan/ecommerce-analytics-dashboard">kode di GitHub</a></p>
+    <p>Built with plain HTML, CSS and JavaScript, no chart library · data pipeline in Python (pandas) · <a href="https://github.com/andinasywan/ecommerce-analytics-dashboard">source on GitHub</a></p>
   </div>
 </footer>
 
 <script src="data.js"></script>
 <script src="js/common.js"></script>
 <script src="js/sellout.js"></script>
+<script src="js/traffic.js"></script>
+<script src="js/campaigns.js"></script>
 <script src="js/forecast.js"></script>
 <script src="js/app.js"></script>
 </body>

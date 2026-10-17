@@ -1,40 +1,43 @@
-/* Shared helpers: formatting, DOM/SVG builders, tooltip, ticks, shared state. */
+/* Shared helpers: formatting, DOM/SVG builders, tooltip, ticks, shared period state. */
 (function () {
   "use strict";
   const NS = "http://www.w3.org/2000/svg";
-  const BULAN = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-  const BLN3 = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+  const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const MON3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const isNum = (v) => typeof v === "number" && isFinite(v);
-  const idn = (v, d = 0) => v.toLocaleString("id-ID", { minimumFractionDigits: d, maximumFractionDigits: d });
+  const fmt = (v, d = 0) => v.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
 
-  // Rupiah, short form: rb (ribu), jt (juta), M (miliar)
+  // Rupiah, short form: K (thousand), M (million), B (billion)
   function rp(v, d) {
     if (!isNum(v)) return "–";
     const a = Math.abs(v);
-    if (a >= 1e9) return "Rp " + idn(v / 1e9, d == null ? 2 : d) + " M";
-    if (a >= 1e6) return "Rp " + idn(v / 1e6, d == null ? (a >= 1e8 ? 0 : 1) : d) + " jt";
-    if (a >= 1e3) return "Rp " + idn(v / 1e3, d == null ? 0 : d) + " rb";
-    return "Rp " + idn(v, 0);
+    if (a >= 1e9) return "Rp " + fmt(v / 1e9, d == null ? 2 : d) + "B";
+    if (a >= 1e6) return "Rp " + fmt(v / 1e6, d == null ? (a >= 1e8 ? 0 : 1) : d) + "M";
+    if (a >= 1e3) return "Rp " + fmt(v / 1e3, d == null ? 0 : d) + "K";
+    return "Rp " + fmt(v, 0);
   }
-  const rpFull = (v) => (isNum(v) ? "Rp " + idn(v, 0) : "–");
-  const num = (v) => (isNum(v) ? idn(v, 0) : "–");
-  const pct = (v, d = 1) => (isNum(v) ? idn(v * 100, d) + "%" : "–");
-  const signedPct = (v, d = 1) => (isNum(v) ? (v > 0 ? "+" : v < 0 ? "−" : "±") + idn(Math.abs(v) * 100, d) + "%" : "–");
+  const rpFull = (v) => (isNum(v) ? "Rp " + fmt(v, 0) : "–");
+  const num = (v) => (isNum(v) ? fmt(v, 0) : "–");
+  const pct = (v, d = 1) => (isNum(v) ? fmt(v * 100, d) + "%" : "–");
+  const signedPct = (v, d = 1) => (isNum(v) ? (v > 0 ? "+" : v < 0 ? "−" : "±") + fmt(Math.abs(v) * 100, d) + "%" : "–");
   function axisRp(v) {
     if (v === 0) return "0";
-    if (Math.abs(v) >= 1e9) return idn(v / 1e9, v % 1e9 ? 1 : 0) + " M";
-    if (Math.abs(v) >= 1e6) return idn(v / 1e6, 0) + " jt";
-    if (Math.abs(v) >= 1e3) return idn(v / 1e3, 0) + " rb";
-    return idn(v, 0);
+    const a = Math.abs(v);
+    if (a >= 1e9) return fmt(v / 1e9, v % 1e9 ? 1 : 0) + "B";
+    if (a >= 1e6) return fmt(v / 1e6, 0) + "M";
+    if (a >= 1e3) return fmt(v / 1e3, 0) + "K";
+    return fmt(v, 0);
   }
   function axisNum(v) {
-    if (Math.abs(v) >= 1e6) return idn(v / 1e6, 1) + " jt";
-    if (Math.abs(v) >= 1e3) return idn(v / 1e3, v % 1e3 ? 1 : 0) + " rb";
-    return idn(v, 0);
+    const a = Math.abs(v);
+    if (a >= 1e6) return fmt(v / 1e6, v % 1e6 ? 1 : 0) + "M";
+    if (a >= 1e3) return fmt(v / 1e3, v % 1e3 ? 1 : 0) + "K";
+    return fmt(v, 0);
   }
   const monthNo = (key) => +key.slice(5, 7);
-  const monthName = (key) => BULAN[monthNo(key) - 1] + " " + key.slice(0, 4);
-  const monthShort = (key) => BLN3[monthNo(key) - 1];
+  const monthName = (key) => MONTHS[monthNo(key) - 1] + " " + key.slice(0, 4);
+  const monthOnly = (key) => MONTHS[monthNo(key) - 1];
+  const monthShort = (key) => MON3[monthNo(key) - 1];
   function prevKey(key, k = 1) {
     let y = +key.slice(0, 4), m = monthNo(key) - k;
     while (m < 1) { m += 12; y -= 1; }
@@ -58,9 +61,9 @@
     const s = el("span", "delta");
     if (!isNum(v)) { s.classList.add("flat"); s.textContent = opts.empty || "–"; return s; }
     const d = opts.d == null ? 1 : opts.d;
-    if (Math.abs(v) < 0.0005) { s.classList.add("flat"); s.textContent = "0%"; return s; }
+    if (Math.abs(v) < (opts.points ? 0.05 : 0.0005)) { s.classList.add("flat"); s.textContent = opts.points ? "no change" : "0%"; return s; }
     s.classList.add(v > 0 ? "up" : "down");
-    s.textContent = idn(Math.abs(v) * (opts.points ? 1 : 100), d) + (opts.points ? " poin" : "%");
+    s.textContent = fmt(Math.abs(v) * (opts.points ? 1 : 100), d) + (opts.points ? " pts" : "%");
     return s;
   }
   function bar(v, color, label) {
@@ -73,17 +76,14 @@
     wrap.append(track, el("span", "val", label != null ? label : pct(v)));
     return wrap;
   }
-  // bar path with rounded data end, anchored at the baseline
+  // bar with a rounded data end, anchored at the baseline
   function barPath(x0, x1, yTop, yBase, r = 4) {
     const h = yBase - yTop;
     if (h <= 0.5) return `M${x0},${yBase}H${x1}V${yBase - 0.5}H${x0}Z`;
     r = Math.min(r, (x1 - x0) / 2, h);
     return `M${x0},${yBase}V${yTop + r}Q${x0},${yTop} ${x0 + r},${yTop}H${x1 - r}Q${x1},${yTop} ${x1},${yTop + r}V${yBase}Z`;
   }
-  // stacked segment: only the top one gets the rounded end
-  function rectPath(x0, x1, yTop, yBase) {
-    return `M${x0},${yBase}V${yTop}H${x1}V${yBase}Z`;
-  }
+  function rectPath(x0, x1, yTop, yBase) { return `M${x0},${yBase}V${yTop}H${x1}V${yBase}Z`; }
 
   // tooltip
   function tipFor(box) {
@@ -124,7 +124,6 @@
     for (let v = 0; v <= max + step * 0.999; v += step) out.push(+v.toFixed(6));
     return out;
   }
-  // width of the widest tick label, measured in a throwaway svg inside box
   function labelWidth(box, labels) {
     const probe = svgEl("svg", { width: 0, height: 0, style: "position:absolute;visibility:hidden" });
     box.appendChild(probe);
@@ -157,31 +156,48 @@
     for (const p of parts) s.appendChild(typeof p === "string" ? document.createTextNode(p) : p);
     return s;
   }
-  // sparkline: faint area + line, emphasized selected point
-  function spark(values, selIdx, labels) {
+  // sparkline: faint area + line, emphasised selected point
+  function spark(values, selIdx, labels, fmtFn = axisNum) {
     const W = 200, H = 30, pad = 4;
     const max = Math.max(...values), min = Math.min(...values);
     const span = max - min || 1;
     const x = (i) => pad + (i / (values.length - 1)) * (W - pad * 2);
     const y = (v) => H - 3 - ((v - min) / span) * (H - 8);
     const svg = svgEl("svg", { class: "spark", viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: "none", role: "img",
-      "aria-label": "Tren " + labels.map((l, i) => l + " " + axisNum(values[i])).join(", ") });
+      "aria-label": "Trend " + labels.map((l, i) => l + " " + fmtFn(values[i])).join(", ") });
     const line = values.map((v, i) => (i ? "L" : "M") + x(i).toFixed(1) + "," + y(v).toFixed(1)).join("");
     svg.appendChild(svgEl("path", { d: line + `L${x(values.length - 1)},${H}L${x(0)},${H}Z`, fill: "var(--one)", "fill-opacity": 0.1 }));
     svg.appendChild(svgEl("path", { d: line, fill: "none", stroke: "var(--one)", "stroke-width": 2, "vector-effect": "non-scaling-stroke", "stroke-linejoin": "round" }));
-    // the dot is drawn in HTML space so it stays round with preserveAspectRatio none
     const wrap = el("div");
     wrap.style.position = "relative";
     wrap.appendChild(svg);
     const dot = el("span");
     Object.assign(dot.style, { position: "absolute", width: "8px", height: "8px", borderRadius: "50%", background: "var(--one)",
-      boxShadow: "0 0 0 2px var(--panel)", left: `calc(${(x(selIdx) / W) * 100}% - 4px)`, top: `calc(${(y(values[selIdx]) / H) * 30}px + 4px - 4px)` });
+      boxShadow: "0 0 0 2px var(--panel)", left: `calc(${(x(selIdx) / W) * 100}% - 4px)`, top: `${y(values[selIdx])}px` });
     wrap.appendChild(dot);
     return wrap;
   }
-  function cssVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
   function emptyRow(tb, cols, text) {
     const tr = el("tr"); const td = el("td", "empty", text); td.colSpan = cols; tr.appendChild(td); tb.appendChild(tr);
+  }
+  // campaign days of a month: twin date, payday, and Independence Day in August
+  function campaignDays(key, daysInMonth) {
+    const mo = monthNo(key);
+    const out = [{ day: mo, label: mo + "." + mo, kind: "twin" }, { day: 25, label: "Payday", kind: "payday" }];
+    if (mo === 8) out.push({ day: 17, label: "Aug 17", kind: "holiday" });
+    return out.filter((c) => !daysInMonth || c.day <= daysInMonth);
+  }
+  // segmented control
+  function seg(box, options, value, onPick) {
+    box.replaceChildren();
+    for (const [val, label] of options) {
+      const b = el("button", "seg-btn", label);
+      b.type = "button";
+      b.setAttribute("role", "tab");
+      b.setAttribute("aria-selected", val === value ? "true" : "false");
+      b.addEventListener("click", () => onPick(val));
+      box.appendChild(b);
+    }
   }
 
   const D = window.DASH;
@@ -189,8 +205,8 @@
   function setMonth(m) { state.month = m; state.listeners.forEach((f) => f(m)); }
   function onMonth(f) { state.listeners.push(f); }
 
-  window.U = { NS, BULAN, BLN3, isNum, idn, rp, rpFull, num, pct, signedPct, axisRp, axisNum, monthName, monthShort, monthNo, prevKey,
-    growth, el, svgEl, delta, bar, barPath, rectPath, showTip, hideTip, niceTicks, labelWidth, kpi, sub, spark, cssVar, emptyRow,
+  window.U = { NS, MONTHS, MON3, isNum, fmt, rp, rpFull, num, pct, signedPct, axisRp, axisNum, monthName, monthOnly, monthShort, monthNo, prevKey,
+    growth, el, svgEl, delta, bar, barPath, rectPath, showTip, hideTip, niceTicks, labelWidth, kpi, sub, spark, emptyRow, campaignDays, seg,
     state, setMonth, onMonth,
     reduceMotion: window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches };
 })();
