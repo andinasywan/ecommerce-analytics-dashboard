@@ -10,8 +10,25 @@
   }
   const FC = D.fc, TOL = FC.tolerance, WH = D.warehouses;
   const SKU = {};
-  D.skus.forEach(([code, name, brand, cat, box]) => (SKU[code] = { code, name, brand, cat, box }));
-  const st = { wh: "", sort: "err", sku: null, planWh: WH[0] };
+  D.skus.forEach(([code, name, brand, cat, box, status]) => (SKU[code] = { code, name, brand, cat, box, status: status || "Active" }));
+  const LAUNCH = D.launch || {};
+  const st = { wh: "", sort: "err", sku: null, planWh: WH[0], stockWh: "", band: "", status: "", stockSort: "doi" };
+
+  // product status from the monthly SKU review (Active / New / Slow moving / Phase-out)
+  const STATUSES = ["Active", "New", "Slow moving", "Phase-out"];
+  const CHIP = { New: "new", "Slow moving": "slow", "Phase-out": "phase" };
+  function statusChip(code) {
+    const s = SKU[code].status;
+    if (!CHIP[s]) return document.createTextNode("");
+    const c = el("span", "st-chip " + CHIP[s], s);
+    c.title = s === "New" && LAUNCH[code] ? "Launched " + U.monthName(LAUNCH[code]) : s === "Phase-out" ? "Being discontinued: sell through, do not restock" : "Sells slowly against the stock held";
+    return c;
+  }
+  const skuCell = (code, sub) => {
+    const td = el("td");
+    td.append(el("span", "code", code), document.createTextNode(" "), el("span", "t-name", short(code)), statusChip(code), el("span", "t-sub", sub || SKU[code].brand));
+    return td;
+  };
 
   // ---------- metrics ----------
   const rows = (m) => (FC.rows[m] || []).map(([sku, wh, f, a]) => ({ sku, wh, f, a }));
@@ -46,7 +63,15 @@
     if (worst) {
       add(". The biggest miss in units was ");
       add(short(worst.sku) + " in " + worst.wh, true);
-      add(" (forecast " + num(worst.f) + ", actual " + num(worst.a) + ").");
+      add(" (forecast " + num(worst.f) + ", actual " + num(worst.a) + "). ");
+    }
+    const sl = stockRows(m);
+    if (sl.length) {
+      const low = sl.filter((r) => r.doi < SB[0]).length;
+      add("At month end the warehouses held ");
+      add(fmt(cover(sl), 0) + " days of stock", true);
+      add(low ? ", but " : ", and no SKU was close to running out.");
+      if (low) { add(num(low) + " SKU × warehouse " + (low === 1 ? "pair" : "pairs"), true); add(" had less than two weeks left."); }
     }
   }
 
@@ -58,9 +83,11 @@
     const accSub = pt ? U.sub([delta((t.acc - pt.acc) * 100, { points: true }), " vs " + month(pm)]) : U.sub(["first month tested"]);
     box.appendChild(U.kpi("Forecast accuracy", pct(t.acc), accSub, { meter: t.acc }));
     box.appendChild(U.kpi("Bias", U.signedPct(t.bias), U.sub([t.bias < 0 ? "forecast below actual" : "forecast above actual"])));
-    box.appendChild(U.kpi("Actual units (physical SKUs)", num(t.A), U.sub(["forecast ", el("b", null, num(t.F)), " units"])));
+    box.appendChild(U.kpi("Actual SKU units", num(t.A), U.sub(["forecast ", el("b", null, num(t.F)), " units"])));
     const out = list.filter(outside).length;
     box.appendChild(U.kpi("SKU × warehouse misses", num(out), U.sub(["of ", el("b", null, num(list.length)), " pairs, tolerance ±" + fmt(TOL * 100, 0) + "%"]), { unit: "pairs" }));
+    const sl = stockRows(m), low = sl.filter((r) => r.doi < SB[0]).length;
+    if (sl.length) box.appendChild(U.kpi("Stock cover", fmt(cover(sl), 0), U.sub([el("b", null, num(low)), " pairs under " + SB[0] + " days"]), { unit: "days" }));
     const cartons = FC.plan.reduce((a, r) => a + r[3], 0);
     box.appendChild(U.kpi(month(D.next) + " shipment plan", num(cartons), U.sub(["to " + WH.length + " warehouses, " + fmt(FC.buffer * 100, 0) + "% safety stock"]), { unit: "cartons" }));
   }
@@ -122,7 +149,7 @@
       const g = svgEl("g");
       g.appendChild(svgEl("path", { d: U.barPath(cx - bw / 2, cx + bw / 2, y(x.A), y(0)), fill: sel ? "var(--one)" : "var(--one-soft)" }));
       g.appendChild(svgEl("rect", { x: cx - bw / 2 - 6, y: y(x.F) - 1.5, width: bw + 12, height: 3, rx: 1.5, fill: "var(--fg)" }));
-      g.appendChild(svgEl("text", { x: cx, y: Math.min(y(x.A), y(x.F)) - 8, "text-anchor": "middle", class: sel ? "lbl-strong" : "" }, pct(x.acc, 0)));
+      if (band >= 30 || sel) g.appendChild(svgEl("text", { x: cx, y: Math.min(y(x.A), y(x.F)) - 8, "text-anchor": "middle", class: sel ? "lbl-strong" : "" }, pct(x.acc, 0)));
       svg.appendChild(g);
       svg.appendChild(svgEl("text", { x: cx, y: H - 8, "text-anchor": "middle", class: sel ? "lbl-strong" : "" }, U.monthShort(x.k)));
       return { g, sel, cx, x };
@@ -254,7 +281,7 @@
   function historyChart(code) {
     const am = D.allMonths;
     const act = am.map((k, i) => WH.reduce((s, w) => s + (FC.hist[code + "|" + w] || [])[i], 0));
-    const fc = am.map((k) => (FC.rows[k] ? metrics(rows(k).filter((r) => r.sku === code)).F : null));
+    const fc = am.map((k) => { const l = rows(k).filter((r) => r.sku === code); return l.length ? metrics(l).F : null; });
     const W = Math.max(280, $("#sku-profile-body").clientWidth || 420), H = 140, m = { t: 12, r: 8, b: 20, l: 40 };
     const iw = W - m.l - m.r, ih = H - m.t - m.b;
     const ticks = U.niceTicks(Math.max(...act, ...fc.filter(isNum)) * 1.1, 3);
@@ -265,7 +292,14 @@
       svg.appendChild(svgEl("line", { x1: m.l, x2: m.l + iw, y1: y(t), y2: y(t), stroke: t === 0 ? "var(--axis)" : "var(--grid)" }));
       svg.appendChild(svgEl("text", { x: m.l - 6, y: y(t) + 4, "text-anchor": "end" }, U.axisNum(t)));
     }
-    am.forEach((k, i) => svg.appendChild(svgEl("text", { x: x(i), y: H - 4, "text-anchor": "middle", class: k === U.state.month ? "lbl-strong" : "" }, U.monthShort(k))));
+    const narrow = iw / am.length < 34;
+    am.forEach((k, i) => svg.appendChild(svgEl("text", { x: x(i), y: H - 4, "text-anchor": "middle", class: k === U.state.month ? "lbl-strong" : "" }, narrow ? U.monthShort(k)[0] : U.monthShort(k))));
+    am.forEach((k, i) => {   // year divider
+      if (!i || k.slice(0, 4) === am[i - 1].slice(0, 4)) return;
+      const x0 = m.l + i * (iw / am.length);
+      svg.appendChild(svgEl("line", { x1: x0, x2: x0, y1: m.t, y2: m.t + ih, stroke: "var(--axis)", "stroke-dasharray": "3 3" }));
+      svg.appendChild(svgEl("text", { x: x0 + 4, y: m.t + 8 }, k.slice(0, 4)));
+    });
     const bw = Math.min(22, (iw / am.length) * 0.55);
     am.forEach((k, i) => {
       svg.appendChild(svgEl("path", { d: U.barPath(x(i) - bw / 2, x(i) + bw / 2, y(act[i]), y(0), 3), fill: "var(--one)", "fill-opacity": k === U.state.month ? 1 : FC.rows[k] ? 0.55 : 0.28 }));
@@ -281,6 +315,13 @@
     const tot = (j) => WH.reduce((s, w) => s + FC.hist[code + "|" + w][j], 0);
     const avg3 = (tot(i - 1) + tot(i - 2) + tot(i - 3)) / 3;
     const now = tot(i), mt = metrics(rows(m).filter((r) => r.sku === code));
+    if (LAUNCH[code]) {
+      const li = D.allMonths.indexOf(LAUNCH[code]);
+      if (i < li) return "A new product that launches in " + U.monthName(LAUNCH[code]) + ", so there is nothing to forecast yet.";
+      if (i - li < 3) return "New product, launched in " + U.monthName(LAUNCH[code]) + ". The 3-month average counts the months before the launch as zero, so the forecast trails far behind real demand (" + U.signedPct(mt.bias) + " this month). For the first three months a launch plan, based on a similar product, should replace the moving average.";
+    }
+    if (SKU[code].status === "Phase-out")
+      return "Being phased out: demand drops month after month, so a 3-month average keeps forecasting too high (" + U.signedPct(mt.bias) + " this month). The remaining stock should be sold through rather than topped up.";
     for (const w of WH) {
       const h = FC.hist[code + "|" + w];
       const before = (h[i - 2] + h[i - 3]) / 2;
@@ -305,6 +346,7 @@
     left.append(el("h3", null, s.name));
     const meta = el("div", "profile-meta");
     meta.append(el("span", null, s.brand + " · " + s.cat));
+    if (CHIP[s.status]) meta.appendChild(statusChip(code));
     const mb = el("span"); mb.append("units per carton ", el("b", null, num(s.box))); meta.appendChild(mb);
     left.appendChild(meta);
     const score = el("div", "profile-score");
@@ -385,9 +427,7 @@
     for (const x of skus) {
       const tr = el("tr", "click-row" + (st.sku === x.code ? " sel" : ""));
       tr.tabIndex = 0;
-      const n = el("td");
-      n.append(el("span", "code", x.code), document.createTextNode(" "), el("span", "t-name", short(x.code)), el("span", "t-sub", SKU[x.code].brand));
-      tr.appendChild(n);
+      tr.appendChild(skuCell(x.code));
       for (const w of WH) {
         const td = cell(x.cells[w]);
         if (st.wh && w !== st.wh) td.style.opacity = 0.35;
@@ -407,10 +447,204 @@
     tbody.appendChild(foot);
   }
 
+  // ---------- stock cover: stock on hand / daily run rate = days of inventory ----------
+  const SB = (D.stock && D.stock.bands) || [14, 60];
+  const BANDS = [
+    { k: "out", label: "Out of stock", hint: "0 days", color: "var(--s-out)", test: (d) => d < 1 },
+    { k: "risk", label: "At risk", hint: "under " + SB[0] + " days", color: "var(--s-risk)", test: (d) => d >= 1 && d < SB[0] },
+    { k: "ok", label: "Healthy", hint: SB[0] + "–" + SB[1] + " days", color: "var(--s-ok)", test: (d) => d >= SB[0] && d <= SB[1] },
+    { k: "over", label: "Overstock", hint: "over " + SB[1] + " days", color: "var(--s-over)", test: (d) => d > SB[1] },
+  ];
+  const bandOf = (d) => BANDS.find((b) => b.test(d));
+  const daysIn = (m) => D.sell[m].daily.length;
+  function stockRows(m) {
+    const i = D.allMonths.indexOf(m), n = daysIn(m);
+    return ((D.stock && D.stock.rows[m]) || []).map(([sku, wh, soh]) => {
+      const rr = (FC.hist[sku + "|" + wh] || [])[i] / n;
+      return { sku, wh, soh, rr, doi: rr > 0 ? soh / rr : Infinity };
+    });
+  }
+  const cover = (list) => { const s = list.reduce((a, r) => a + r.soh, 0), rr = list.reduce((a, r) => a + r.rr, 0); return rr ? s / rr : null; };
+  const days = (d) => (d < 1 ? "0 days" : fmt(d, 0) + " days");
+  function runsOut(m, doi) {
+    if (doi < 1) return null;
+    if (doi > 365) return "over a year";
+    const d = new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7) - 1, daysIn(m)) + Math.round(doi) * 864e5);
+    return d.getUTCDate() + " " + U.MON3[d.getUTCMonth()] + (d.getUTCFullYear() !== +m.slice(0, 4) ? " " + d.getUTCFullYear() : "");
+  }
+
+  function renderStock() {
+    const m = U.state.month, all = stockRows(m);
+    if (!all.length) { $("#stock").hidden = true; return; }
+    $("#stock-sub").textContent = "Stock on hand on " + daysIn(m) + " " + month(m) + " ÷ units sold per day in " + month(m) + " = days of inventory (DOI). Under " + SB[0] + " days needs a shipment now; over " + SB[1] + " days ties up cash and risks expiry.";
+    const scoped = all.filter((r) => !st.stockWh || r.wh === st.stockWh);
+
+    const strip = $("#band-strip");
+    strip.replaceChildren();
+    for (const b of BANDS) {
+      const list = scoped.filter((r) => b.test(r.doi));
+      const btn = el("button", "band-btn");
+      btn.type = "button";
+      btn.style.setProperty("--c", b.color);
+      btn.setAttribute("aria-pressed", st.band === b.k ? "true" : "false");
+      const name = el("span", "b-name", b.label); name.appendChild(el("small", null, b.hint));
+      const val = el("span", "b-val", num(list.length)); val.appendChild(el("small", null, list.length === 1 ? "pair" : "pairs"));
+      const oh = list.reduce((a, r) => a + r.soh, 0);
+      btn.append(name, val, el("span", "b-sub", num(oh) + (oh === 1 ? " unit" : " units") + " on hand"));
+      btn.addEventListener("click", () => { st.band = st.band === b.k ? "" : b.k; renderStock(); });
+      strip.appendChild(btn);
+    }
+
+    const box = $("#doi-wh");
+    box.replaceChildren();
+    for (const w of ["", ...WH]) {
+      const list = all.filter((r) => !w || r.wh === w);
+      const row = el("button", "doi-row" + (w ? "" : " all") + (st.stockWh === w ? " sel" : ""));
+      row.type = "button";
+      const val = el("span", "doi-val", fmt(cover(list), 0)); val.appendChild(el("small", null, "days"));
+      const stack = el("span", "stack");
+      const counts = BANDS.map((b) => list.filter((r) => b.test(r.doi)).length);
+      BANDS.forEach((b, j) => {
+        if (!counts[j]) return;
+        const seg = el("span");
+        seg.style.flex = counts[j] + " 1 0";
+        seg.style.background = b.color;
+        seg.title = b.label + ": " + counts[j];
+        stack.appendChild(seg);
+      });
+      const low = counts[0] + counts[1];
+      row.append(el("span", "doi-name", w || "All warehouses"), val, stack,
+        el("span", "doi-sub", new Set(list.map((r) => r.sku)).size + " SKUs · " + (low ? low + " under " + SB[0] + " days" : "none under " + SB[0] + " days") + (counts[3] ? " · " + counts[3] + " over " + SB[1] : "")));
+      row.addEventListener("click", () => { st.stockWh = w; $("#stock-wh").value = w; renderStock(); });
+      box.appendChild(row);
+    }
+
+    // stock by product status
+    const t = $("#table-status");
+    t.replaceChildren();
+    const hr = el("tr");
+    ["Status", "SKUs", "On hand", "Share of stock", "Share of sales", "Cover"].forEach((h, i) => hr.appendChild(el("th", i ? "r" + (i === 4 || i === 3 ? " opt" : "") : null, h)));
+    const thd = el("thead"); thd.appendChild(hr);
+    const tb = el("tbody");
+    const SOH = scoped.reduce((a, r) => a + r.soh, 0), RR = scoped.reduce((a, r) => a + r.rr, 0);
+    const byStatus = {};
+    for (const s of STATUSES) {
+      const list = scoped.filter((r) => SKU[r.sku].status === s);
+      byStatus[s] = { list, soh: list.reduce((a, r) => a + r.soh, 0), rr: list.reduce((a, r) => a + r.rr, 0) };
+      const tr = el("tr");
+      const c = el("td");
+      if (CHIP[s]) c.appendChild(el("span", "st-chip " + CHIP[s], s)); else c.textContent = s;
+      if (CHIP[s]) c.firstChild.style.marginLeft = "0";
+      if (!list.length) {
+        const td = el("td", "r", s === "New" && Object.keys(LAUNCH).length ? "launches in " + month(Object.values(LAUNCH)[0]) : "–");
+        td.colSpan = 5; td.style.color = "var(--muted)";
+        tr.append(c, td); tb.appendChild(tr); continue;
+      }
+      const cv = cover(list), cvTd = el("td", "r"); cvTd.appendChild(el("b", null, days(cv)));
+      cvTd.style.color = bandOf(cv).k === "ok" ? "" : bandOf(cv).color;
+      tr.append(c, el("td", "r", num(new Set(list.map((r) => r.sku)).size)), el("td", "r", num(byStatus[s].soh)),
+        el("td", "r opt", pct(byStatus[s].soh / SOH, 0)), el("td", "r opt", pct(byStatus[s].rr / RR, 0)), cvTd);
+      tb.appendChild(tr);
+    }
+    t.append(thd, tb);
+    const slow = ["Slow moving", "Phase-out"].map((s) => byStatus[s]);
+    const sSoh = slow[0].soh + slow[1].soh, sRr = slow[0].rr + slow[1].rr;
+    const note = $("#status-note");
+    note.replaceChildren(el("h4", null, "Note"));
+    const p = el("p");
+    if (sSoh) {
+      p.append("Slow movers and phase-outs hold ", el("b", null, pct(sSoh / SOH, 0) + " of the stock"), " but bring only ", el("b", null, pct(sRr / RR, 0) + " of daily sales"),
+        ", enough for " + days(sSoh / sRr) + ". Stop topping up the phase-out and move the slow movers through bundles or campaign vouchers.");
+    }
+    const nw = byStatus.New;
+    if (nw.list.length) {
+      const code = nw.list[0].sku, li = D.allMonths.indexOf(LAUNCH[code]), mi = D.allMonths.indexOf(m);
+      p.append(" The new " + short(code) + (mi === li ? " went out with launch stock for " : " has stock for ") + days(cover(nw.list)) + ".");
+    }
+    note.appendChild(p);
+    drawRisk();
+
+    // detail table
+    const wsel = $("#stock-wh");
+    if (!wsel.options.length) wsel.append(new Option("All warehouses", ""), ...WH.map((w) => new Option(w, w)));
+    wsel.value = st.stockWh;
+    const ssel = $("#stock-status");
+    if (!ssel.options.length) ssel.append(new Option("All statuses", ""), ...STATUSES.map((s) => new Option(s, s)));
+    ssel.value = st.status;
+    let list = scoped.filter((r) => (!st.band || bandOf(r.doi).k === st.band) && (!st.status || SKU[r.sku].status === st.status));
+    if (st.stockSort === "doi") list.sort((a, b) => a.doi - b.doi);
+    else if (st.stockSort === "doi-desc") list.sort((a, b) => b.doi - a.doi);
+    else list.sort((a, b) => b.soh - a.soh);
+    $("#stock-count").textContent = list.length + " of " + all.length + " SKU × warehouse pairs";
+    const body = $("#table-stock tbody");
+    body.replaceChildren();
+    if (!list.length) return U.emptyRow(body, 5, "No SKU in this selection.");
+    const MAXD = 120;
+    for (const r of list) {
+      const b = bandOf(r.doi);
+      const tr = el("tr", "click-row");
+      tr.tabIndex = 0;
+      tr.appendChild(skuCell(r.sku, SKU[r.sku].brand + " · " + r.wh));
+      const d = el("td", "barcell doi-cell");
+      const bar = U.bar(Math.min(r.doi, MAXD) / MAXD, b.color, days(r.doi));
+      bar.classList.add("doi");
+      bar.title = b.label + " (" + b.hint + ")";
+      d.appendChild(bar);
+      const ro = runsOut(m, r.doi);
+      const roTd = el("td", "r" + (ro ? "" : " out"), ro || "out of stock");
+      tr.append(el("td", "r opt", num(r.soh)), el("td", "r opt", fmt(r.rr, r.rr < 10 ? 1 : 0)), d, roTd);
+      const go = () => { pickSku(r.sku); $("#sku-profile").scrollIntoView({ behavior: U.reduceMotion ? "auto" : "smooth", block: "nearest" }); };
+      tr.addEventListener("click", go);
+      tr.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+      body.appendChild(tr);
+    }
+  }
+
+  // pairs under the risk threshold in every month: is the network getting tighter?
+  function drawRisk() {
+    const box = $("#chart-risk");
+    const W = box.clientWidth;
+    if (!W) return;
+    $("#risk-title").textContent = "SKU × warehouse pairs under " + SB[0] + " days, by month" + (st.stockWh ? " (" + st.stockWh + ")" : "");
+    const ms = D.months.map((k) => {
+      const l = stockRows(k).filter((r) => !st.stockWh || r.wh === st.stockWh);
+      return { k, out: l.filter((r) => r.doi < 1).length, risk: l.filter((r) => r.doi >= 1 && r.doi < SB[0]).length };
+    });
+    const H = 120, m = { t: 18, r: 4, b: 22, l: 4 };
+    const iw = W - m.l - m.r, ih = H - m.t - m.b, band = iw / ms.length, bw = Math.min(30, band * 0.55);
+    const max = Math.max(4, ...ms.map((x) => x.out + x.risk));
+    const y = (v) => m.t + ih - (v / max) * ih;
+    const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": "Number of SKU and warehouse pairs with less than " + SB[0] + " days of stock, per month" });
+    svg.appendChild(svgEl("line", { x1: m.l, x2: m.l + iw, y1: y(0), y2: y(0), stroke: "var(--axis)" }));
+    const gs = ms.map((x, i) => {
+      const cx = m.l + (i + 0.5) * band, sel = x.k === U.state.month;
+      const g = svgEl("g", { opacity: sel ? 1 : 0.5 });
+      if (x.risk) g.appendChild(svgEl("path", { d: U.barPath(cx - bw / 2, cx + bw / 2, y(x.risk), y(0), x.out ? 0 : 3), fill: "var(--s-risk)" }));
+      if (x.out) g.appendChild(svgEl("path", { d: U.barPath(cx - bw / 2, cx + bw / 2, y(x.risk + x.out), y(x.risk) - (x.risk ? 1.5 : 0), 3), fill: "var(--s-out)" }));
+      svg.appendChild(g);
+      svg.appendChild(svgEl("text", { x: cx, y: y(x.out + x.risk) - 5, "text-anchor": "middle", class: sel ? "lbl-strong" : "" }, String(x.out + x.risk)));
+      svg.appendChild(svgEl("text", { x: cx, y: H - 5, "text-anchor": "middle", class: sel ? "lbl-strong" : "" }, U.monthShort(x.k)));
+      return { cx, x };
+    });
+    const hit = svgEl("rect", { x: m.l, y: m.t, width: iw, height: ih + m.b, fill: "transparent", style: "cursor:pointer" });
+    svg.appendChild(hit);
+    box.replaceChildren(svg);
+    const at = (ev) => { const r = svg.getBoundingClientRect(); return Math.max(0, Math.min(ms.length - 1, Math.floor((((ev.clientX - r.left) / r.width) * W - m.l) / band))); };
+    hit.addEventListener("pointermove", (ev) => {
+      const i = at(ev), s = svg.getBoundingClientRect().width / W, x = gs[i].x;
+      U.showTip(box, gs[i].cx * s, y(x.out + x.risk) * s, U.monthName(x.k), [
+        { label: "Out of stock", value: num(x.out), color: "var(--s-out)" }, { label: "Under " + SB[0] + " days", value: num(x.risk), color: "var(--s-risk)" },
+      ], x.k === U.state.month ? null : "Click to select this month");
+    });
+    hit.addEventListener("pointerleave", () => U.hideTip(box));
+    hit.addEventListener("click", (ev) => { const k = ms[at(ev)].k; if (k !== U.state.month) { U.hideTip(box); U.setMonth(k); } });
+  }
+
   // ---------- shipment plan ----------
   function renderPlan() {
     $("#plan-title").textContent = "Shipment plan, " + nextName;
-    $("#plan-sub").textContent = month(D.next) + " forecast from July–September sales, plus " + fmt(FC.buffer * 100, 0) + "% safety stock, rounded up to full cartons";
+    const am = D.allMonths, l3 = am.slice(-3);
+    $("#plan-sub").textContent = month(D.next) + " forecast from " + month(l3[0]) + "–" + month(l3[2]) + " sales, plus " + fmt(FC.buffer * 100, 0) + "% safety stock, rounded up to full cartons";
     const strip = $("#wh-strip");
     strip.replaceChildren();
     for (const w of WH) {
@@ -434,9 +668,7 @@
       const h = FC.hist[code + "|" + st.planWh];
       const avg = (h[n - 1] + h[n - 2] + h[n - 3]) / 3;
       const tr = el("tr");
-      const c = el("td");
-      c.append(el("span", "code", code), document.createTextNode(" "), el("span", "t-name", short(code)), el("span", "t-sub", SKU[code].brand));
-      tr.append(c, el("td", "r opt", num(Math.round(avg))), el("td", "r", num(f)), el("td", "r opt", num(Math.ceil(f * (1 + FC.buffer)))), el("td", "r opt", num(SKU[code].box)));
+      tr.append(skuCell(code), el("td", "r opt", num(Math.round(avg))), el("td", "r", num(f)), el("td", "r opt", num(Math.ceil(f * (1 + FC.buffer)))), el("td", "r opt", num(SKU[code].box)));
       const k = el("td", "r"); k.appendChild(el("b", null, num(cartons)));
       tr.appendChild(k);
       tb.appendChild(tr);
@@ -504,15 +736,18 @@
     box.appendChild(el("p", null, "A weighted moving average is easy to explain to the warehouse team and works well for steady SKUs. Its weak spots show in months with a rising trend, viral content and stock-outs. Next steps: add a trend factor and the campaign calendar, and correct stock-out months before they enter the average."));
   }
 
-  function redraw() { drawNetMap(); drawMonthly(); drawScatter(); renderProfile(); }
+  function redraw() { drawNetMap(); drawMonthly(); drawScatter(); renderProfile(); drawRisk(); }
   function renderAll() {
-    renderLede(); renderKpis(); renderNetList(); renderWhTable(); renderSkuSelect(); renderProfile(); renderHeat(); renderPlan(); renderFlow(); renderConvert(); renderMethod();
+    renderLede(); renderKpis(); renderNetList(); renderWhTable(); renderSkuSelect(); renderProfile(); renderHeat(); renderStock(); renderPlan(); renderFlow(); renderConvert(); renderMethod();
     redraw();
   }
 
   $("#sku-pick").addEventListener("change", (e) => pickSku(e.target.value));
   $("#heat-wh").addEventListener("change", (e) => { st.wh = e.target.value; renderWhTable(); renderHeat(); drawScatter(); renderNetList(); drawNetMap(); });
   $("#heat-sort").addEventListener("change", (e) => { st.sort = e.target.value; renderHeat(); });
+  $("#stock-wh").addEventListener("change", (e) => { st.stockWh = e.target.value; renderStock(); });
+  $("#stock-status").addEventListener("change", (e) => { st.status = e.target.value; renderStock(); });
+  $("#stock-sort").addEventListener("change", (e) => { st.stockSort = e.target.value; renderStock(); });
 
   U.onMonth(() => renderAll());
   window.FORECAST_PAGE = { render: renderAll, redraw };

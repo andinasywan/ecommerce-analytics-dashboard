@@ -1,65 +1,97 @@
 date,campaign,channel,rebate
-2026-02-02,2.2,TikTok Shop,804500
-2026-02-02,2.2,Shopee Dermaya Official,807500
-2026-02-02,2.2,Shopee Fortivit Official,530700
-2026-02-02,2.2,Shopee Growlie Official,557100
-2026-02-25,Payday 2/25,TikTok Shop,561600
-2026-02-25,Payday 2/25,Shopee Dermaya Official,219100
-2026-02-25,Payday 2/25,Shopee Growlie Official,347400
-2026-02-25,Payday 2/25,Shopee Fortivit Official,241700
-2026-03-03,3.3,TikTok Shop,761800
-2026-03-03,3.3,Shopee Dermaya Official,895200
-2026-03-03,3.3,Shopee Growlie Official,571800
-2026-03-03,3.3,Shopee Fortivit Official,398300
-2026-03-25,Payday 3/25,Shopee Growlie Official,259200
-2026-03-25,Payday 3/25,TikTok Shop,354700
-2026-03-25,Payday 3/25,Shopee Dermaya Official,391000
-2026-03-25,Payday 3/25,Shopee Fortivit Official,274800
-2026-04-04,4.4,TikTok Shop,812500
-2026-04-04,4.4,Shopee Dermaya Official,662400
-2026-04-04,4.4,Shopee Growlie Official,639100
-2026-04-04,4.4,Shopee Fortivit Official,291200
-2026-04-25,Payday 4/25,Shopee Growlie Official,276900
-2026-04-25,Payday 4/25,TikTok Shop,492500
-2026-04-25,Payday 4/25,Shopee Dermaya Official,274900
-2026-04-25,Payday 4/25,Shopee Fortivit Official,98700
-2026-05-05,5.5,TikTok Shop,976200
-2026-05-05,5.5,Shopee Growlie Official,548100
-2026-05-05,5.5,Shopee Dermaya Official,790100
-2026-05-05,5.5,Shopee Fortivit Official,390200
-2026-05-25,Payday 5/25,TikTok Shop,607800
-2026-05-25,Payday 5/25,Shopee Dermaya Official,413100
-2026-05-25,Payday 5/25,Shopee Growlie Official,235700
-2026-05-25,Payday 5/25,Shopee Fortivit Official,229300
-2026-06-06,6.6,TikTok Shop,921500
-2026-06-06,6.6,Shopee Fortivit Official,793600
-2026-06-06,6.6,Shopee Growlie Official,677500
-2026-06-06,6.6,Shopee Dermaya Official,882600
-2026-06-25,Payday 6/25,Shopee Growlie Official,237000
-2026-06-25,Payday 6/25,Shopee Fortivit Official,144700
-2026-06-25,Payday 6/25,Shopee Dermaya Official,318800
-2026-06-25,Payday 6/25,TikTok Shop,569700
-2026-07-07,7.7,TikTok Shop,688100
-2026-07-07,7.7,Shopee Dermaya Official,788900
-2026-07-07,7.7,Shopee Fortivit Official,578500
-2026-07-07,7.7,Shopee Growlie Official,472700
-2026-07-25,Payday 7/25,Shopee Dermaya Official,147000
-2026-07-25,Payday 7/25,Shopee Growlie Official,138100
-2026-07-25,Payday 7/25,TikTok Shop,360500
-2026-07-25,Payday 7/25,Shopee Fortivit Official,110700
-2026-08-08,8.8,Shopee Fortivit Official,632500
-2026-08-08,8.8,Shopee Dermaya Official,371300
-2026-08-08,8.8,TikTok Shop,1218000
-2026-08-08,8.8,Shopee Growlie Official,434900
-2026-08-25,Payday 8/25,TikTok Shop,604200
-2026-08-25,Payday 8/25,Shopee Dermaya Official,141200
-2026-08-25,Payday 8/25,Shopee Fortivit Official,148300
-2026-08-25,Payday 8/25,Shopee Growlie Official,270300
-2026-09-09,9.9,TikTok Shop,2034600
-2026-09-09,9.9,Shopee Dermaya Official,824400
-2026-09-09,9.9,Shopee Fortivit Official,448900
-2026-09-09,9.9,Shopee Growlie Official,1020200
-2026-09-25,Payday 9/25,TikTok Shop,1003200
-2026-09-25,Payday 9/25,Shopee Growlie Official,369600
-2026-09-25,Payday 9/25,Shopee Dermaya Official,256700
-2026-09-25,Payday 9/25,Shopee Fortivit Official,222900
+2025-10-10,10.10,TikTok Shop,757800
+2025-10-10,10.10,Shopee Dermaya Official,622000
+2025-10-10,10.10,Shopee Fortivit Official,465000
+2025-10-10,10.10,Shopee Growlie Official,536700
+2025-10-25,Payday 10/25,TikTok Shop,184100
+2025-10-25,Payday 10/25,Shopee Fortivit Official,130800
+2025-10-25,Payday 10/25,Shopee Growlie Official,245400
+2025-10-25,Payday 10/25,Shopee Dermaya Official,185600
+2025-11-11,11.11,TikTok Shop,621800
+2025-11-11,11.11,Shopee Fortivit Official,440600
+2025-11-11,11.11,Shopee Growlie Official,880400
+2025-11-11,11.11,Shopee Dermaya Official,814900
+2025-11-25,Payday 11/25,TikTok Shop,269700
+2025-11-25,Payday 11/25,Shopee Fortivit Official,214300
+2025-11-25,Payday 11/25,Shopee Dermaya Official,408000
+2025-11-25,Payday 11/25,Shopee Growlie Official,344900
+2025-12-12,12.12,TikTok Shop,563700
+2025-12-12,12.12,Shopee Dermaya Official,976000
+2025-12-12,12.12,Shopee Growlie Official,446600
+2025-12-12,12.12,Shopee Fortivit Official,437000
+2025-12-25,Payday 12/25,Shopee Fortivit Official,174000
+2025-12-25,Payday 12/25,TikTok Shop,288400
+2025-12-25,Payday 12/25,Shopee Dermaya Official,202100
+2025-12-25,Payday 12/25,Shopee Growlie Official,216300
+2026-01-01,1.1,TikTok Shop,855800
+2026-01-01,1.1,Shopee Fortivit Official,293200
+2026-01-01,1.1,Shopee Growlie Official,444000
+2026-01-01,1.1,Shopee Dermaya Official,740200
+2026-01-25,Payday 1/25,Shopee Fortivit Official,79500
+2026-01-25,Payday 1/25,TikTok Shop,351100
+2026-01-25,Payday 1/25,Shopee Growlie Official,228100
+2026-01-25,Payday 1/25,Shopee Dermaya Official,261100
+2026-02-02,2.2,TikTok Shop,1053300
+2026-02-02,2.2,Shopee Fortivit Official,605300
+2026-02-02,2.2,Shopee Growlie Official,728400
+2026-02-02,2.2,Shopee Dermaya Official,845000
+2026-02-25,Payday 2/25,TikTok Shop,387800
+2026-02-25,Payday 2/25,Shopee Growlie Official,146500
+2026-02-25,Payday 2/25,Shopee Fortivit Official,285400
+2026-02-25,Payday 2/25,Shopee Dermaya Official,434200
+2026-03-03,3.3,Shopee Growlie Official,1034400
+2026-03-03,3.3,TikTok Shop,958100
+2026-03-03,3.3,Shopee Dermaya Official,905300
+2026-03-03,3.3,Shopee Fortivit Official,608400
+2026-03-25,Payday 3/25,TikTok Shop,547600
+2026-03-25,Payday 3/25,Shopee Growlie Official,198000
+2026-03-25,Payday 3/25,Shopee Dermaya Official,297100
+2026-03-25,Payday 3/25,Shopee Fortivit Official,189100
+2026-04-04,4.4,Shopee Dermaya Official,824500
+2026-04-04,4.4,TikTok Shop,730600
+2026-04-04,4.4,Shopee Growlie Official,527400
+2026-04-04,4.4,Shopee Fortivit Official,749700
+2026-04-25,Payday 4/25,TikTok Shop,501100
+2026-04-25,Payday 4/25,Shopee Growlie Official,167300
+2026-04-25,Payday 4/25,Shopee Fortivit Official,221800
+2026-04-25,Payday 4/25,Shopee Dermaya Official,276100
+2026-05-05,5.5,TikTok Shop,1024500
+2026-05-05,5.5,Shopee Growlie Official,573400
+2026-05-05,5.5,Shopee Fortivit Official,407600
+2026-05-05,5.5,Shopee Dermaya Official,433600
+2026-05-25,Payday 5/25,TikTok Shop,469800
+2026-05-25,Payday 5/25,Shopee Fortivit Official,185600
+2026-05-25,Payday 5/25,Shopee Dermaya Official,336800
+2026-05-25,Payday 5/25,Shopee Growlie Official,310600
+2026-06-06,6.6,TikTok Shop,1119200
+2026-06-06,6.6,Shopee Fortivit Official,533800
+2026-06-06,6.6,Shopee Dermaya Official,678500
+2026-06-06,6.6,Shopee Growlie Official,759000
+2026-06-25,Payday 6/25,TikTok Shop,373500
+2026-06-25,Payday 6/25,Shopee Growlie Official,350300
+2026-06-25,Payday 6/25,Shopee Fortivit Official,244400
+2026-06-25,Payday 6/25,Shopee Dermaya Official,289400
+2026-07-07,7.7,TikTok Shop,1224900
+2026-07-07,7.7,Shopee Dermaya Official,628000
+2026-07-07,7.7,Shopee Growlie Official,791000
+2026-07-07,7.7,Shopee Fortivit Official,540400
+2026-07-25,Payday 7/25,TikTok Shop,616700
+2026-07-25,Payday 7/25,Shopee Growlie Official,380400
+2026-07-25,Payday 7/25,Shopee Dermaya Official,214400
+2026-07-25,Payday 7/25,Shopee Fortivit Official,174400
+2026-08-08,8.8,Shopee Growlie Official,497600
+2026-08-08,8.8,TikTok Shop,1119300
+2026-08-08,8.8,Shopee Fortivit Official,612600
+2026-08-08,8.8,Shopee Dermaya Official,784400
+2026-08-25,Payday 8/25,TikTok Shop,594500
+2026-08-25,Payday 8/25,Shopee Growlie Official,320300
+2026-08-25,Payday 8/25,Shopee Fortivit Official,200200
+2026-08-25,Payday 8/25,Shopee Dermaya Official,227000
+2026-09-09,9.9,TikTok Shop,1617900
+2026-09-09,9.9,Shopee Growlie Official,742800
+2026-09-09,9.9,Shopee Fortivit Official,648800
+2026-09-09,9.9,Shopee Dermaya Official,1164200
+2026-09-25,Payday 9/25,TikTok Shop,691600
+2026-09-25,Payday 9/25,Shopee Dermaya Official,241900
+2026-09-25,Payday 9/25,Shopee Growlie Official,163900
+2026-09-25,Payday 9/25,Shopee Fortivit Official,170700

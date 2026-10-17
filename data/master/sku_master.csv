@@ -1,26 +1,27 @@
-sku,sku_name,brand,category,list_price,units_per_carton
-NV-1101,Growlie Kids Multivitamin Syrup 60 ml,Growlie,Kids & Family,39500,48
-NV-1102,Growlie Kids Multivitamin Syrup 120 ml,Growlie,Kids & Family,64900,48
-NV-1103,Growlie Orange Chewable Tablets x20,Growlie,Kids & Family,45900,60
-NV-1104,Growlie Appetite Emulsion 200 ml,Growlie,Kids & Family,72500,24
-NV-1201,Immunio Kids Immune Syrup 60 ml,Immunio Kids,Kids & Family,38900,48
-NV-1202,Immunio Kids Immune Syrup 120 ml,Immunio Kids,Kids & Family,61500,48
-NV-1203,Immunio Kids Vitamin C Gummies x30,Immunio Kids,Kids & Family,79000,36
-NV-1301,Calsee Kids Calcium Chewables x30,Calsee,Kids & Family,68500,60
-NV-1302,Calsee Calcium + D3 Gummies x30,Calsee,Kids & Family,84900,36
-NV-1401,Honeyo Kids Orange Honey 100 ml,Honeyo Kids,Kids & Family,36500,48
-NV-1402,Honeyo Kids Orange Honey 200 ml,Honeyo Kids,Kids & Family,58900,24
-NV-1501,NutriMilk Kids Growing-up Milk 400 g,NutriMilk Kids,Kids & Family,118000,12
-NV-1502,NutriMilk Kids Growing-up Milk 800 g,NutriMilk Kids,Kids & Family,214000,12
-NV-1601,Respira Kids Cough & Cold Syrup 60 ml,Respira Kids,Kids & Family,34900,48
-NV-2101,Dermaya Sensitive Skin Lotion 200 ml,Dermaya,Adult & Specialty,146000,24
-NV-2102,Dermaya Face Moisturizing Gel 30 g,Dermaya,Adult & Specialty,98500,48
-NV-2103,Dermaya Gentle Body Wash 250 ml,Dermaya,Adult & Specialty,69900,24
-NV-2201,"Fortivit Immune Caplets, strip of 10",Fortivit,Adult & Specialty,31500,100
-NV-2202,"Fortivit Immune Caplets, bottle of 30",Fortivit,Adult & Specialty,168000,24
-NV-2203,Fortivit Vitamin C Effervescent x10,Fortivit,Adult & Specialty,47500,48
-NV-2301,"Lancara Fiber Capsules, strip of 10",Lancara,Adult & Specialty,26500,100
-NV-2302,"Lancara Fiber Capsules, bottle of 30",Lancara,Adult & Specialty,72000,48
-NV-2401,Somnia Sleep Capsules x10,Somnia,Adult & Specialty,71500,60
-NV-2501,Flexora Joint & Bone Tablets x30,Flexora,Adult & Specialty,186000,24
-NV-2601,Optivisa Eye Health Capsules x30,Optivisa,Adult & Specialty,209000,24
+sku,sku_name,brand,category,status,launch_month,list_price,units_per_carton
+NV-1101,Growlie Kids Multivitamin Syrup 60 ml,Growlie,Kids & Family,Active,,39500,48
+NV-1102,Growlie Kids Multivitamin Syrup 120 ml,Growlie,Kids & Family,Active,,64900,48
+NV-1103,Growlie Orange Chewable Tablets x20,Growlie,Kids & Family,Active,,45900,60
+NV-1104,Growlie Appetite Emulsion 200 ml,Growlie,Kids & Family,Phase-out,,72500,24
+NV-1105,Growlie Kids Vitamin Gummies x30,Growlie,Kids & Family,New,2026-06,82000,36
+NV-1201,Immunio Kids Immune Syrup 60 ml,Immunio Kids,Kids & Family,Active,,38900,48
+NV-1202,Immunio Kids Immune Syrup 120 ml,Immunio Kids,Kids & Family,Active,,61500,48
+NV-1203,Immunio Kids Vitamin C Gummies x30,Immunio Kids,Kids & Family,Active,,79000,36
+NV-1301,Calsee Kids Calcium Chewables x30,Calsee,Kids & Family,Active,,68500,60
+NV-1302,Calsee Calcium + D3 Gummies x30,Calsee,Kids & Family,Active,,84900,36
+NV-1401,Honeyo Kids Orange Honey 100 ml,Honeyo Kids,Kids & Family,Active,,36500,48
+NV-1402,Honeyo Kids Orange Honey 200 ml,Honeyo Kids,Kids & Family,Slow moving,,58900,24
+NV-1501,NutriMilk Kids Growing-up Milk 400 g,NutriMilk Kids,Kids & Family,Active,,118000,12
+NV-1502,NutriMilk Kids Growing-up Milk 800 g,NutriMilk Kids,Kids & Family,Active,,214000,12
+NV-1601,Respira Kids Cough & Cold Syrup 60 ml,Respira Kids,Kids & Family,Active,,34900,48
+NV-2101,Dermaya Sensitive Skin Lotion 200 ml,Dermaya,Adult & Specialty,Active,,146000,24
+NV-2102,Dermaya Face Moisturizing Gel 30 g,Dermaya,Adult & Specialty,Active,,98500,48
+NV-2103,Dermaya Gentle Body Wash 250 ml,Dermaya,Adult & Specialty,Active,,69900,24
+NV-2201,"Fortivit Immune Caplets, strip of 10",Fortivit,Adult & Specialty,Active,,31500,100
+NV-2202,"Fortivit Immune Caplets, bottle of 30",Fortivit,Adult & Specialty,Active,,168000,24
+NV-2203,Fortivit Vitamin C Effervescent x10,Fortivit,Adult & Specialty,Active,,47500,48
+NV-2301,"Lancara Fiber Capsules, strip of 10",Lancara,Adult & Specialty,Active,,26500,100
+NV-2302,"Lancara Fiber Capsules, bottle of 30",Lancara,Adult & Specialty,Active,,72000,48
+NV-2401,Somnia Sleep Capsules x10,Somnia,Adult & Specialty,Active,,71500,60
+NV-2501,Flexora Joint & Bone Tablets x30,Flexora,Adult & Specialty,Active,,186000,24
+NV-2601,Optivisa Eye Health Capsules x30,Optivisa,Adult & Specialty,Slow moving,,209000,24

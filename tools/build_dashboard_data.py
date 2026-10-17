@@ -14,6 +14,7 @@ The same monthly steps that were done in Excel during the internship, rewritten 
   8. Forecast month M = weighted average of the 3 previous months (0.5 / 0.3 / 0.2),
      compared with actuals -> accuracy (1 - WAPE) and bias.
   9. Next month's shipment plan: forecast x (1 + safety buffer), rounded up to full cartons.
+ 10. Stock cover: month-end stock on hand (SOH) / daily run rate (RR) = days of inventory (DOI).
 
 Run:  python tools/build_dashboard_data.py
 """
@@ -30,11 +31,12 @@ ROOT = Path(__file__).resolve().parents[1]
 RAW, MASTER, OUT = ROOT / "data" / "raw", ROOT / "data" / "master", ROOT / "data" / "processed"
 OUT.mkdir(parents=True, exist_ok=True)
 
-SHOW = ["2026-05", "2026-06", "2026-07", "2026-08", "2026-09"]   # months shown in the dashboard
+SHOW = [f"2026-{m:02d}" for m in range(1, 10)]   # months shown in the dashboard (Oct-Dec 2025 seed the history)
 NEXT = "2026-10"
 WMA = [0.5, 0.3, 0.2]       # weights for M-1, M-2, M-3
 BUFFER = 0.15               # safety stock on top of the forecast
 TOLERANCE = 0.25            # |error| above 25% counts as a miss
+DOI_BANDS = [14, 60]        # days of inventory: under 14 = at risk, over 60 = overstock
 PLATFORMS = ["TikTok Shop", "Shopee", "Tokopedia", "Lazada", "Blibli"]
 CHANNELS = ["TikTok Shop", "Shopee Growlie Official", "Shopee Dermaya Official", "Shopee Fortivit Official",
             "Tokopedia", "Lazada", "Blibli"]
@@ -67,6 +69,7 @@ def main():
     conv = pd.read_csv(MASTER / "item_convert.csv")
     vouchers = pd.read_csv(MASTER / "vouchers.csv")
     rebates = pd.read_csv(RAW / "platform_rebates.csv")
+    soh = pd.read_csv(RAW / "stock_on_hand.csv")
     traffic = pd.read_csv(RAW / "traffic_daily.csv.gz")
     raw = raw.merge(stores, on="store", how="left")
     assert raw["warehouse"].notna().all(), "a store is missing from store_map.csv"
@@ -209,6 +212,24 @@ def main():
     pd.DataFrame(plan, columns=["sku", "warehouse", "forecast_units", "cartons"]).to_csv(OUT / f"shipment_plan_{NEXT}.csv", index=False)
 
     hist = {f"{sku}|{wh}": [int(act_p.loc[(sku, wh), m]) for m in months_all] for sku, wh in act_p.index}
+
+    # ------------------------------------------------------------ stock cover (SOH / run rate = DOI)
+    soh["month"] = soh["snapshot_date"].str[:7]
+    stock, cover_rows = {}, []
+    for m in SHOW:
+        days = int(pd.Period(m, "M").days_in_month)
+        sm = soh[soh.month == m].set_index(["sku", "warehouse"]).soh_units
+        rows = []
+        for (sku, wh), units in act_p[m].items():
+            if units == 0:
+                continue
+            rr = units / days
+            on_hand = int(sm.get((sku, wh), 0))
+            rows.append([sku, wh, on_hand])           # the dashboard takes the run rate from fc.hist
+            cover_rows.append(dict(month=m, sku=sku, warehouse=wh, soh_units=on_hand, run_rate=round(rr, 2), doi=round(on_hand / rr, 1)))
+        stock[m] = rows
+    cover = pd.DataFrame(cover_rows)
+    cover.to_csv(OUT / "stock_cover.csv", index=False)
     items = []
     for _, r in conv.iterrows():
         comps = [[r[f"sku_{i}"], int(r[f"qty_{i}"])] for i in (1, 2, 3) if isinstance(r[f"sku_{i}"], str)]
@@ -219,10 +240,12 @@ def main():
         dummy=True, months=SHOW, allMonths=months_all, next=NEXT,
         platforms=PLATFORMS, channels=CHANNELS, warehouses=WAREHOUSES, ttSources=TT_SOURCES,
         brands=skus.groupby("brand").category.first().reset_index().values.tolist(),
-        skus=skus[["sku", "sku_name", "brand", "category", "units_per_carton"]].values.tolist(),
+        skus=skus[["sku", "sku_name", "brand", "category", "units_per_carton", "status"]].fillna("").values.tolist(),
+        launch={r.sku: r.launch_month for r in skus.itertuples() if isinstance(r.launch_month, str)},
         items=items, stores=stores.values.tolist(),
         sell=sell, campaigns=campaigns, traffic=tr, geo=geo,
         fc=dict(weights=WMA, buffer=BUFFER, tolerance=TOLERANCE, rows=fc_rows, plan=plan, hist=hist, pipe=pipe),
+        stock=dict(bands=DOI_BANDS, rows=stock),
     )
     js = "/* Dummy data - built by tools/build_dashboard_data.py. Every name and number is fictional. */\n"
     js += "window.DASH = " + json.dumps(data, ensure_ascii=False, separators=(",", ":")) + ";\n"
@@ -234,6 +257,11 @@ def main():
     for m in SHOW:
         df = pd.DataFrame(fc_rows[m], columns=["sku", "wh", "f", "a"])
         print(m, f"accuracy {1 - (df.f - df.a).abs().sum() / df.a.sum():.1%}", f"bias {(df.f - df.a).sum() / df.a.sum():+.1%}")
+    for m in SHOW:
+        c = cover[cover.month == m]
+        lo, hi = DOI_BANDS
+        print(m, "DOI: at risk", int((c.doi < lo).sum()), "| healthy", int(c.doi.between(lo, hi).sum()), "| overstock", int((c.doi > hi).sum()),
+              f"| network DOI {c.soh_units.sum() / c.run_rate.sum():.0f} days")
 
 
 if __name__ == "__main__":

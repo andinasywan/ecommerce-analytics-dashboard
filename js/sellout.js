@@ -142,7 +142,8 @@
         acc += v;
       });
       svg.appendChild(g);
-      svg.appendChild(svgEl("text", { x: cx, y: y(totals[i]) - 7, "text-anchor": "middle", class: sel ? "lbl-strong" : "" }, rp(totals[i]).replace("Rp ", "")));
+      // on narrow screens only the chosen month keeps its total, so the labels do not collide
+      if (band >= 46 || sel) svg.appendChild(svgEl("text", { x: cx, y: y(totals[i]) - 7, "text-anchor": "middle", class: sel ? "lbl-strong" : "" }, rp(totals[i]).replace("Rp ", "")));
       svg.appendChild(svgEl("text", { x: cx, y: H - 8, "text-anchor": "middle", class: sel ? "lbl-strong" : "" }, U.monthShort(k)));
       groups.push({ k, g, sel, cx });
     });

@@ -175,7 +175,7 @@
     const H = W < 520 ? 240 : 270;
     const ticks = U.niceTicks(Math.max(...vals) * 1.12, 4);
     const yMax = ticks[ticks.length - 1];
-    const m = { t: 20, r: 6, b: 28, l: U.labelWidth(box, ticks.map(U.axisRp)) + 12 };
+    const m = { t: 30, r: 6, b: 28, l: U.labelWidth(box, ticks.map(U.axisRp)) + 12 };
     const iw = W - m.l - m.r, ih = H - m.t - m.b;
     const band = iw / ms.length, bw = Math.min(26, band * 0.3);
     const y = (v) => m.t + ih - (v / yMax) * ih;
@@ -191,14 +191,23 @@
       const tv = full(r.twin), pv = full(r.pay);
       g.appendChild(svgEl("path", { d: U.barPath(cx - bw - 1, cx - 1, y(tv), y(0)), fill: "var(--camp)" }));
       g.appendChild(svgEl("path", { d: U.barPath(cx + 1, cx + bw + 1, y(pv), y(0)), fill: "var(--one)" }));
-      g.appendChild(svgEl("rect", { x: cx - bw - 5, y: y(r.twin.avgDay) - 1.5, width: 2 * bw + 12, height: 3, rx: 1.5, fill: "var(--fg)" }));
+      const ext = Math.max(2, Math.min(5, (band - 2 * bw) / 2 - 3));
+      g.appendChild(svgEl("rect", { x: cx - bw - ext, y: y(r.twin.avgDay) - 1.5, width: 2 * bw + 2 * ext + 2, height: 3, rx: 1.5, fill: "var(--fg)" }));
       svg.appendChild(g);
       if (sel) {
         const v = st.kind === "twin" ? tv : pv, xx = st.kind === "twin" ? cx - bw / 2 - 1 : cx + bw / 2 + 1;
         svg.appendChild(svgEl("text", { x: xx, y: y(v) - 6, "text-anchor": "middle", class: "lbl-strong" }, rp(v).replace("Rp ", "")));
       }
-      svg.appendChild(svgEl("text", { x: cx, y: H - 8, "text-anchor": "middle", class: sel ? "lbl-strong" : "" }, U.monthShort(r.k)));
+      // narrow screens: one letter per month (J F M ...), the tooltip carries the full name
+      svg.appendChild(svgEl("text", { x: cx, y: H - 8, "text-anchor": "middle", class: sel ? "lbl-strong" : "" }, band < 34 ? U.monthShort(r.k)[0] : U.monthShort(r.k)));
       return { g, sel, cx, r };
+    });
+    // year divider when the history spans two years
+    ms.forEach((k, i) => {
+      if (i && k.slice(0, 4) === ms[i - 1].slice(0, 4)) return;
+      const x0 = m.l + i * band;
+      if (i) svg.appendChild(svgEl("line", { x1: x0, x2: x0, y1: m.t - 24, y2: m.t + ih, stroke: "var(--axis)", "stroke-dasharray": "3 3" }));
+      svg.appendChild(svgEl("text", { x: x0 + (i ? 6 : 0), y: m.t - 14, class: "lbl-strong" }, k.slice(0, 4)));
     });
     const hit = svgEl("rect", { x: m.l, y: m.t, width: iw, height: ih, fill: "transparent", style: "cursor:pointer" });
     svg.appendChild(hit);

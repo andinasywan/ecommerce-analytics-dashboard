@@ -8,13 +8,15 @@
 > every figure are produced by a random generator (`tools/generate_dummy_data.py`). No company data is included.
 
 A four-page dashboard for a fictional consumer-health brand that sells on Indonesian marketplaces
-(TikTok Shop, Shopee, Tokopedia, Lazada, Blibli) and ships from five warehouses.
+(TikTok Shop, Shopee, Tokopedia, Lazada, Blibli) and ships from five warehouses. It covers January–September 2026;
+October–December 2025 are generated too, so the forecast and the campaign history have something to start from.
 
 ## Background
 
 During my Data Analyst internship at Soho Global Health I turned raw marketplace exports into recurring reports:
-monthly sell-out, warehouse stock needs, hour-by-hour updates on twin-date and payday campaigns, voucher usage,
-platform rebates and store traffic. The work ran in Excel: combining hundreds of thousands of order lines, mapping
+monthly sell-out, warehouse stock needs, forecast against daily sell-out with stock on hand and days of inventory,
+the SKU review (new launches, slow movers, phase-outs), hour-by-hour updates on twin-date and payday campaigns,
+voucher usage, platform rebates and store traffic. The work ran in Excel: combining hundreds of thousands of order lines, mapping
 each store to its shipping warehouse, splitting bundles into component SKUs with a *master convert* table, and
 building pivots.
 
@@ -43,7 +45,7 @@ warehouses, vouchers that sell out), never the real names or numbers.
 - Twin date (e.g. 9.9) or payday (25th) of the chosen month
 - Hour-by-hour cumulative GMV against the previous campaign of the same type
 - Checkpoint report at 02:00, 10:00, 14:00, 18:00 and full day, per channel
-- Campaign history since February against the ordinary-day average
+- Campaign history since October 2025 (10.10, 11.11, 12.12 included) against the ordinary-day average
 - Store vouchers: quota, usage, sell-out time, cost and GMV per Rp1 of voucher cost
 - Voucher cost after platform rebates
 
@@ -51,7 +53,9 @@ warehouses, vouchers that sell out), never the real names or numbers.
 - Warehouse network map: next month's cartons per warehouse, ringed by forecast accuracy
 - Forecast accuracy (1 − WAPE) and bias by month and warehouse
 - Forecast vs actual per SKU × warehouse, SKU profile with automatic notes (spikes, stock-outs, trend)
-- Heat map of forecast error for 25 SKUs × 5 warehouses
+- Heat map of forecast error for 26 SKUs × 5 warehouses, with product status (New / Slow moving / Phase-out)
+- Stock cover: month-end stock on hand ÷ daily run rate = days of inventory, banded into out of stock, at risk
+  (under 14 days), healthy and overstock (over 60 days), by warehouse and by product status, with a run-out date per SKU
 - Next month's shipment plan in cartons per warehouse
 - The processing pipeline with the numbers at each step
 
@@ -61,7 +65,7 @@ warehouses, vouchers that sell out), never the real names or numbers.
 
 ```mermaid
 flowchart LR
-  A[Order exports<br/>8 monthly .csv.gz] --> B[Drop cancelled & returned]
+  A[Order exports<br/>12 monthly .csv.gz] --> B[Drop cancelled & returned]
   B --> C[Map store to<br/>platform, channel, warehouse]
   C --> D[Sell-out recap<br/>platform · store · brand · item · day · hour]
   C --> K[Campaign days<br/>hourly GMV · vouchers · rebates]
@@ -70,11 +74,14 @@ flowchart LR
   E --> F[Pivot SKU units × warehouse<br/>per month]
   F --> G[3-month WMA forecast<br/>vs actual]
   G --> H[Shipment plan<br/>cartons per warehouse]
+  S[Month-end stock on hand] --> J[Stock cover<br/>SOH ÷ run rate = DOI]
+  F --> J
   D --> I[data.js]
   K --> I
   L --> I
   G --> I
   H --> I
+  J --> I
 ```
 
 ## Forecast method
@@ -84,12 +91,15 @@ Forecast(M) = 0.5 × Actual(M−1) + 0.3 × Actual(M−2) + 0.2 × Actual(M−3)
 Accuracy    = 1 − Σ|forecast − actual| ÷ Σ actual        (WAPE)
 Bias        = (Σ forecast − Σ actual) ÷ Σ actual
 Cartons     = ⌈forecast × 1.15 ÷ units per carton⌉       (15% safety stock)
+Run rate    = units sold in the month ÷ days in the month
+DOI         = stock on hand at month end ÷ run rate       (days of inventory)
 ```
 
-February–April only seed the history. Forecasts are tested for May–September, and the October forecast becomes
-the shipment plan. The dummy data includes a few events that expose the weak spots of a moving average:
-a product that goes viral on TikTok in August, a stock-out in one warehouse in July, an affiliate push in
-September, and a seasonal cough syrup that picks up when the rainy season starts.
+October–December 2025 only seed the history. Forecasts are tested for January–September 2026, and the October 2026
+forecast becomes the shipment plan. The dummy data includes a few events that expose the weak spots of a moving
+average: a product that goes viral on TikTok in August, stock-outs in one warehouse (February and July), an affiliate
+push in September, a cough syrup that follows the rainy season, a new product launched in June (three months with no
+history) and a product being phased out (demand falls every month, so the average keeps forecasting too high).
 
 ## Repository layout
 
@@ -99,11 +109,12 @@ data.js                           aggregated data for the dashboard (pipeline ou
 tools/generate_dummy_data.py      dummy data generator
 tools/build_dashboard_data.py     pipeline: raw exports -> data.js + processed CSVs
 tools/build_map.py                map outlines and province centroids -> js/geo.js, data/master/provinces.csv (Natural Earth, public domain)
-data/raw/orders_2026-MM.csv.gz    monthly order exports (Feb–Sep 2026)
+data/raw/orders_YYYY-MM.csv.gz    monthly order exports (Oct 2025–Sep 2026)
 data/raw/traffic_daily.csv.gz     daily traffic report per store
+data/raw/stock_on_hand.csv        month-end stock on hand per SKU and warehouse
 data/raw/platform_rebates.csv     platform rebates on campaign days
-data/master/                      sku_master, item_convert (bundle -> SKU), store_map, vouchers
-data/processed/                   SKU × warehouse units, forecast vs actual, shipment plan
+data/master/                      sku_master (with status and launch month), item_convert (bundle -> SKU), store_map, vouchers
+data/processed/                   SKU × warehouse units, forecast vs actual, stock cover, shipment plan
 ```
 
 ### Order export columns (`data/raw/orders_*.csv.gz`)
@@ -124,6 +135,10 @@ data/processed/                   SKU × warehouse units, forecast vs actual, sh
 ### Traffic report columns (`data/raw/traffic_daily.csv.gz`)
 
 `date`, `store`, `organic_views`, `product_clicks`, `visitors`, `orders`, `ad_impressions`, `ad_clicks`
+
+### Stock on hand columns (`data/raw/stock_on_hand.csv`)
+
+`snapshot_date` (last day of the month), `sku`, `warehouse`, `soh_units`
 
 ## Run it yourself
 

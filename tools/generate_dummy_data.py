@@ -8,10 +8,11 @@ vouchers on campaign days, platform rebates, daily traffic reports, and Indonesi
 seasonality (twin-date sales such as 9.9, payday on the 25th, midnight flash sales).
 
 Outputs
-  data/raw/orders_YYYY-MM.csv.gz     line-level order export per month (Feb-Sep 2026)
+  data/raw/orders_YYYY-MM.csv.gz     line-level order export per month (Oct 2025 - Sep 2026)
   data/raw/traffic_daily.csv.gz      daily traffic report per store
   data/raw/platform_rebates.csv      platform co-funding rebates on campaign days
-  data/master/sku_master.csv         physical SKUs + units per carton
+  data/raw/stock_on_hand.csv         month-end stock on hand per SKU and warehouse
+  data/master/sku_master.csv         physical SKUs, status (Active / New / Slow moving / Phase-out), units per carton
   data/master/item_convert.csv       sellable item -> component SKUs (bundles, multipacks)
   data/master/store_map.csv          store -> platform, channel, warehouse
   data/master/vouchers.csv           store vouchers set up for each campaign day
@@ -31,31 +32,34 @@ from pathlib import Path
 import numpy as np
 
 SEED = 20260917
+# every month gets its own random streams (seeded by year and month), so adding a month leaves the others unchanged
 rng = np.random.default_rng(SEED)
-rng_geo = np.random.default_rng(SEED + 7)   # separate stream: adding buyer provinces leaves every other number unchanged
+rng_geo = np.random.default_rng(SEED + 7)   # buyer provinces: separate stream
+rng_static = np.random.default_rng(SEED + 1)   # per item / per store monthly noise, drawn once up front
 ROOT = Path(__file__).resolve().parents[1]
 RAW, MASTER = ROOT / "data" / "raw", ROOT / "data" / "master"
 RAW.mkdir(parents=True, exist_ok=True)
 MASTER.mkdir(parents=True, exist_ok=True)
 
-MONTHS = [(2026, m) for m in range(2, 10)]  # Feb-Sep 2026; Feb-Apr only seed the forecast history
+# Oct 2025 - Sep 2026. The dashboard shows Jan-Sep 2026; Oct-Dec 2025 seed the forecast history and the campaign history.
+MONTHS = [(2025, 10), (2025, 11), (2025, 12)] + [(2026, m) for m in range(1, 10)]
 KIDS, ADULT = "Kids & Family", "Adult & Specialty"
 
 # ---------------------------------------------------------------- fictional catalogue
-# brand: category, base weight, monthly trend (Feb..Sep)
+# brand: category, base weight, monthly trend (Oct 2025 .. Sep 2026)
 BRANDS = {
-    "Growlie":        (KIDS,  1.00, [0.92, 0.95, 0.97, 1.00, 1.03, 1.02, 1.06, 1.10]),
-    "Immunio Kids":   (KIDS,  0.78, [1.18, 1.12, 0.98, 0.94, 0.92, 0.95, 1.00, 1.14]),
-    "Calsee":         (KIDS,  0.46, [0.85, 0.88, 0.92, 0.97, 1.02, 1.08, 1.15, 1.22]),
-    "Honeyo Kids":    (KIDS,  0.30, [1.12, 1.10, 1.05, 1.00, 0.95, 0.90, 0.86, 0.82]),
-    "NutriMilk Kids": (KIDS,  0.42, [0.95, 1.05, 1.00, 0.98, 1.00, 1.02, 1.04, 1.03]),
-    "Respira Kids":   (KIDS,  0.20, [1.45, 1.30, 1.00, 0.82, 0.74, 0.72, 0.80, 1.10]),
-    "Dermaya":        (ADULT, 0.70, [0.80, 0.86, 0.90, 0.97, 1.04, 1.10, 1.18, 1.28]),
-    "Fortivit":       (ADULT, 0.66, [1.15, 1.10, 0.96, 0.92, 0.90, 0.93, 0.98, 1.08]),
-    "Lancara":        (ADULT, 0.40, [0.98, 1.10, 1.02, 0.98, 1.00, 0.99, 1.01, 1.03]),
-    "Somnia":         (ADULT, 0.18, [0.90, 0.92, 0.95, 1.00, 1.02, 1.04, 1.06, 1.08]),
-    "Flexora":        (ADULT, 0.16, [1.00, 1.00, 0.98, 1.00, 1.02, 1.01, 1.03, 1.04]),
-    "Optivisa":       (ADULT, 0.10, [0.96, 0.98, 1.00, 1.00, 1.02, 1.03, 1.02, 1.05]),
+    "Growlie":        (KIDS,  1.00, [0.86, 0.88, 0.90, 0.90, 0.92, 0.95, 0.97, 1.00, 1.03, 1.02, 1.06, 1.10]),
+    "Immunio Kids":   (KIDS,  0.78, [1.06, 1.16, 1.24, 1.22, 1.18, 1.12, 0.98, 0.94, 0.92, 0.95, 1.00, 1.14]),
+    "Calsee":         (KIDS,  0.46, [0.76, 0.78, 0.80, 0.82, 0.85, 0.88, 0.92, 0.97, 1.02, 1.08, 1.15, 1.22]),
+    "Honeyo Kids":    (KIDS,  0.30, [1.15, 1.17, 1.16, 1.14, 1.12, 1.10, 1.05, 1.00, 0.95, 0.90, 0.86, 0.82]),
+    "NutriMilk Kids": (KIDS,  0.42, [0.96, 0.98, 1.01, 0.97, 0.95, 1.05, 1.00, 0.98, 1.00, 1.02, 1.04, 1.03]),
+    "Respira Kids":   (KIDS,  0.20, [1.12, 1.38, 1.56, 1.52, 1.45, 1.30, 1.00, 0.82, 0.74, 0.72, 0.80, 1.10]),
+    "Dermaya":        (ADULT, 0.70, [0.68, 0.71, 0.74, 0.77, 0.80, 0.86, 0.90, 0.97, 1.04, 1.10, 1.18, 1.28]),
+    "Fortivit":       (ADULT, 0.66, [1.02, 1.12, 1.21, 1.20, 1.15, 1.10, 0.96, 0.92, 0.90, 0.93, 0.98, 1.08]),
+    "Lancara":        (ADULT, 0.40, [0.95, 0.97, 1.06, 1.01, 0.98, 1.10, 1.02, 0.98, 1.00, 0.99, 1.01, 1.03]),
+    "Somnia":         (ADULT, 0.18, [0.84, 0.86, 0.89, 0.88, 0.90, 0.92, 0.95, 1.00, 1.02, 1.04, 1.06, 1.08]),
+    "Flexora":        (ADULT, 0.16, [0.98, 0.99, 1.01, 0.99, 1.00, 1.00, 0.98, 1.00, 1.02, 1.01, 1.03, 1.04]),
+    "Optivisa":       (ADULT, 0.10, [0.91, 0.93, 0.95, 0.95, 0.96, 0.98, 1.00, 1.00, 1.02, 1.03, 1.02, 1.05]),
 }
 
 # physical SKU: code, name, brand, list price (Rp), weight within brand, units per carton
@@ -64,6 +68,7 @@ SKUS = [
     ("NV-1102", "Growlie Kids Multivitamin Syrup 120 ml",       "Growlie",         64900, 0.26, 48),
     ("NV-1103", "Growlie Orange Chewable Tablets x20",          "Growlie",         45900, 0.30, 60),
     ("NV-1104", "Growlie Appetite Emulsion 200 ml",             "Growlie",         72500, 0.14, 24),
+    ("NV-1105", "Growlie Kids Vitamin Gummies x30",             "Growlie",         82000, 0.18, 36),
     ("NV-1201", "Immunio Kids Immune Syrup 60 ml",              "Immunio Kids",    38900, 0.42, 48),
     ("NV-1202", "Immunio Kids Immune Syrup 120 ml",             "Immunio Kids",    61500, 0.33, 48),
     ("NV-1203", "Immunio Kids Vitamin C Gummies x30",           "Immunio Kids",    79000, 0.25, 36),
@@ -87,6 +92,15 @@ SKUS = [
     ("NV-2601", "Optivisa Eye Health Capsules x30",             "Optivisa",       209000, 1.00, 24),
 ]
 SKU = {s[0]: s for s in SKUS}
+
+# product life cycle, as tracked in the monthly SKU review: launches, slow movers and phase-outs
+SKU_STATUS = {"NV-1105": "New", "NV-1402": "Slow moving", "NV-2601": "Slow moving", "NV-1104": "Phase-out"}
+# demand multiplier per month (Oct..Sep): the gummies launch in June 2026, the emulsion is being phased out
+SKU_CYCLE = {
+    "NV-1105": [0, 0, 0, 0, 0, 0, 0, 0, 0.55, 0.90, 1.10, 1.25],
+    "NV-1104": [1, 1, 1, 1, 1, 0.95, 0.88, 0.78, 0.66, 0.54, 0.44, 0.36],
+}
+LAUNCH = ("NV-1105", 2026, 6)
 
 # sellable items that are not a single SKU: multipacks & bundles (must be exploded before stock counts)
 PACKS = [  # item code, name, [(sku, qty)], weight relative to the main brand
@@ -128,16 +142,16 @@ for wh in ["Jakarta", "Surabaya"]:
 STORES.append(("Lazada Jakarta", "Lazada", "Lazada", "Jakarta", None))
 STORES.append(("Blibli Jakarta", "Blibli", "Blibli", "Jakarta", None))
 
-# GMV share per platform per month (Feb..Sep): TikTok Shop gains, Shopee and Tokopedia ease off
+# GMV share per platform per month (Oct..Sep): TikTok Shop gains, Shopee and Tokopedia ease off
 PLATFORM_SHARE = {
-    "TikTok Shop": [0.35, 0.36, 0.37, 0.38, 0.40, 0.41, 0.43, 0.45],
-    "Shopee":      [0.47, 0.47, 0.46, 0.46, 0.45, 0.44, 0.43, 0.42],
-    "Tokopedia":   [0.12, 0.11, 0.11, 0.10, 0.09, 0.09, 0.08, 0.08],
-    "Lazada":      [0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.04],
-    "Blibli":      [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01],
+    "TikTok Shop": [0.31, 0.32, 0.33, 0.34, 0.35, 0.36, 0.37, 0.38, 0.40, 0.41, 0.43, 0.45],
+    "Shopee":      [0.48, 0.48, 0.48, 0.47, 0.47, 0.47, 0.46, 0.46, 0.45, 0.44, 0.43, 0.42],
+    "Tokopedia":   [0.14, 0.13, 0.13, 0.13, 0.12, 0.11, 0.11, 0.10, 0.09, 0.09, 0.08, 0.08],
+    "Lazada":      [0.06, 0.06, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.04],
+    "Blibli":      [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01],
 }
 CAMPAIGN_LIFT = {"TikTok Shop": 2.7, "Shopee": 3.3, "Tokopedia": 2.2, "Lazada": 2.9, "Blibli": 1.8}
-BASE_ORDERS = {2: 31500, 3: 36500, 4: 33800, 5: 36200, 6: 38100, 7: 37400, 8: 41800, 9: 46500}
+BASE_ORDERS = {10: 27500, 11: 29800, 12: 31200, 1: 30400, 2: 31500, 3: 36500, 4: 33800, 5: 36200, 6: 38100, 7: 37400, 8: 41800, 9: 46500}
 
 # special events that make the forecast story interesting: (month, item/SKU, platform|None, warehouse|None, multiplier)
 EVENTS = [
@@ -146,11 +160,14 @@ EVENTS = [
     (7, "NV-2202", None, "Medan", 0.22),        # Fortivit bottle out of stock in Medan in July
     (9, "NV-2101", "TikTok Shop", None, 1.45),  # Dermaya Lotion joins an affiliate programme in September
     (6, "BDL-TALL", None, None, 1.6),           # new bundle pushed in June
+    (12, "BDL-RAINY", None, None, 1.5),         # rainy-season bundle pushed in December
+    (2, "NV-1601", None, "Surabaya", 0.35),     # cough syrup short in Surabaya in February
 ]
 
 # TikTok order source mix (LIVE, Video, Product card) per month, LIVE growing
 TT_SOURCE = ["LIVE", "Video", "Product card"]
-TT_MIX = [[0.26, 0.44, 0.30], [0.27, 0.44, 0.29], [0.29, 0.43, 0.28], [0.31, 0.42, 0.27],
+TT_MIX = [[0.20, 0.46, 0.34], [0.22, 0.45, 0.33], [0.23, 0.45, 0.32], [0.25, 0.44, 0.31],
+          [0.26, 0.44, 0.30], [0.27, 0.44, 0.29], [0.29, 0.43, 0.28], [0.31, 0.42, 0.27],
           [0.33, 0.41, 0.26], [0.35, 0.40, 0.25], [0.38, 0.38, 0.24], [0.41, 0.36, 0.23]]
 
 # store vouchers per channel: prefix, [(tier, min spend, discount, base quota on twin date)]
@@ -218,8 +235,8 @@ ITEMS = item_catalog()
 def day_multiplier(d: dt.date):
     """Daily volume multiplier and campaign tag."""
     m, tag = 1.0, ""
-    if d.day == d.month:                          # twin dates 2.2, 3.3, ... 9.9
-        tag = "twin"
+    if d.day == d.month:                          # twin dates 10.10, 11.11, 12.12, 1.1 ... 9.9
+        m, tag = {11: 1.3, 12: 1.2}.get(d.month, 1.0), "twin"   # 11.11 and 12.12 are the biggest of the year
     elif d.day == 25:
         m, tag = 1.75, "payday"
     elif d.day in (24, 26):
@@ -232,6 +249,12 @@ def day_multiplier(d: dt.date):
         m = 0.55
     if d.month == 3 and 5 <= d.day <= 15:         # Ramadan shopping
         m *= 1.18
+    if d.month == 2 and d.day >= 18:              # first days of Ramadan
+        m *= 1.08
+    if d.month == 12 and 24 <= d.day <= 26:       # Christmas
+        m *= 0.85
+    if d.month == 12 and d.day == 31:             # New Year's Eve
+        m *= 0.8
     if d.weekday() == 6:
         m *= 0.94
     return m, tag
@@ -269,6 +292,10 @@ def store_item_weights(store, month_idx, month):
             continue
         b = BRANDS[it["brand"]]
         val = it["w"] * b[1] * b[2][month_idx]
+        for code, cycle in SKU_CYCLE.items():
+            # a phase-out also shrinks the bundles that contain the SKU
+            if code == it["code"] or (cycle[month_idx] < 1 and any(c == code for c, _ in it["comp"])):
+                val *= cycle[month_idx]
         for (em, code, ep, ewh, mult) in EVENTS:
             # a stock-out also holds back bundles that contain the SKU
             hit = code == it["code"] or (mult < 1 and any(c == code for c, _ in it["comp"]))
@@ -297,28 +324,50 @@ def traffic_row(d, store, orders, tag, mi):
     return [d.isoformat(), store[0], organic, clicks, visitors, orders, ad_impr, ad_clicks]
 
 
+def cover_days(sku, wh, y, mo, r):
+    """Days of stock left at month end, before the next shipment arrives."""
+    if (sku, y, mo) == LAUNCH:
+        return r.uniform(45, 70)                  # launch stock sent to every warehouse
+    for em, code, ep, ewh, mult in EVENTS:
+        if em == mo and mult < 1 and code == sku and ewh == wh:
+            return r.uniform(0, 1.5)              # the stock-out behind the dip in sales
+    if sku == "NV-1302" and mo == 8:
+        return r.uniform(4, 9)                    # viral month: shelves nearly empty
+    if SKU_STATUS.get(sku) in ("Slow moving", "Phase-out"):
+        return r.uniform(60, 115)
+    if r.random() < 0.05:
+        return r.uniform(3, 11)                   # the odd late replenishment
+    if r.random() < 0.05:
+        return r.uniform(62, 90)                  # ...and the odd over-shipment
+    return r.uniform(18, 44)
+
+
 def main():
-    month_noise = {(it["code"], m): float(rng.lognormal(0, 0.09)) for it in ITEMS for _, m in MONTHS}
-    store_noise = {(s[0], m): float(rng.lognormal(0, 0.05)) for s in STORES for _, m in MONTHS}
+    global rng, rng_geo
+    month_noise = {(it["code"], mi): float(rng_static.lognormal(0, 0.09)) for it in ITEMS for mi in range(len(MONTHS))}
+    store_noise = {(s[0], mi): float(rng_static.lognormal(0, 0.05)) for s in STORES for mi in range(len(MONTHS))}
 
     fields = ["order_id", "order_datetime", "order_date", "store", "item_code", "item_name", "brand", "category",
               "qty", "gmv", "status", "tiktok_channel", "voucher_code", "voucher_discount", "buyer_province"]
     buyer_province = province_sampler()
-    traffic, rebates, voucher_rows = [], [], []
+    traffic, rebates, voucher_rows, stock_rows = [], [], [], []
     for mi, (y, mo) in enumerate(MONTHS):
+        rng = np.random.default_rng([SEED, y, mo])
+        rng_geo = np.random.default_rng([SEED + 7, y, mo])
         rows = []
+        shipped = {}          # (sku, warehouse) -> units on valid orders, for the stock snapshot
         days = calendar.monthrange(y, mo)[1]
         st_w = []
         for s in STORES:
             plat = s[1]
             same = [x for x in STORES if x[1] == plat]
             wh_norm = sum(WH_SHARE[x[3]] for x in same)
-            st_w.append(PLATFORM_SHARE[plat][mi] * WH_SHARE[s[3]] / wh_norm * store_noise[(s[0], mo)])
+            st_w.append(PLATFORM_SHARE[plat][mi] * WH_SHARE[s[3]] / wh_norm * store_noise[(s[0], mi)])
         st_w = np.array(st_w)
         st_w /= st_w.sum()
         item_w = {}
         for s in STORES:
-            w = store_item_weights(s, mi, mo) * np.array([month_noise[(it["code"], mo)] for it in ITEMS])
+            w = store_item_weights(s, mi, mo) * np.array([month_noise[(it["code"], mi)] for it in ITEMS])
             item_w[s[0]] = w / w.sum()
 
         for day in range(1, days + 1):
@@ -408,6 +457,10 @@ def main():
                 v = o.get("voucher")
                 prov = buyer_province(o["store"][3])
                 for k, (it, q, gmv) in enumerate(o["lines"]):
+                    if o["status"] in ("Completed", "In transit"):
+                        for c, per in it["comp"]:
+                            key = (c, o["store"][3])
+                            shipped[key] = shipped.get(key, 0) + q * per
                     rows.append([o["id"], o["ts"], d.isoformat(), o["store"][0], it["code"], it["name"], it["brand"],
                                  BRANDS[it["brand"]][0], q, gmv, o["status"], o["src"],
                                  v[0] if v and k == 0 else "", v[1] if v and k == 0 else "", prov])
@@ -422,6 +475,16 @@ def main():
             w.writerows(rows)
         print(f"{out.name}: {len(rows):,} lines")
 
+        # month-end stock on hand = daily run rate x days of cover left
+        r_stock = np.random.default_rng([SEED + 11, y, mo])
+        snap = dt.date(y, mo, days).isoformat()
+        for code, *_ in SKUS:
+            for wh in WAREHOUSES:
+                units = shipped.get((code, wh), 0)
+                if units == 0:
+                    continue
+                stock_rows.append([snap, code, wh, int(round(units / days * cover_days(code, wh, y, mo, r_stock)))])
+
     with gzip.open(RAW / "traffic_daily.csv.gz", "wt", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["date", "store", "organic_views", "product_clicks", "visitors", "orders", "ad_impressions", "ad_clicks"])
@@ -430,15 +493,20 @@ def main():
         w = csv.writer(f)
         w.writerow(["date", "campaign", "channel", "rebate"])
         w.writerows(rebates)
+    with open(RAW / "stock_on_hand.csv", "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["snapshot_date", "sku", "warehouse", "soh_units"])
+        w.writerows(stock_rows)
     with open(MASTER / "vouchers.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["date", "campaign", "channel", "voucher_code", "voucher_name", "min_spend", "discount", "quota"])
         w.writerows(voucher_rows)
     with open(MASTER / "sku_master.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["sku", "sku_name", "brand", "category", "list_price", "units_per_carton"])
+        w.writerow(["sku", "sku_name", "brand", "category", "status", "launch_month", "list_price", "units_per_carton"])
         for code, name, brand, price, _, box in SKUS:
-            w.writerow([code, name, brand, BRANDS[brand][0], price, box])
+            launch = f"{LAUNCH[1]}-{LAUNCH[2]:02d}" if code == LAUNCH[0] else ""
+            w.writerow([code, name, brand, BRANDS[brand][0], SKU_STATUS.get(code, "Active"), launch, price, box])
     with open(MASTER / "item_convert.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["item_code", "item_name", "sku_1", "qty_1", "sku_2", "qty_2", "sku_3", "qty_3"])
@@ -450,7 +518,7 @@ def main():
         w.writerow(["store", "platform", "channel", "warehouse"])
         for s in STORES:
             w.writerow(s[:4])
-    print("traffic rows", len(traffic), "| vouchers", len(voucher_rows), "| rebates", len(rebates))
+    print("traffic rows", len(traffic), "| vouchers", len(voucher_rows), "| rebates", len(rebates), "| stock rows", len(stock_rows))
 
 
 if __name__ == "__main__":

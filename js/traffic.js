@@ -106,7 +106,7 @@
     const yMax = ticks[ticks.length - 1];
     const tl = ticks.map((t) => fmt(t * 100, 0) + "%");
     const H = W < 520 ? 240 : 270;
-    const endW = U.labelWidth(box, ["Tokopedia 3.1%"]);
+    const endW = U.labelWidth(box, series.map((q) => q.p + " " + pct(q.v[q.v.length - 1])));
     const m = { t: 12, r: endW + 18, b: 28, l: U.labelWidth(box, tl) + 12 };
     const iw = W - m.l - m.r, ih = H - m.t - m.b;
     const band = iw / ms.length;
@@ -116,8 +116,10 @@
       svg.appendChild(svgEl("line", { x1: m.l, x2: m.l + iw, y1: y(t), y2: y(t), stroke: t === 0 ? "var(--axis)" : "var(--grid)" }));
       svg.appendChild(svgEl("text", { x: m.l - 8, y: y(t) + 4, "text-anchor": "end" }, tl[i]));
     });
-    ms.forEach((k, i) => svg.appendChild(svgEl("text", { x: x(i), y: H - 8, "text-anchor": "middle", class: k === U.state.month ? "lbl-strong" : "" }, U.monthShort(k))));
     const si = ms.indexOf(U.state.month);
+    // narrow screens: label every other month (and the chosen one) so the names do not touch
+    ms.forEach((k, i) => { if (band >= 28 || i === si || (i % 2 === (ms.length - 1) % 2 && Math.abs(i - si) > 1))
+      svg.appendChild(svgEl("text", { x: x(i), y: H - 8, "text-anchor": "middle", class: k === U.state.month ? "lbl-strong" : "" }, U.monthShort(k))); });
     svg.appendChild(svgEl("line", { x1: x(si), x2: x(si), y1: m.t, y2: m.t + ih, stroke: "var(--axis)" }));
     const ends = [];
     for (const s of series) {

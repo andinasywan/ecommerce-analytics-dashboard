@@ -1,145 +1,217 @@
 date,campaign,channel,voucher_code,voucher_name,min_spend,discount,quota
-2026-02-02,2.2,Shopee Growlie Official,GRW0202A,"Store voucher 2.2 - min. spend Rp75,000, Rp7,500 off",75000,7500,80
-2026-02-02,2.2,Shopee Growlie Official,GRW0202B,"Store voucher 2.2 - min. spend Rp150,000, Rp18,000 off",150000,18000,70
-2026-02-02,2.2,Shopee Dermaya Official,DMY0202A,"Store voucher 2.2 - min. spend Rp150,000, Rp12,000 off",150000,12000,80
+2025-10-10,10.10,Shopee Growlie Official,GRW1010A,"Store voucher 10.10 - min. spend Rp75,000, Rp7,500 off",75000,7500,60
+2025-10-10,10.10,Shopee Growlie Official,GRW1010B,"Store voucher 10.10 - min. spend Rp150,000, Rp18,000 off",150000,18000,50
+2025-10-10,10.10,Shopee Dermaya Official,DMY1010A,"Store voucher 10.10 - min. spend Rp150,000, Rp12,000 off",150000,12000,70
+2025-10-10,10.10,Shopee Dermaya Official,DMY1010B,"Store voucher 10.10 - min. spend Rp250,000, Rp25,000 off",250000,25000,30
+2025-10-10,10.10,Shopee Fortivit Official,FTV1010A,"Store voucher 10.10 - min. spend Rp100,000, Rp8,000 off",100000,8000,60
+2025-10-10,10.10,Shopee Fortivit Official,FTV1010B,"Store voucher 10.10 - min. spend Rp200,000, Rp18,000 off",200000,18000,50
+2025-10-10,10.10,TikTok Shop,TTS1010A,"Store voucher 10.10 - min. spend Rp100,000, Rp8,000 off",100000,8000,120
+2025-10-10,10.10,TikTok Shop,TTS1010B,"Store voucher 10.10 - min. spend Rp160,000, Rp14,500 off",160000,14500,80
+2025-10-10,10.10,TikTok Shop,TTS1010L,"LIVE voucher 10.10 - no minimum spend, Rp5,000 off",0,5000,100
+2025-10-25,Payday 10/25,Shopee Growlie Official,GRW1025A,"Store voucher Payday 10/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,30
+2025-10-25,Payday 10/25,Shopee Growlie Official,GRW1025B,"Store voucher Payday 10/25 - min. spend Rp150,000, Rp18,000 off",150000,18000,30
+2025-10-25,Payday 10/25,Shopee Dermaya Official,DMY1025A,"Store voucher Payday 10/25 - min. spend Rp150,000, Rp12,000 off",150000,12000,10
+2025-10-25,Payday 10/25,Shopee Dermaya Official,DMY1025B,"Store voucher Payday 10/25 - min. spend Rp250,000, Rp25,000 off",250000,25000,20
+2025-10-25,Payday 10/25,Shopee Fortivit Official,FTV1025A,"Store voucher Payday 10/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,30
+2025-10-25,Payday 10/25,Shopee Fortivit Official,FTV1025B,"Store voucher Payday 10/25 - min. spend Rp200,000, Rp18,000 off",200000,18000,20
+2025-10-25,Payday 10/25,TikTok Shop,TTS1025A,"Store voucher Payday 10/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,30
+2025-10-25,Payday 10/25,TikTok Shop,TTS1025B,"Store voucher Payday 10/25 - min. spend Rp160,000, Rp14,500 off",160000,14500,20
+2025-10-25,Payday 10/25,TikTok Shop,TTS1025L,"LIVE voucher Payday 10/25 - no minimum spend, Rp5,000 off",0,5000,50
+2025-11-11,11.11,Shopee Growlie Official,GRW1111A,"Store voucher 11.11 - min. spend Rp75,000, Rp7,500 off",75000,7500,130
+2025-11-11,11.11,Shopee Growlie Official,GRW1111B,"Store voucher 11.11 - min. spend Rp150,000, Rp18,000 off",150000,18000,60
+2025-11-11,11.11,Shopee Dermaya Official,DMY1111A,"Store voucher 11.11 - min. spend Rp150,000, Rp12,000 off",150000,12000,110
+2025-11-11,11.11,Shopee Dermaya Official,DMY1111B,"Store voucher 11.11 - min. spend Rp250,000, Rp25,000 off",250000,25000,40
+2025-11-11,11.11,Shopee Fortivit Official,FTV1111A,"Store voucher 11.11 - min. spend Rp100,000, Rp8,000 off",100000,8000,80
+2025-11-11,11.11,Shopee Fortivit Official,FTV1111B,"Store voucher 11.11 - min. spend Rp200,000, Rp18,000 off",200000,18000,40
+2025-11-11,11.11,TikTok Shop,TTS1111A,"Store voucher 11.11 - min. spend Rp100,000, Rp8,000 off",100000,8000,100
+2025-11-11,11.11,TikTok Shop,TTS1111B,"Store voucher 11.11 - min. spend Rp160,000, Rp14,500 off",160000,14500,80
+2025-11-11,11.11,TikTok Shop,TTS1111L,"LIVE voucher 11.11 - no minimum spend, Rp5,000 off",0,5000,120
+2025-11-25,Payday 11/25,Shopee Growlie Official,GRW1125A,"Store voucher Payday 11/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,60
+2025-11-25,Payday 11/25,Shopee Growlie Official,GRW1125B,"Store voucher Payday 11/25 - min. spend Rp150,000, Rp18,000 off",150000,18000,20
+2025-11-25,Payday 11/25,Shopee Dermaya Official,DMY1125A,"Store voucher Payday 11/25 - min. spend Rp150,000, Rp12,000 off",150000,12000,40
+2025-11-25,Payday 11/25,Shopee Dermaya Official,DMY1125B,"Store voucher Payday 11/25 - min. spend Rp250,000, Rp25,000 off",250000,25000,20
+2025-11-25,Payday 11/25,Shopee Fortivit Official,FTV1125A,"Store voucher Payday 11/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,20
+2025-11-25,Payday 11/25,Shopee Fortivit Official,FTV1125B,"Store voucher Payday 11/25 - min. spend Rp200,000, Rp18,000 off",200000,18000,20
+2025-11-25,Payday 11/25,TikTok Shop,TTS1125A,"Store voucher Payday 11/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,50
+2025-11-25,Payday 11/25,TikTok Shop,TTS1125B,"Store voucher Payday 11/25 - min. spend Rp160,000, Rp14,500 off",160000,14500,60
+2025-11-25,Payday 11/25,TikTok Shop,TTS1125L,"LIVE voucher Payday 11/25 - no minimum spend, Rp5,000 off",0,5000,60
+2025-12-12,12.12,Shopee Growlie Official,GRW1212A,"Store voucher 12.12 - min. spend Rp75,000, Rp7,500 off",75000,7500,110
+2025-12-12,12.12,Shopee Growlie Official,GRW1212B,"Store voucher 12.12 - min. spend Rp150,000, Rp18,000 off",150000,18000,40
+2025-12-12,12.12,Shopee Dermaya Official,DMY1212A,"Store voucher 12.12 - min. spend Rp150,000, Rp12,000 off",150000,12000,90
+2025-12-12,12.12,Shopee Dermaya Official,DMY1212B,"Store voucher 12.12 - min. spend Rp250,000, Rp25,000 off",250000,25000,60
+2025-12-12,12.12,Shopee Fortivit Official,FTV1212A,"Store voucher 12.12 - min. spend Rp100,000, Rp8,000 off",100000,8000,70
+2025-12-12,12.12,Shopee Fortivit Official,FTV1212B,"Store voucher 12.12 - min. spend Rp200,000, Rp18,000 off",200000,18000,40
+2025-12-12,12.12,TikTok Shop,TTS1212A,"Store voucher 12.12 - min. spend Rp100,000, Rp8,000 off",100000,8000,110
+2025-12-12,12.12,TikTok Shop,TTS1212B,"Store voucher 12.12 - min. spend Rp160,000, Rp14,500 off",160000,14500,70
+2025-12-12,12.12,TikTok Shop,TTS1212L,"LIVE voucher 12.12 - no minimum spend, Rp5,000 off",0,5000,220
+2025-12-25,Payday 12/25,Shopee Growlie Official,GRW1225A,"Store voucher Payday 12/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,20
+2025-12-25,Payday 12/25,Shopee Growlie Official,GRW1225B,"Store voucher Payday 12/25 - min. spend Rp150,000, Rp18,000 off",150000,18000,20
+2025-12-25,Payday 12/25,Shopee Dermaya Official,DMY1225A,"Store voucher Payday 12/25 - min. spend Rp150,000, Rp12,000 off",150000,12000,30
+2025-12-25,Payday 12/25,Shopee Dermaya Official,DMY1225B,"Store voucher Payday 12/25 - min. spend Rp250,000, Rp25,000 off",250000,25000,10
+2025-12-25,Payday 12/25,Shopee Fortivit Official,FTV1225A,"Store voucher Payday 12/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,20
+2025-12-25,Payday 12/25,Shopee Fortivit Official,FTV1225B,"Store voucher Payday 12/25 - min. spend Rp200,000, Rp18,000 off",200000,18000,20
+2025-12-25,Payday 12/25,TikTok Shop,TTS1225A,"Store voucher Payday 12/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,40
+2025-12-25,Payday 12/25,TikTok Shop,TTS1225B,"Store voucher Payday 12/25 - min. spend Rp160,000, Rp14,500 off",160000,14500,40
+2025-12-25,Payday 12/25,TikTok Shop,TTS1225L,"LIVE voucher Payday 12/25 - no minimum spend, Rp5,000 off",0,5000,50
+2026-01-01,1.1,Shopee Growlie Official,GRW0101A,"Store voucher 1.1 - min. spend Rp75,000, Rp7,500 off",75000,7500,80
+2026-01-01,1.1,Shopee Growlie Official,GRW0101B,"Store voucher 1.1 - min. spend Rp150,000, Rp18,000 off",150000,18000,40
+2026-01-01,1.1,Shopee Dermaya Official,DMY0101A,"Store voucher 1.1 - min. spend Rp150,000, Rp12,000 off",150000,12000,40
+2026-01-01,1.1,Shopee Dermaya Official,DMY0101B,"Store voucher 1.1 - min. spend Rp250,000, Rp25,000 off",250000,25000,50
+2026-01-01,1.1,Shopee Fortivit Official,FTV0101A,"Store voucher 1.1 - min. spend Rp100,000, Rp8,000 off",100000,8000,40
+2026-01-01,1.1,Shopee Fortivit Official,FTV0101B,"Store voucher 1.1 - min. spend Rp200,000, Rp18,000 off",200000,18000,20
+2026-01-01,1.1,TikTok Shop,TTS0101A,"Store voucher 1.1 - min. spend Rp100,000, Rp8,000 off",100000,8000,110
+2026-01-01,1.1,TikTok Shop,TTS0101B,"Store voucher 1.1 - min. spend Rp160,000, Rp14,500 off",160000,14500,100
+2026-01-01,1.1,TikTok Shop,TTS0101L,"LIVE voucher 1.1 - no minimum spend, Rp5,000 off",0,5000,240
+2026-01-25,Payday 1/25,Shopee Growlie Official,GRW0125A,"Store voucher Payday 1/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,20
+2026-01-25,Payday 1/25,Shopee Growlie Official,GRW0125B,"Store voucher Payday 1/25 - min. spend Rp150,000, Rp18,000 off",150000,18000,30
+2026-01-25,Payday 1/25,Shopee Dermaya Official,DMY0125A,"Store voucher Payday 1/25 - min. spend Rp150,000, Rp12,000 off",150000,12000,30
+2026-01-25,Payday 1/25,Shopee Dermaya Official,DMY0125B,"Store voucher Payday 1/25 - min. spend Rp250,000, Rp25,000 off",250000,25000,10
+2026-01-25,Payday 1/25,Shopee Fortivit Official,FTV0125A,"Store voucher Payday 1/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,10
+2026-01-25,Payday 1/25,Shopee Fortivit Official,FTV0125B,"Store voucher Payday 1/25 - min. spend Rp200,000, Rp18,000 off",200000,18000,10
+2026-01-25,Payday 1/25,TikTok Shop,TTS0125A,"Store voucher Payday 1/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,70
+2026-01-25,Payday 1/25,TikTok Shop,TTS0125B,"Store voucher Payday 1/25 - min. spend Rp160,000, Rp14,500 off",160000,14500,30
+2026-01-25,Payday 1/25,TikTok Shop,TTS0125L,"LIVE voucher Payday 1/25 - no minimum spend, Rp5,000 off",0,5000,50
+2026-02-02,2.2,Shopee Growlie Official,GRW0202A,"Store voucher 2.2 - min. spend Rp75,000, Rp7,500 off",75000,7500,110
+2026-02-02,2.2,Shopee Growlie Official,GRW0202B,"Store voucher 2.2 - min. spend Rp150,000, Rp18,000 off",150000,18000,50
+2026-02-02,2.2,Shopee Dermaya Official,DMY0202A,"Store voucher 2.2 - min. spend Rp150,000, Rp12,000 off",150000,12000,110
 2026-02-02,2.2,Shopee Dermaya Official,DMY0202B,"Store voucher 2.2 - min. spend Rp250,000, Rp25,000 off",250000,25000,50
-2026-02-02,2.2,Shopee Fortivit Official,FTV0202A,"Store voucher 2.2 - min. spend Rp100,000, Rp8,000 off",100000,8000,110
-2026-02-02,2.2,Shopee Fortivit Official,FTV0202B,"Store voucher 2.2 - min. spend Rp200,000, Rp18,000 off",200000,18000,40
-2026-02-02,2.2,TikTok Shop,TTS0202A,"Store voucher 2.2 - min. spend Rp100,000, Rp8,000 off",100000,8000,130
+2026-02-02,2.2,Shopee Fortivit Official,FTV0202A,"Store voucher 2.2 - min. spend Rp100,000, Rp8,000 off",100000,8000,60
+2026-02-02,2.2,Shopee Fortivit Official,FTV0202B,"Store voucher 2.2 - min. spend Rp200,000, Rp18,000 off",200000,18000,50
+2026-02-02,2.2,TikTok Shop,TTS0202A,"Store voucher 2.2 - min. spend Rp100,000, Rp8,000 off",100000,8000,150
 2026-02-02,2.2,TikTok Shop,TTS0202B,"Store voucher 2.2 - min. spend Rp160,000, Rp14,500 off",160000,14500,100
-2026-02-02,2.2,TikTok Shop,TTS0202L,"LIVE voucher 2.2 - no minimum spend, Rp5,000 off",0,5000,200
-2026-02-25,Payday 2/25,Shopee Growlie Official,GRW0225A,"Store voucher Payday 2/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,40
-2026-02-25,Payday 2/25,Shopee Growlie Official,GRW0225B,"Store voucher Payday 2/25 - min. spend Rp150,000, Rp18,000 off",150000,18000,30
+2026-02-02,2.2,TikTok Shop,TTS0202L,"LIVE voucher 2.2 - no minimum spend, Rp5,000 off",0,5000,240
+2026-02-25,Payday 2/25,Shopee Growlie Official,GRW0225A,"Store voucher Payday 2/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,20
+2026-02-25,Payday 2/25,Shopee Growlie Official,GRW0225B,"Store voucher Payday 2/25 - min. spend Rp150,000, Rp18,000 off",150000,18000,20
 2026-02-25,Payday 2/25,Shopee Dermaya Official,DMY0225A,"Store voucher Payday 2/25 - min. spend Rp150,000, Rp12,000 off",150000,12000,20
-2026-02-25,Payday 2/25,Shopee Dermaya Official,DMY0225B,"Store voucher Payday 2/25 - min. spend Rp250,000, Rp25,000 off",250000,25000,20
-2026-02-25,Payday 2/25,Shopee Fortivit Official,FTV0225A,"Store voucher Payday 2/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,30
-2026-02-25,Payday 2/25,Shopee Fortivit Official,FTV0225B,"Store voucher Payday 2/25 - min. spend Rp200,000, Rp18,000 off",200000,18000,20
-2026-02-25,Payday 2/25,TikTok Shop,TTS0225A,"Store voucher Payday 2/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,100
-2026-02-25,Payday 2/25,TikTok Shop,TTS0225B,"Store voucher Payday 2/25 - min. spend Rp160,000, Rp14,500 off",160000,14500,40
-2026-02-25,Payday 2/25,TikTok Shop,TTS0225L,"LIVE voucher Payday 2/25 - no minimum spend, Rp5,000 off",0,5000,110
-2026-03-03,3.3,Shopee Growlie Official,GRW0303A,"Store voucher 3.3 - min. spend Rp75,000, Rp7,500 off",75000,7500,100
-2026-03-03,3.3,Shopee Growlie Official,GRW0303B,"Store voucher 3.3 - min. spend Rp150,000, Rp18,000 off",150000,18000,50
-2026-03-03,3.3,Shopee Dermaya Official,DMY0303A,"Store voucher 3.3 - min. spend Rp150,000, Rp12,000 off",150000,12000,80
-2026-03-03,3.3,Shopee Dermaya Official,DMY0303B,"Store voucher 3.3 - min. spend Rp250,000, Rp25,000 off",250000,25000,70
-2026-03-03,3.3,Shopee Fortivit Official,FTV0303A,"Store voucher 3.3 - min. spend Rp100,000, Rp8,000 off",100000,8000,70
-2026-03-03,3.3,Shopee Fortivit Official,FTV0303B,"Store voucher 3.3 - min. spend Rp200,000, Rp18,000 off",200000,18000,30
-2026-03-03,3.3,TikTok Shop,TTS0303A,"Store voucher 3.3 - min. spend Rp100,000, Rp8,000 off",100000,8000,90
-2026-03-03,3.3,TikTok Shop,TTS0303B,"Store voucher 3.3 - min. spend Rp160,000, Rp14,500 off",160000,14500,80
-2026-03-03,3.3,TikTok Shop,TTS0303L,"LIVE voucher 3.3 - no minimum spend, Rp5,000 off",0,5000,320
-2026-03-25,Payday 3/25,Shopee Growlie Official,GRW0325A,"Store voucher Payday 3/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,40
+2026-02-25,Payday 2/25,Shopee Dermaya Official,DMY0225B,"Store voucher Payday 2/25 - min. spend Rp250,000, Rp25,000 off",250000,25000,30
+2026-02-25,Payday 2/25,Shopee Fortivit Official,FTV0225A,"Store voucher Payday 2/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,50
+2026-02-25,Payday 2/25,Shopee Fortivit Official,FTV0225B,"Store voucher Payday 2/25 - min. spend Rp200,000, Rp18,000 off",200000,18000,30
+2026-02-25,Payday 2/25,TikTok Shop,TTS0225A,"Store voucher Payday 2/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,70
+2026-02-25,Payday 2/25,TikTok Shop,TTS0225B,"Store voucher Payday 2/25 - min. spend Rp160,000, Rp14,500 off",160000,14500,50
+2026-02-25,Payday 2/25,TikTok Shop,TTS0225L,"LIVE voucher Payday 2/25 - no minimum spend, Rp5,000 off",0,5000,130
+2026-03-03,3.3,Shopee Growlie Official,GRW0303A,"Store voucher 3.3 - min. spend Rp75,000, Rp7,500 off",75000,7500,140
+2026-03-03,3.3,Shopee Growlie Official,GRW0303B,"Store voucher 3.3 - min. spend Rp150,000, Rp18,000 off",150000,18000,90
+2026-03-03,3.3,Shopee Dermaya Official,DMY0303A,"Store voucher 3.3 - min. spend Rp150,000, Rp12,000 off",150000,12000,130
+2026-03-03,3.3,Shopee Dermaya Official,DMY0303B,"Store voucher 3.3 - min. spend Rp250,000, Rp25,000 off",250000,25000,60
+2026-03-03,3.3,Shopee Fortivit Official,FTV0303A,"Store voucher 3.3 - min. spend Rp100,000, Rp8,000 off",100000,8000,110
+2026-03-03,3.3,Shopee Fortivit Official,FTV0303B,"Store voucher 3.3 - min. spend Rp200,000, Rp18,000 off",200000,18000,40
+2026-03-03,3.3,TikTok Shop,TTS0303A,"Store voucher 3.3 - min. spend Rp100,000, Rp8,000 off",100000,8000,120
+2026-03-03,3.3,TikTok Shop,TTS0303B,"Store voucher 3.3 - min. spend Rp160,000, Rp14,500 off",160000,14500,160
+2026-03-03,3.3,TikTok Shop,TTS0303L,"LIVE voucher 3.3 - no minimum spend, Rp5,000 off",0,5000,160
+2026-03-25,Payday 3/25,Shopee Growlie Official,GRW0325A,"Store voucher Payday 3/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,20
 2026-03-25,Payday 3/25,Shopee Growlie Official,GRW0325B,"Store voucher Payday 3/25 - min. spend Rp150,000, Rp18,000 off",150000,18000,30
 2026-03-25,Payday 3/25,Shopee Dermaya Official,DMY0325A,"Store voucher Payday 3/25 - min. spend Rp150,000, Rp12,000 off",150000,12000,30
-2026-03-25,Payday 3/25,Shopee Dermaya Official,DMY0325B,"Store voucher Payday 3/25 - min. spend Rp250,000, Rp25,000 off",250000,25000,20
+2026-03-25,Payday 3/25,Shopee Dermaya Official,DMY0325B,"Store voucher Payday 3/25 - min. spend Rp250,000, Rp25,000 off",250000,25000,30
 2026-03-25,Payday 3/25,Shopee Fortivit Official,FTV0325A,"Store voucher Payday 3/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,40
 2026-03-25,Payday 3/25,Shopee Fortivit Official,FTV0325B,"Store voucher Payday 3/25 - min. spend Rp200,000, Rp18,000 off",200000,18000,20
-2026-03-25,Payday 3/25,TikTok Shop,TTS0325A,"Store voucher Payday 3/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,90
-2026-03-25,Payday 3/25,TikTok Shop,TTS0325B,"Store voucher Payday 3/25 - min. spend Rp160,000, Rp14,500 off",160000,14500,30
-2026-03-25,Payday 3/25,TikTok Shop,TTS0325L,"LIVE voucher Payday 3/25 - no minimum spend, Rp5,000 off",0,5000,80
-2026-04-04,4.4,Shopee Growlie Official,GRW0404A,"Store voucher 4.4 - min. spend Rp75,000, Rp7,500 off",75000,7500,90
-2026-04-04,4.4,Shopee Growlie Official,GRW0404B,"Store voucher 4.4 - min. spend Rp150,000, Rp18,000 off",150000,18000,50
-2026-04-04,4.4,Shopee Dermaya Official,DMY0404A,"Store voucher 4.4 - min. spend Rp150,000, Rp12,000 off",150000,12000,60
-2026-04-04,4.4,Shopee Dermaya Official,DMY0404B,"Store voucher 4.4 - min. spend Rp250,000, Rp25,000 off",250000,25000,70
-2026-04-04,4.4,Shopee Fortivit Official,FTV0404A,"Store voucher 4.4 - min. spend Rp100,000, Rp8,000 off",100000,8000,60
-2026-04-04,4.4,Shopee Fortivit Official,FTV0404B,"Store voucher 4.4 - min. spend Rp200,000, Rp18,000 off",200000,18000,20
-2026-04-04,4.4,TikTok Shop,TTS0404A,"Store voucher 4.4 - min. spend Rp100,000, Rp8,000 off",100000,8000,200
-2026-04-04,4.4,TikTok Shop,TTS0404B,"Store voucher 4.4 - min. spend Rp160,000, Rp14,500 off",160000,14500,110
-2026-04-04,4.4,TikTok Shop,TTS0404L,"LIVE voucher 4.4 - no minimum spend, Rp5,000 off",0,5000,190
+2026-03-25,Payday 3/25,TikTok Shop,TTS0325A,"Store voucher Payday 3/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,70
+2026-03-25,Payday 3/25,TikTok Shop,TTS0325B,"Store voucher Payday 3/25 - min. spend Rp160,000, Rp14,500 off",160000,14500,50
+2026-03-25,Payday 3/25,TikTok Shop,TTS0325L,"LIVE voucher Payday 3/25 - no minimum spend, Rp5,000 off",0,5000,90
+2026-04-04,4.4,Shopee Growlie Official,GRW0404A,"Store voucher 4.4 - min. spend Rp75,000, Rp7,500 off",75000,7500,80
+2026-04-04,4.4,Shopee Growlie Official,GRW0404B,"Store voucher 4.4 - min. spend Rp150,000, Rp18,000 off",150000,18000,40
+2026-04-04,4.4,Shopee Dermaya Official,DMY0404A,"Store voucher 4.4 - min. spend Rp150,000, Rp12,000 off",150000,12000,90
+2026-04-04,4.4,Shopee Dermaya Official,DMY0404B,"Store voucher 4.4 - min. spend Rp250,000, Rp25,000 off",250000,25000,50
+2026-04-04,4.4,Shopee Fortivit Official,FTV0404A,"Store voucher 4.4 - min. spend Rp100,000, Rp8,000 off",100000,8000,100
+2026-04-04,4.4,Shopee Fortivit Official,FTV0404B,"Store voucher 4.4 - min. spend Rp200,000, Rp18,000 off",200000,18000,60
+2026-04-04,4.4,TikTok Shop,TTS0404A,"Store voucher 4.4 - min. spend Rp100,000, Rp8,000 off",100000,8000,120
+2026-04-04,4.4,TikTok Shop,TTS0404B,"Store voucher 4.4 - min. spend Rp160,000, Rp14,500 off",160000,14500,100
+2026-04-04,4.4,TikTok Shop,TTS0404L,"LIVE voucher 4.4 - no minimum spend, Rp5,000 off",0,5000,210
 2026-04-25,Payday 4/25,Shopee Growlie Official,GRW0425A,"Store voucher Payday 4/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,30
 2026-04-25,Payday 4/25,Shopee Growlie Official,GRW0425B,"Store voucher Payday 4/25 - min. spend Rp150,000, Rp18,000 off",150000,18000,20
-2026-04-25,Payday 4/25,Shopee Dermaya Official,DMY0425A,"Store voucher Payday 4/25 - min. spend Rp150,000, Rp12,000 off",150000,12000,40
-2026-04-25,Payday 4/25,Shopee Dermaya Official,DMY0425B,"Store voucher Payday 4/25 - min. spend Rp250,000, Rp25,000 off",250000,25000,10
-2026-04-25,Payday 4/25,Shopee Fortivit Official,FTV0425A,"Store voucher Payday 4/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,20
-2026-04-25,Payday 4/25,Shopee Fortivit Official,FTV0425B,"Store voucher Payday 4/25 - min. spend Rp200,000, Rp18,000 off",200000,18000,10
-2026-04-25,Payday 4/25,TikTok Shop,TTS0425A,"Store voucher Payday 4/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,80
-2026-04-25,Payday 4/25,TikTok Shop,TTS0425B,"Store voucher Payday 4/25 - min. spend Rp160,000, Rp14,500 off",160000,14500,60
+2026-04-25,Payday 4/25,Shopee Dermaya Official,DMY0425A,"Store voucher Payday 4/25 - min. spend Rp150,000, Rp12,000 off",150000,12000,30
+2026-04-25,Payday 4/25,Shopee Dermaya Official,DMY0425B,"Store voucher Payday 4/25 - min. spend Rp250,000, Rp25,000 off",250000,25000,20
+2026-04-25,Payday 4/25,Shopee Fortivit Official,FTV0425A,"Store voucher Payday 4/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,30
+2026-04-25,Payday 4/25,Shopee Fortivit Official,FTV0425B,"Store voucher Payday 4/25 - min. spend Rp200,000, Rp18,000 off",200000,18000,20
+2026-04-25,Payday 4/25,TikTok Shop,TTS0425A,"Store voucher Payday 4/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,40
+2026-04-25,Payday 4/25,TikTok Shop,TTS0425B,"Store voucher Payday 4/25 - min. spend Rp160,000, Rp14,500 off",160000,14500,40
 2026-04-25,Payday 4/25,TikTok Shop,TTS0425L,"LIVE voucher Payday 4/25 - no minimum spend, Rp5,000 off",0,5000,130
-2026-05-05,5.5,Shopee Growlie Official,GRW0505A,"Store voucher 5.5 - min. spend Rp75,000, Rp7,500 off",75000,7500,90
-2026-05-05,5.5,Shopee Growlie Official,GRW0505B,"Store voucher 5.5 - min. spend Rp150,000, Rp18,000 off",150000,18000,40
-2026-05-05,5.5,Shopee Dermaya Official,DMY0505A,"Store voucher 5.5 - min. spend Rp150,000, Rp12,000 off",150000,12000,70
-2026-05-05,5.5,Shopee Dermaya Official,DMY0505B,"Store voucher 5.5 - min. spend Rp250,000, Rp25,000 off",250000,25000,70
-2026-05-05,5.5,Shopee Fortivit Official,FTV0505A,"Store voucher 5.5 - min. spend Rp100,000, Rp8,000 off",100000,8000,100
-2026-05-05,5.5,Shopee Fortivit Official,FTV0505B,"Store voucher 5.5 - min. spend Rp200,000, Rp18,000 off",200000,18000,30
-2026-05-05,5.5,TikTok Shop,TTS0505A,"Store voucher 5.5 - min. spend Rp100,000, Rp8,000 off",100000,8000,180
-2026-05-05,5.5,TikTok Shop,TTS0505B,"Store voucher 5.5 - min. spend Rp160,000, Rp14,500 off",160000,14500,90
-2026-05-05,5.5,TikTok Shop,TTS0505L,"LIVE voucher 5.5 - no minimum spend, Rp5,000 off",0,5000,230
-2026-05-25,Payday 5/25,Shopee Growlie Official,GRW0525A,"Store voucher Payday 5/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,30
-2026-05-25,Payday 5/25,Shopee Growlie Official,GRW0525B,"Store voucher Payday 5/25 - min. spend Rp150,000, Rp18,000 off",150000,18000,30
-2026-05-25,Payday 5/25,Shopee Dermaya Official,DMY0525A,"Store voucher Payday 5/25 - min. spend Rp150,000, Rp12,000 off",150000,12000,40
+2026-05-05,5.5,Shopee Growlie Official,GRW0505A,"Store voucher 5.5 - min. spend Rp75,000, Rp7,500 off",75000,7500,70
+2026-05-05,5.5,Shopee Growlie Official,GRW0505B,"Store voucher 5.5 - min. spend Rp150,000, Rp18,000 off",150000,18000,90
+2026-05-05,5.5,Shopee Dermaya Official,DMY0505A,"Store voucher 5.5 - min. spend Rp150,000, Rp12,000 off",150000,12000,40
+2026-05-05,5.5,Shopee Dermaya Official,DMY0505B,"Store voucher 5.5 - min. spend Rp250,000, Rp25,000 off",250000,25000,30
+2026-05-05,5.5,Shopee Fortivit Official,FTV0505A,"Store voucher 5.5 - min. spend Rp100,000, Rp8,000 off",100000,8000,50
+2026-05-05,5.5,Shopee Fortivit Official,FTV0505B,"Store voucher 5.5 - min. spend Rp200,000, Rp18,000 off",200000,18000,40
+2026-05-05,5.5,TikTok Shop,TTS0505A,"Store voucher 5.5 - min. spend Rp100,000, Rp8,000 off",100000,8000,150
+2026-05-05,5.5,TikTok Shop,TTS0505B,"Store voucher 5.5 - min. spend Rp160,000, Rp14,500 off",160000,14500,80
+2026-05-05,5.5,TikTok Shop,TTS0505L,"LIVE voucher 5.5 - no minimum spend, Rp5,000 off",0,5000,260
+2026-05-25,Payday 5/25,Shopee Growlie Official,GRW0525A,"Store voucher Payday 5/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,60
+2026-05-25,Payday 5/25,Shopee Growlie Official,GRW0525B,"Store voucher Payday 5/25 - min. spend Rp150,000, Rp18,000 off",150000,18000,20
+2026-05-25,Payday 5/25,Shopee Dermaya Official,DMY0525A,"Store voucher Payday 5/25 - min. spend Rp150,000, Rp12,000 off",150000,12000,30
 2026-05-25,Payday 5/25,Shopee Dermaya Official,DMY0525B,"Store voucher Payday 5/25 - min. spend Rp250,000, Rp25,000 off",250000,25000,20
 2026-05-25,Payday 5/25,Shopee Fortivit Official,FTV0525A,"Store voucher Payday 5/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,40
-2026-05-25,Payday 5/25,Shopee Fortivit Official,FTV0525B,"Store voucher Payday 5/25 - min. spend Rp200,000, Rp18,000 off",200000,18000,10
-2026-05-25,Payday 5/25,TikTok Shop,TTS0525A,"Store voucher Payday 5/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,50
-2026-05-25,Payday 5/25,TikTok Shop,TTS0525B,"Store voucher Payday 5/25 - min. spend Rp160,000, Rp14,500 off",160000,14500,60
-2026-05-25,Payday 5/25,TikTok Shop,TTS0525L,"LIVE voucher Payday 5/25 - no minimum spend, Rp5,000 off",0,5000,190
-2026-06-06,6.6,Shopee Growlie Official,GRW0606A,"Store voucher 6.6 - min. spend Rp75,000, Rp7,500 off",75000,7500,110
-2026-06-06,6.6,Shopee Growlie Official,GRW0606B,"Store voucher 6.6 - min. spend Rp150,000, Rp18,000 off",150000,18000,40
-2026-06-06,6.6,Shopee Dermaya Official,DMY0606A,"Store voucher 6.6 - min. spend Rp150,000, Rp12,000 off",150000,12000,110
+2026-05-25,Payday 5/25,Shopee Fortivit Official,FTV0525B,"Store voucher Payday 5/25 - min. spend Rp200,000, Rp18,000 off",200000,18000,20
+2026-05-25,Payday 5/25,TikTok Shop,TTS0525A,"Store voucher Payday 5/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,90
+2026-05-25,Payday 5/25,TikTok Shop,TTS0525B,"Store voucher Payday 5/25 - min. spend Rp160,000, Rp14,500 off",160000,14500,40
+2026-05-25,Payday 5/25,TikTok Shop,TTS0525L,"LIVE voucher Payday 5/25 - no minimum spend, Rp5,000 off",0,5000,140
+2026-06-06,6.6,Shopee Growlie Official,GRW0606A,"Store voucher 6.6 - min. spend Rp75,000, Rp7,500 off",75000,7500,120
+2026-06-06,6.6,Shopee Growlie Official,GRW0606B,"Store voucher 6.6 - min. spend Rp150,000, Rp18,000 off",150000,18000,50
+2026-06-06,6.6,Shopee Dermaya Official,DMY0606A,"Store voucher 6.6 - min. spend Rp150,000, Rp12,000 off",150000,12000,70
 2026-06-06,6.6,Shopee Dermaya Official,DMY0606B,"Store voucher 6.6 - min. spend Rp250,000, Rp25,000 off",250000,25000,50
-2026-06-06,6.6,Shopee Fortivit Official,FTV0606A,"Store voucher 6.6 - min. spend Rp100,000, Rp8,000 off",100000,8000,90
-2026-06-06,6.6,Shopee Fortivit Official,FTV0606B,"Store voucher 6.6 - min. spend Rp200,000, Rp18,000 off",200000,18000,70
-2026-06-06,6.6,TikTok Shop,TTS0606A,"Store voucher 6.6 - min. spend Rp100,000, Rp8,000 off",100000,8000,150
-2026-06-06,6.6,TikTok Shop,TTS0606B,"Store voucher 6.6 - min. spend Rp160,000, Rp14,500 off",160000,14500,150
-2026-06-06,6.6,TikTok Shop,TTS0606L,"LIVE voucher 6.6 - no minimum spend, Rp5,000 off",0,5000,250
-2026-06-25,Payday 6/25,Shopee Growlie Official,GRW0625A,"Store voucher Payday 6/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,70
+2026-06-06,6.6,Shopee Fortivit Official,FTV0606A,"Store voucher 6.6 - min. spend Rp100,000, Rp8,000 off",100000,8000,70
+2026-06-06,6.6,Shopee Fortivit Official,FTV0606B,"Store voucher 6.6 - min. spend Rp200,000, Rp18,000 off",200000,18000,50
+2026-06-06,6.6,TikTok Shop,TTS0606A,"Store voucher 6.6 - min. spend Rp100,000, Rp8,000 off",100000,8000,170
+2026-06-06,6.6,TikTok Shop,TTS0606B,"Store voucher 6.6 - min. spend Rp160,000, Rp14,500 off",160000,14500,140
+2026-06-06,6.6,TikTok Shop,TTS0606L,"LIVE voucher 6.6 - no minimum spend, Rp5,000 off",0,5000,350
+2026-06-25,Payday 6/25,Shopee Growlie Official,GRW0625A,"Store voucher Payday 6/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,60
 2026-06-25,Payday 6/25,Shopee Growlie Official,GRW0625B,"Store voucher Payday 6/25 - min. spend Rp150,000, Rp18,000 off",150000,18000,20
 2026-06-25,Payday 6/25,Shopee Dermaya Official,DMY0625A,"Store voucher Payday 6/25 - min. spend Rp150,000, Rp12,000 off",150000,12000,40
 2026-06-25,Payday 6/25,Shopee Dermaya Official,DMY0625B,"Store voucher Payday 6/25 - min. spend Rp250,000, Rp25,000 off",250000,25000,20
-2026-06-25,Payday 6/25,Shopee Fortivit Official,FTV0625A,"Store voucher Payday 6/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,40
-2026-06-25,Payday 6/25,Shopee Fortivit Official,FTV0625B,"Store voucher Payday 6/25 - min. spend Rp200,000, Rp18,000 off",200000,18000,10
-2026-06-25,Payday 6/25,TikTok Shop,TTS0625A,"Store voucher Payday 6/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,90
-2026-06-25,Payday 6/25,TikTok Shop,TTS0625B,"Store voucher Payday 6/25 - min. spend Rp160,000, Rp14,500 off",160000,14500,60
-2026-06-25,Payday 6/25,TikTok Shop,TTS0625L,"LIVE voucher Payday 6/25 - no minimum spend, Rp5,000 off",0,5000,130
+2026-06-25,Payday 6/25,Shopee Fortivit Official,FTV0625A,"Store voucher Payday 6/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,30
+2026-06-25,Payday 6/25,Shopee Fortivit Official,FTV0625B,"Store voucher Payday 6/25 - min. spend Rp200,000, Rp18,000 off",200000,18000,20
+2026-06-25,Payday 6/25,TikTok Shop,TTS0625A,"Store voucher Payday 6/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,60
+2026-06-25,Payday 6/25,TikTok Shop,TTS0625B,"Store voucher Payday 6/25 - min. spend Rp160,000, Rp14,500 off",160000,14500,50
+2026-06-25,Payday 6/25,TikTok Shop,TTS0625L,"LIVE voucher Payday 6/25 - no minimum spend, Rp5,000 off",0,5000,150
 2026-07-07,7.7,Shopee Growlie Official,GRW0707A,"Store voucher 7.7 - min. spend Rp75,000, Rp7,500 off",75000,7500,120
-2026-07-07,7.7,Shopee Growlie Official,GRW0707B,"Store voucher 7.7 - min. spend Rp150,000, Rp18,000 off",150000,18000,60
-2026-07-07,7.7,Shopee Dermaya Official,DMY0707A,"Store voucher 7.7 - min. spend Rp150,000, Rp12,000 off",150000,12000,70
-2026-07-07,7.7,Shopee Dermaya Official,DMY0707B,"Store voucher 7.7 - min. spend Rp250,000, Rp25,000 off",250000,25000,40
-2026-07-07,7.7,Shopee Fortivit Official,FTV0707A,"Store voucher 7.7 - min. spend Rp100,000, Rp8,000 off",100000,8000,100
-2026-07-07,7.7,Shopee Fortivit Official,FTV0707B,"Store voucher 7.7 - min. spend Rp200,000, Rp18,000 off",200000,18000,40
-2026-07-07,7.7,TikTok Shop,TTS0707A,"Store voucher 7.7 - min. spend Rp100,000, Rp8,000 off",100000,8000,100
-2026-07-07,7.7,TikTok Shop,TTS0707B,"Store voucher 7.7 - min. spend Rp160,000, Rp14,500 off",160000,14500,80
-2026-07-07,7.7,TikTok Shop,TTS0707L,"LIVE voucher 7.7 - no minimum spend, Rp5,000 off",0,5000,310
-2026-07-25,Payday 7/25,Shopee Growlie Official,GRW0725A,"Store voucher Payday 7/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,20
-2026-07-25,Payday 7/25,Shopee Growlie Official,GRW0725B,"Store voucher Payday 7/25 - min. spend Rp150,000, Rp18,000 off",150000,18000,20
+2026-07-07,7.7,Shopee Growlie Official,GRW0707B,"Store voucher 7.7 - min. spend Rp150,000, Rp18,000 off",150000,18000,50
+2026-07-07,7.7,Shopee Dermaya Official,DMY0707A,"Store voucher 7.7 - min. spend Rp150,000, Rp12,000 off",150000,12000,50
+2026-07-07,7.7,Shopee Dermaya Official,DMY0707B,"Store voucher 7.7 - min. spend Rp250,000, Rp25,000 off",250000,25000,60
+2026-07-07,7.7,Shopee Fortivit Official,FTV0707A,"Store voucher 7.7 - min. spend Rp100,000, Rp8,000 off",100000,8000,90
+2026-07-07,7.7,Shopee Fortivit Official,FTV0707B,"Store voucher 7.7 - min. spend Rp200,000, Rp18,000 off",200000,18000,30
+2026-07-07,7.7,TikTok Shop,TTS0707A,"Store voucher 7.7 - min. spend Rp100,000, Rp8,000 off",100000,8000,220
+2026-07-07,7.7,TikTok Shop,TTS0707B,"Store voucher 7.7 - min. spend Rp160,000, Rp14,500 off",160000,14500,100
+2026-07-07,7.7,TikTok Shop,TTS0707L,"LIVE voucher 7.7 - no minimum spend, Rp5,000 off",0,5000,200
+2026-07-25,Payday 7/25,Shopee Growlie Official,GRW0725A,"Store voucher Payday 7/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,40
+2026-07-25,Payday 7/25,Shopee Growlie Official,GRW0725B,"Store voucher Payday 7/25 - min. spend Rp150,000, Rp18,000 off",150000,18000,40
 2026-07-25,Payday 7/25,Shopee Dermaya Official,DMY0725A,"Store voucher Payday 7/25 - min. spend Rp150,000, Rp12,000 off",150000,12000,20
-2026-07-25,Payday 7/25,Shopee Dermaya Official,DMY0725B,"Store voucher Payday 7/25 - min. spend Rp250,000, Rp25,000 off",250000,25000,10
-2026-07-25,Payday 7/25,Shopee Fortivit Official,FTV0725A,"Store voucher Payday 7/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,30
+2026-07-25,Payday 7/25,Shopee Dermaya Official,DMY0725B,"Store voucher Payday 7/25 - min. spend Rp250,000, Rp25,000 off",250000,25000,20
+2026-07-25,Payday 7/25,Shopee Fortivit Official,FTV0725A,"Store voucher Payday 7/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,50
 2026-07-25,Payday 7/25,Shopee Fortivit Official,FTV0725B,"Store voucher Payday 7/25 - min. spend Rp200,000, Rp18,000 off",200000,18000,10
-2026-07-25,Payday 7/25,TikTok Shop,TTS0725A,"Store voucher Payday 7/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,50
+2026-07-25,Payday 7/25,TikTok Shop,TTS0725A,"Store voucher Payday 7/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,90
 2026-07-25,Payday 7/25,TikTok Shop,TTS0725B,"Store voucher Payday 7/25 - min. spend Rp160,000, Rp14,500 off",160000,14500,60
-2026-07-25,Payday 7/25,TikTok Shop,TTS0725L,"LIVE voucher Payday 7/25 - no minimum spend, Rp5,000 off",0,5000,140
-2026-08-08,8.8,Shopee Growlie Official,GRW0808A,"Store voucher 8.8 - min. spend Rp75,000, Rp7,500 off",75000,7500,110
-2026-08-08,8.8,Shopee Growlie Official,GRW0808B,"Store voucher 8.8 - min. spend Rp150,000, Rp18,000 off",150000,18000,30
-2026-08-08,8.8,Shopee Dermaya Official,DMY0808A,"Store voucher 8.8 - min. spend Rp150,000, Rp12,000 off",150000,12000,60
-2026-08-08,8.8,Shopee Dermaya Official,DMY0808B,"Store voucher 8.8 - min. spend Rp250,000, Rp25,000 off",250000,25000,20
-2026-08-08,8.8,Shopee Fortivit Official,FTV0808A,"Store voucher 8.8 - min. spend Rp100,000, Rp8,000 off",100000,8000,100
+2026-07-25,Payday 7/25,TikTok Shop,TTS0725L,"LIVE voucher Payday 7/25 - no minimum spend, Rp5,000 off",0,5000,100
+2026-08-08,8.8,Shopee Growlie Official,GRW0808A,"Store voucher 8.8 - min. spend Rp75,000, Rp7,500 off",75000,7500,100
+2026-08-08,8.8,Shopee Growlie Official,GRW0808B,"Store voucher 8.8 - min. spend Rp150,000, Rp18,000 off",150000,18000,50
+2026-08-08,8.8,Shopee Dermaya Official,DMY0808A,"Store voucher 8.8 - min. spend Rp150,000, Rp12,000 off",150000,12000,50
+2026-08-08,8.8,Shopee Dermaya Official,DMY0808B,"Store voucher 8.8 - min. spend Rp250,000, Rp25,000 off",250000,25000,80
+2026-08-08,8.8,Shopee Fortivit Official,FTV0808A,"Store voucher 8.8 - min. spend Rp100,000, Rp8,000 off",100000,8000,90
 2026-08-08,8.8,Shopee Fortivit Official,FTV0808B,"Store voucher 8.8 - min. spend Rp200,000, Rp18,000 off",200000,18000,50
-2026-08-08,8.8,TikTok Shop,TTS0808A,"Store voucher 8.8 - min. spend Rp100,000, Rp8,000 off",100000,8000,210
-2026-08-08,8.8,TikTok Shop,TTS0808B,"Store voucher 8.8 - min. spend Rp160,000, Rp14,500 off",160000,14500,140
-2026-08-08,8.8,TikTok Shop,TTS0808L,"LIVE voucher 8.8 - no minimum spend, Rp5,000 off",0,5000,390
-2026-08-25,Payday 8/25,Shopee Growlie Official,GRW0825A,"Store voucher Payday 8/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,50
+2026-08-08,8.8,TikTok Shop,TTS0808A,"Store voucher 8.8 - min. spend Rp100,000, Rp8,000 off",100000,8000,270
+2026-08-08,8.8,TikTok Shop,TTS0808B,"Store voucher 8.8 - min. spend Rp160,000, Rp14,500 off",160000,14500,220
+2026-08-08,8.8,TikTok Shop,TTS0808L,"LIVE voucher 8.8 - no minimum spend, Rp5,000 off",0,5000,330
+2026-08-25,Payday 8/25,Shopee Growlie Official,GRW0825A,"Store voucher Payday 8/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,30
 2026-08-25,Payday 8/25,Shopee Growlie Official,GRW0825B,"Store voucher Payday 8/25 - min. spend Rp150,000, Rp18,000 off",150000,18000,30
 2026-08-25,Payday 8/25,Shopee Dermaya Official,DMY0825A,"Store voucher Payday 8/25 - min. spend Rp150,000, Rp12,000 off",150000,12000,20
 2026-08-25,Payday 8/25,Shopee Dermaya Official,DMY0825B,"Store voucher Payday 8/25 - min. spend Rp250,000, Rp25,000 off",250000,25000,10
-2026-08-25,Payday 8/25,Shopee Fortivit Official,FTV0825A,"Store voucher Payday 8/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,20
-2026-08-25,Payday 8/25,Shopee Fortivit Official,FTV0825B,"Store voucher Payday 8/25 - min. spend Rp200,000, Rp18,000 off",200000,18000,20
-2026-08-25,Payday 8/25,TikTok Shop,TTS0825A,"Store voucher Payday 8/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,130
+2026-08-25,Payday 8/25,Shopee Fortivit Official,FTV0825A,"Store voucher Payday 8/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,40
+2026-08-25,Payday 8/25,Shopee Fortivit Official,FTV0825B,"Store voucher Payday 8/25 - min. spend Rp200,000, Rp18,000 off",200000,18000,30
+2026-08-25,Payday 8/25,TikTok Shop,TTS0825A,"Store voucher Payday 8/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,70
 2026-08-25,Payday 8/25,TikTok Shop,TTS0825B,"Store voucher Payday 8/25 - min. spend Rp160,000, Rp14,500 off",160000,14500,50
-2026-08-25,Payday 8/25,TikTok Shop,TTS0825L,"LIVE voucher Payday 8/25 - no minimum spend, Rp5,000 off",0,5000,250
+2026-08-25,Payday 8/25,TikTok Shop,TTS0825L,"LIVE voucher Payday 8/25 - no minimum spend, Rp5,000 off",0,5000,100
 2026-09-09,9.9,Shopee Growlie Official,GRW0909A,"Store voucher 9.9 - min. spend Rp75,000, Rp7,500 off",75000,7500,170
-2026-09-09,9.9,Shopee Growlie Official,GRW0909B,"Store voucher 9.9 - min. spend Rp150,000, Rp18,000 off",150000,18000,80
-2026-09-09,9.9,Shopee Dermaya Official,DMY0909A,"Store voucher 9.9 - min. spend Rp150,000, Rp12,000 off",150000,12000,60
-2026-09-09,9.9,Shopee Dermaya Official,DMY0909B,"Store voucher 9.9 - min. spend Rp250,000, Rp25,000 off",250000,25000,60
-2026-09-09,9.9,Shopee Fortivit Official,FTV0909A,"Store voucher 9.9 - min. spend Rp100,000, Rp8,000 off",100000,8000,90
+2026-09-09,9.9,Shopee Growlie Official,GRW0909B,"Store voucher 9.9 - min. spend Rp150,000, Rp18,000 off",150000,18000,90
+2026-09-09,9.9,Shopee Dermaya Official,DMY0909A,"Store voucher 9.9 - min. spend Rp150,000, Rp12,000 off",150000,12000,120
+2026-09-09,9.9,Shopee Dermaya Official,DMY0909B,"Store voucher 9.9 - min. spend Rp250,000, Rp25,000 off",250000,25000,50
+2026-09-09,9.9,Shopee Fortivit Official,FTV0909A,"Store voucher 9.9 - min. spend Rp100,000, Rp8,000 off",100000,8000,60
 2026-09-09,9.9,Shopee Fortivit Official,FTV0909B,"Store voucher 9.9 - min. spend Rp200,000, Rp18,000 off",200000,18000,60
-2026-09-09,9.9,TikTok Shop,TTS0909A,"Store voucher 9.9 - min. spend Rp100,000, Rp8,000 off",100000,8000,400
-2026-09-09,9.9,TikTok Shop,TTS0909B,"Store voucher 9.9 - min. spend Rp160,000, Rp14,500 off",160000,14500,180
-2026-09-09,9.9,TikTok Shop,TTS0909L,"LIVE voucher 9.9 - no minimum spend, Rp5,000 off",0,5000,380
-2026-09-25,Payday 9/25,Shopee Growlie Official,GRW0925A,"Store voucher Payday 9/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,70
-2026-09-25,Payday 9/25,Shopee Growlie Official,GRW0925B,"Store voucher Payday 9/25 - min. spend Rp150,000, Rp18,000 off",150000,18000,20
+2026-09-09,9.9,TikTok Shop,TTS0909A,"Store voucher 9.9 - min. spend Rp100,000, Rp8,000 off",100000,8000,310
+2026-09-09,9.9,TikTok Shop,TTS0909B,"Store voucher 9.9 - min. spend Rp160,000, Rp14,500 off",160000,14500,200
+2026-09-09,9.9,TikTok Shop,TTS0909L,"LIVE voucher 9.9 - no minimum spend, Rp5,000 off",0,5000,360
+2026-09-25,Payday 9/25,Shopee Growlie Official,GRW0925A,"Store voucher Payday 9/25 - min. spend Rp75,000, Rp7,500 off",75000,7500,30
+2026-09-25,Payday 9/25,Shopee Growlie Official,GRW0925B,"Store voucher Payday 9/25 - min. spend Rp150,000, Rp18,000 off",150000,18000,10
 2026-09-25,Payday 9/25,Shopee Dermaya Official,DMY0925A,"Store voucher Payday 9/25 - min. spend Rp150,000, Rp12,000 off",150000,12000,30
-2026-09-25,Payday 9/25,Shopee Dermaya Official,DMY0925B,"Store voucher Payday 9/25 - min. spend Rp250,000, Rp25,000 off",250000,25000,30
-2026-09-25,Payday 9/25,Shopee Fortivit Official,FTV0925A,"Store voucher Payday 9/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,30
+2026-09-25,Payday 9/25,Shopee Dermaya Official,DMY0925B,"Store voucher Payday 9/25 - min. spend Rp250,000, Rp25,000 off",250000,25000,10
+2026-09-25,Payday 9/25,Shopee Fortivit Official,FTV0925A,"Store voucher Payday 9/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,20
 2026-09-25,Payday 9/25,Shopee Fortivit Official,FTV0925B,"Store voucher Payday 9/25 - min. spend Rp200,000, Rp18,000 off",200000,18000,20
-2026-09-25,Payday 9/25,TikTok Shop,TTS0925A,"Store voucher Payday 9/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,120
-2026-09-25,Payday 9/25,TikTok Shop,TTS0925B,"Store voucher Payday 9/25 - min. spend Rp160,000, Rp14,500 off",160000,14500,120
-2026-09-25,Payday 9/25,TikTok Shop,TTS0925L,"LIVE voucher Payday 9/25 - no minimum spend, Rp5,000 off",0,5000,200
+2026-09-25,Payday 9/25,TikTok Shop,TTS0925A,"Store voucher Payday 9/25 - min. spend Rp100,000, Rp8,000 off",100000,8000,100
+2026-09-25,Payday 9/25,TikTok Shop,TTS0925B,"Store voucher Payday 9/25 - min. spend Rp160,000, Rp14,500 off",160000,14500,100
+2026-09-25,Payday 9/25,TikTok Shop,TTS0925L,"LIVE voucher Payday 9/25 - no minimum spend, Rp5,000 off",0,5000,180

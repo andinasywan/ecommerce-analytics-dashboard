@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="style.css?v=20261017-1400">
+<link rel="stylesheet" href="style.css?v=20261017-2000">
 </head>
 <body data-page="sellout">
 <header class="hero">
@@ -91,7 +91,7 @@
       </div>
       <div class="grid2">
         <div class="card">
-          <h3>GMV by platform, May–September</h3>
+          <h3>GMV by platform, <span data-range></span></h3>
           <div class="legend" id="leg-platform"></div>
           <div class="chart" id="chart-monthly"></div>
         </div>
@@ -238,7 +238,7 @@
           <div class="funnel" id="tr-funnel"></div>
         </div>
         <div class="card">
-          <h3>Conversion rate by platform, May–September</h3>
+          <h3>Conversion rate by platform, <span data-range></span></h3>
           <p class="note">Orders ÷ visitors.</p>
           <div class="legend" id="leg-platform-tr"></div>
           <div class="chart" id="chart-cvr"></div>
@@ -347,7 +347,7 @@
     <section class="section" id="history">
       <div class="section-head">
         <h2>Campaign history</h2>
-        <p>Full-day GMV of every twin date and payday since February</p>
+        <p>Full-day GMV of every twin date and payday since <span data-since></span></p>
       </div>
       <div class="card">
         <div class="legend"><span><span class="key" style="background:var(--camp)"></span>Twin date</span><span><span class="key" style="background:var(--one)"></span>Payday (25th)</span><span><span class="key tick"></span>Ordinary day average</span></div>
@@ -470,6 +470,61 @@
       </div>
     </section>
 
+    <section class="section" id="stock">
+      <div class="section-head">
+        <h2>Stock cover</h2>
+        <p id="stock-sub"></p>
+      </div>
+      <div class="band-strip" id="band-strip" role="group" aria-label="Filter the stock table by days of inventory"></div>
+      <div class="grid2">
+        <div class="card">
+          <h3>Days of inventory by warehouse</h3>
+          <p class="note">Each bar splits the SKUs a warehouse holds by how many days their stock lasts. The number is the warehouse's overall cover. Click a row to filter the table.</p>
+          <div class="doi-list" id="doi-wh"></div>
+        </div>
+        <div class="card">
+          <h3>Stock by product status</h3>
+          <p class="note">Status from the monthly SKU review: steady sellers, new launches, slow movers and products being phased out.</p>
+          <div class="table-box flat">
+            <table class="mini-table" id="table-status"></table>
+          </div>
+          <div class="callout" id="status-note"></div>
+          <h4 class="mini-h" id="risk-title">SKU × warehouse pairs under 14 days, by month</h4>
+          <div class="chart" id="chart-risk"></div>
+        </div>
+      </div>
+      <div class="toolbar">
+        <label class="field" for="stock-wh">Warehouse
+          <select id="stock-wh"></select>
+        </label>
+        <label class="field" for="stock-status">Status
+          <select id="stock-status"></select>
+        </label>
+        <label class="field" for="stock-sort">Sort
+          <select id="stock-sort">
+            <option value="doi">Fewest days first</option>
+            <option value="doi-desc">Most days first</option>
+            <option value="soh">Most stock on hand</option>
+          </select>
+        </label>
+        <span class="count" id="stock-count"></span>
+      </div>
+      <div class="table-box">
+        <table id="table-stock">
+          <thead>
+            <tr>
+              <th>SKU · warehouse</th>
+              <th class="r opt">Stock on hand</th>
+              <th class="r opt">Sold per day</th>
+              <th><span class="hide-narrow">Days of inventory</span><span class="only-narrow">Cover</span></th>
+              <th class="r">Runs out<span class="hide-narrow"> around</span></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
     <section class="section" id="plan">
       <div class="section-head">
         <h2 id="plan-title">Shipment plan</h2>
@@ -541,13 +596,13 @@
   </div>
 </footer>
 
-<script src="data.js?v=20261017-1400"></script>
-<script src="js/geo.js?v=20261017-1400"></script>
-<script src="js/common.js?v=20261017-1400"></script>
-<script src="js/sellout.js?v=20261017-1400"></script>
-<script src="js/traffic.js?v=20261017-1400"></script>
-<script src="js/campaigns.js?v=20261017-1400"></script>
-<script src="js/forecast.js?v=20261017-1400"></script>
-<script src="js/app.js?v=20261017-1400"></script>
+<script src="data.js?v=20261017-2000"></script>
+<script src="js/geo.js?v=20261017-2000"></script>
+<script src="js/common.js?v=20261017-2000"></script>
+<script src="js/sellout.js?v=20261017-2000"></script>
+<script src="js/traffic.js?v=20261017-2000"></script>
+<script src="js/campaigns.js?v=20261017-2000"></script>
+<script src="js/forecast.js?v=20261017-2000"></script>
+<script src="js/app.js?v=20261017-2000"></script>
 </body>
 </html>
